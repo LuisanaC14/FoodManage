@@ -26,7 +26,7 @@ SECRET_KEY = 'django-insecure-g3(&&_ur#s%kkbltf$j5dsonl6a-7o^1vp+%buq79zj-#-2^&c
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = []
+ALLOWED_HOSTS = ['straight-rowena-universidadchimborazo-7d598f7d.koyeb.app', 'localhost', '127.0.0.1', '*']
 
 
 # Application definition
