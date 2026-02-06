@@ -1,0 +1,22 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Reporte de Gestión - FoodManage</title>
+</head>
+<body>
+    <h1>Resumen de Operaciones</h1>
+    <div style="background: #e1f5fe; padding: 20px; border-radius: 10px;">
+        <h2>Ventas Totales: ${{ total_ventas }}</h2>
+    </div>
+    
+    <h2>Alerta de Inventario (Stock bajo)</h2>
+    <ul>
+        {% for p in productos_poco_stock %}
+            <li style="color: red;">{{ p.nombre }} - Quedan: {{ p.stock }}</li>
+        {% empty %}
+            <li>El inventario está completo.</li>
+        {% endfor %}
+    </ul>
+    <a href="{% url 'inicio' %}">Volver al inicio</a>
+</body>
+</html>

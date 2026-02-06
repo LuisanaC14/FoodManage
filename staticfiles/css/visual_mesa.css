@@ -1,0 +1,192 @@
+/* =========================================
+   CONTENEDOR DEL MAPA (LA "PANTALLA DE CINE")
+   ========================================= */
+#visual-mesa-container {
+    background: #050505; /* Fondo casi negro */
+    border: 2px solid #333;
+    border-radius: 12px;
+    padding: 20px;
+    margin-bottom: 25px;
+    box-shadow: 0 0 20px rgba(0,0,0,0.8);
+    text-align: center;
+}
+
+/* Título del escenario */
+.stage-title {
+    color: #444;
+    text-transform: uppercase;
+    letter-spacing: 4px;
+    font-weight: 900;
+    margin-bottom: 20px;
+    border-bottom: 1px solid #222;
+    padding-bottom: 10px;
+}
+
+/* =========================================
+   PESTAÑAS DE PISO (BOTONES SUPERIORES)
+   ========================================= */
+.floor-tabs {
+    display: flex;
+    justify-content: center;
+    gap: 15px;
+    margin-bottom: 25px;
+}
+
+.floor-tab-btn {
+    background: #111;
+    color: #666;
+    border: 1px solid #333;
+    padding: 12px 30px;
+    cursor: pointer;
+    font-weight: 900;
+    text-transform: uppercase;
+    letter-spacing: 1px;
+    border-radius: 6px;
+    transition: 0.3s;
+}
+
+.floor-tab-btn:hover {
+    color: #fff;
+    border-color: #fff;
+}
+
+.floor-tab-btn.active {
+    background: #ffcc00; /* Amarillo Máncora */
+    color: #000;
+    border-color: #ffcc00;
+    box-shadow: 0 0 15px rgba(255, 204, 0, 0.4);
+    transform: scale(1.05);
+}
+
+/* =========================================
+   EL MAPA (CANVAS)
+   ========================================= */
+.floor-map {
+    position: relative;
+    display: none; 
+    width: 100%;
+    height: 500px; /* Altura del mapa */
+    background-image: 
+        radial-gradient(#222 1px, transparent 1px),
+        radial-gradient(#111 1px, transparent 1px);
+    background-size: 20px 20px; /* Cuadrícula de guía */
+    background-position: 0 0, 10px 10px;
+    background-color: #0d0d0d;
+    border: 1px solid #222;
+    border-radius: 8px;
+    overflow: hidden;
+}
+
+.floor-map.active {
+    display: block;
+    animation: fadeIn 0.5s;
+}
+
+/* Zonas visuales (Suelo rojo vs Grava) - Opcional para decorar */
+.zona-grava {
+    position: absolute;
+    top: 0; left: 0; bottom: 0; width: 50%;
+    background: rgba(255, 255, 255, 0.02);
+    border-right: 2px dashed #333;
+}
+.zona-deck {
+    position: absolute;
+    top: 0; left: 0; right: 0; bottom: 0;
+    background: repeating-linear-gradient(
+        45deg,
+        rgba(255,255,255,0.01),
+        rgba(255,255,255,0.01) 10px,
+        rgba(255,255,255,0.02) 10px,
+        rgba(255,255,255,0.02) 20px
+    );
+}
+
+/* =========================================
+   LAS MESAS (LOS "ASIENTOS")
+   ========================================= */
+.mesa-spot {
+    position: absolute;
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+    cursor: pointer;
+    transition: all 0.2s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+    z-index: 10;
+}
+
+/* La forma de la mesa */
+.mesa-shape {
+    background: #1a1a1a;
+    border: 2px solid #555;
+    color: #fff;
+    font-weight: bold;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    box-shadow: 0 5px 15px rgba(0,0,0,0.5);
+}
+
+/* Mesa Cuadrada (Estándar) */
+.mesa-cuadrada .mesa-shape {
+    width: 50px;
+    height: 50px;
+    border-radius: 8px;
+}
+
+/* Mesa Redonda (Troncos) */
+.mesa-redonda .mesa-shape {
+    width: 55px;
+    height: 55px;
+    border-radius: 50%;
+    border-color: #888; /* Diferente para identificar */
+}
+
+/* Mesa Larga (Grupos) */
+.mesa-larga .mesa-shape {
+    width: 100px;
+    height: 50px;
+    border-radius: 8px;
+}
+
+/* Hover (Disponible) */
+.mesa-spot:hover .mesa-shape {
+    border-color: #ffcc00; /* Borde Amarillo */
+    color: #ffcc00;
+    background: #222;
+    transform: translateY(-3px);
+    box-shadow: 0 10px 20px rgba(255, 204, 0, 0.2);
+}
+
+/* ESTADO: SELECCIONADA (Activa) */
+.mesa-spot.selected .mesa-shape {
+    background: #ff0000; /* Fondo Rojo */
+    border-color: #ff0000;
+    color: #fff;
+    box-shadow: 0 0 20px rgba(255, 0, 0, 0.6);
+}
+
+/* ESTADO: OCUPADA (Reservada por otro - Opcional si implementas lógica) */
+.mesa-spot.ocupada {
+    pointer-events: none;
+    opacity: 0.5;
+}
+.mesa-spot.ocupada .mesa-shape {
+    background: #333;
+    border-color: #444;
+    color: #555;
+    text-decoration: line-through;
+}
+
+/* Etiquetas pequeñas (capacidad) */
+.mesa-capacidad {
+    font-size: 0.6rem;
+    color: #888;
+    margin-top: 3px;
+    font-family: monospace;
+}
+
+@keyframes fadeIn {
+    from { opacity: 0; transform: translateY(10px); }
+    to { opacity: 1; transform: translateY(0); }
+}

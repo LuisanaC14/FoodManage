@@ -1,0 +1,196 @@
+<div id="visual-mesa-container">
+    <div class="stage-title">SELECCIÓN DE MESA DIGITAL</div>
+
+    <div class="floor-tabs">
+        <button type="button" class="floor-tab-btn active" data-target="map-piso1">
+            <i class="fas fa-umbrella-beach"></i> PLANTA BAJA (Piso 1)
+        </button>
+        <button type="button" class="floor-tab-btn" data-target="map-piso2">
+            <i class="fas fa-layer-group"></i> PLANTA ALTA (Piso 2)
+        </button>
+    </div>
+
+    <div id="map-piso1" class="floor-map active">
+        <div class="zona-grava"></div>
+        
+        <div style="position: absolute; top: 10px; left: 10px; color: #666; font-weight: 900;">ZONA AIRE LIBRE</div>
+        <div style="position: absolute; top: 10px; right: 10px; color: #666; font-weight: 900;">ZONA CUBIERTA</div>
+
+        <div style="position: absolute; top: 65%; right: 0; width: 49.8%; border-top: 1px dashed #333;"></div>
+
+        <div style="position: absolute; bottom: 15px; right: 15px; color: #999; font-weight: 900; font-size: 0.8rem; text-align: right;">
+            <i class="fas fa-street-view me-1"></i> VISTA A LA CALLE
+        </div>
+
+        {% for mesa in mesas_piso1 %}
+        <div class="mesa-spot {{ mesa.forma }}" 
+             style="top: {{ mesa.pos_y }}%; left: {{ mesa.pos_x }}%;" 
+             data-mesa-id="{{ mesa.id }}">
+            <div class="mesa-shape">
+                {% if mesa.numero < 10 %}0{% endif %}{{ mesa.numero }}
+            </div>
+            <span class="mesa-capacidad">{{ mesa.capacidad }}p</span>
+        </div>
+        {% endfor %}
+    </div>
+
+    <div id="map-piso2" class="floor-map">
+        <div class="zona-deck"></div>
+        <div style="position: absolute; bottom: 10px; width:100%; text-align:center; color: #666; font-weight: 900;">VISTA A LA CALLE</div>
+
+        {% for mesa in mesas_piso2 %}
+        <div class="mesa-spot {{ mesa.forma }}" 
+             style="top: {{ mesa.pos_y }}%; left: {{ mesa.pos_x }}%;" 
+             data-mesa-id="{{ mesa.id }}">
+            <div class="mesa-shape">
+                {% if mesa.numero < 10 %}0{% endif %}{{ mesa.numero }}
+            </div>
+            <span class="mesa-capacidad">{{ mesa.capacidad }}p</span>
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    // Usamos una función autoejecutable para evitar conflictos de nombres
+    (function() {
+        function iniciarMapa() {
+            const botones = document.querySelectorAll('.floor-tab-btn');
+            const mapas = document.querySelectorAll('.floor-map');
+
+            if (botones.length === 0) return; // Si no hay botones, no hacemos nada
+
+            botones.forEach(btn => {
+                // Limpiamos eventos anteriores para evitar duplicados (clics dobles)
+                const nuevoBtn = btn.cloneNode(true);
+                btn.parentNode.replaceChild(nuevoBtn, btn);
+            });
+
+            // Re-seleccionamos los botones "limpios"
+            document.querySelectorAll('.floor-tab-btn').forEach(btn => {
+                btn.addEventListener('click', function(e) {
+                    e.preventDefault(); // Evita saltos de página
+                    
+                    // 1. Quitar activo visual de todos los botones
+                    document.querySelectorAll('.floor-tab-btn').forEach(b => b.classList.remove('active'));
+                    
+                    // 2. Activar el botón clicado
+                    this.classList.add('active');
+
+                    // 3. Mostrar el mapa correspondiente
+                    const objetivo = this.getAttribute('data-target');
+                    
+                    document.querySelectorAll('.floor-map').forEach(map => {
+                        map.classList.remove('active');
+                        map.style.display = 'none'; // Aseguramos que se oculte
+                        
+                        if (map.id === objetivo) {
+                            map.classList.add('active');
+                            map.style.display = 'block'; // Aseguramos que se vea
+                        }
+                    });
+                });
+            });
+        }
+
+        // Ejecutar al cargar y también si Django Admin recarga partes de la página
+        if (document.readyState === 'loading') {
+            document.addEventListener('DOMContentLoaded', iniciarMapa);
+        } else {
+            iniciarMapa();
+        }
+    })();
+
+    if ("{{ admin_mode }}" === "True") {
+    const inputX = document.getElementById('id_pos_x');
+    const inputY = document.getElementById('id_pos_y');
+    const mesaId = "{{ mesa_actual_id }}";
+    
+    // Buscamos el elemento visual de la mesa que estamos editando
+    const mesaVisual = document.querySelector(`.mesa-spot[data-mesa-id="${mesaId}"]`);
+
+    if (mesaVisual && inputX && inputY) {
+        const mover = () => {
+            mesaVisual.style.left = inputX.value + '%';
+            mesaVisual.style.top = inputY.value + '%';
+            mesaVisual.style.boxShadow = "0 0 20px #ccff00"; // Resaltar
+            mesaVisual.style.zIndex = "9999";
+        };
+        inputX.addEventListener('input', mover);
+        inputY.addEventListener('input', mover);
+    }
+}
+</script>
+
+<style>
+    /* 1. ESTILOS BASE (Se mantienen) */
+    .floor-map { 
+        display: none; 
+        width: 100%; 
+        height: 500px; 
+        position: relative; 
+        background: #1a1a1a; 
+        border: 1px solid #333; 
+        border-radius: 0 0 10px 10px; 
+    }
+    .floor-map.active { display: block !important; }
+    
+    /* Contenedor maestro para permitir el scroll */
+    #visual-mesa-container {
+        width: 100%;
+        overflow: hidden;
+    }
+
+    @media (max-width: 992px) {
+        
+        /* 1. CONTENEDOR CON SCROLL SOLO PARA EL MAPA */
+        #visual-mesa-container {
+            overflow-x: auto !important;
+            -webkit-overflow-scrolling: touch;
+            padding-bottom: 10px;
+            display: block;
+        }
+
+        /* 2. ELEMENTOS QUE SE QUEDAN QUIETOS (Sticky) */
+        .stage-title, 
+        .floor-tabs {
+            position: sticky !important;
+            left: 0;
+            width: 100vw; /* Se ajustan al ancho de la pantalla del celular */
+            z-index: 100;
+            background: #0f0f0f; /* Fondo sólido para que no se vea el mapa pasar por debajo */
+        }
+
+        /* 3. PESTAÑAS MÁS PEQUEÑAS Y FIJAS */
+        .floor-tabs {
+            display: flex;
+            justify-content: center; /* Centradas */
+            gap: 5px;
+            padding: 10px 0 !important;
+            border-bottom: 1px solid #333;
+        }
+
+        .floor-tab-btn {
+            flex: 0 1 auto !important; /* No se estiran locamente */
+            padding: 6px 12px !important; /* Más pequeñas */
+            font-size: 0.75rem !important; /* Letra miniatura */
+            white-space: nowrap;
+            border-radius: 6px !important;
+        }
+
+        /* 4. EL MAPA (Único elemento que se mueve) */
+        .floor-map {
+            min-width: 850px !important; /* Mantiene el tamaño para las mesas */
+            height: 550px !important;
+            margin-top: 5px;
+        }
+
+        /* Barra de desplazamiento neón */
+        #visual-mesa-container::-webkit-scrollbar { height: 6px; }
+        #visual-mesa-container::-webkit-scrollbar-thumb {
+            background: #ccff00;
+            border-radius: 10px;
+        }
+    }
+</style>
+</style>

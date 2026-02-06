@@ -1,0 +1,183 @@
+{% extends "gestion/index.html" %}
+{% load static %}
+
+{% block hero %}{% endblock %}
+
+{% block content %}
+<div class="container-fluid py-5" style="background: #000; overflow: hidden;">
+    
+    <div class="container mb-5 pt-lg-5">
+        <div class="row align-items-center g-5">
+            <div class="col-lg-6">
+                <div class="reveal-content animate__animated animate__fadeInLeft">
+                    <span class="text-neon-tag mb-3 d-block">EST. 2021 | LAGO AGRIO</span>
+                    <h1 class="text-white fw-900 mb-4" style="font-size: clamp(2.5rem, 6vw, 4.5rem); line-height: 0.85;">
+                        LA ARTE DE LA <br><span class="text-italic-gold">Marisquería.</span>
+                    </h1>
+                    <div class="divider-long mb-4"></div>
+                    <p class="text-description">
+                        Máncora no es solo un restaurante, es un santuario gastronómico donde la frescura del Pacífico llega a la Amazonía. Seleccionamos cada pieza con rigor artesanal para que tu experiencia sea sublime.
+                    </p>
+                </div>
+            </div>
+            
+            <div class="col-lg-6">
+                <div class="image-parallax-container animate__animated animate__fadeInRight">
+                    <div class="neon-border-frame"></div>
+                    <div class="img-hero-curved-wrapper">
+                        <img src="{% static 'img/nosotros_local.jpg' %}" class="img-hero-curved" alt="Nuestra Casa">
+                    </div>
+                    <div class="floating-label">
+                        <i class="fas fa-star me-2 text-dark"></i> NUESTRA CASA
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container py-5">
+        <div class="row g-4 justify-content-center">
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="depth-card border-cyan">
+                    <div class="depth-icon icon-cyan"><i class="fas fa-gem"></i></div>
+                    <h4>CALIDAD SUPREMA</h4>
+                    <p>Estándares de exportación para asegurar un sabor inolvidable en cada bocado.</p>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="depth-card border-magenta">
+                    <div class="depth-icon icon-magenta"><i class="fas fa-heart"></i></div>
+                    <h4>PASIÓN LOCAL</h4>
+                    <p>Nacimos en Lago Agrio. Cada cliente es parte fundamental de nuestra familia.</p>
+                </div>
+            </div>
+            <div class="col-12 col-md-6 col-lg-4">
+                <div class="depth-card border-yellow">
+                    <div class="depth-icon icon-yellow"><i class="fas fa-map-marked-alt"></i></div>
+                    <h4>UBICACIÓN ÚNICA</h4>
+                    <p>Un espacio diseñado para escapar de la rutina bajo el resplandor del neón.</p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container py-5">
+        <div class="text-center mb-5">
+            <h3 class="text-white fw-bold">MOMENTOS <span class="text-warning italic-serif">Máncora</span></h3>
+            <p class="text-white-50">La frescura y el ambiente capturados en un instante.</p>
+        </div>
+        <div class="row g-3">
+            <div class="col-6 col-md-4 col-lg-3">
+                <div class="gallery-item"><img src="{% static 'img/plato1.JPG' %}" class="img-fluid rounded-4 shadow" alt="Plato"></div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3">
+                <div class="gallery-item"><img src="{% static 'img/plato2.JPG' %}" class="img-fluid rounded-4 shadow" alt="Ambiente"></div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3 d-none d-md-block">
+                <div class="gallery-item"><img src="{% static 'img/plato3.JPG' %}" class="img-fluid rounded-4 shadow" alt="Cocina"></div>
+            </div>
+            <div class="col-6 col-md-4 col-lg-3 d-none d-lg-block">
+                <div class="gallery-item"><img src="{% static 'img/plato4.JPG' %}" class="img-fluid rounded-4 shadow" alt="Detalle"></div>
+            </div>
+        </div>
+    </div>
+
+    <div class="container py-5 mb-5 animate__animated animate__fadeInUp">
+    
+        <div class="text-center mb-5">
+            <h6 class="text-warning fw-bold mb-2" style="letter-spacing: 4px; font-size: 0.75rem; text-transform: uppercase;">¿Cómo llegar?</h6>
+            <h3 class="text-white fw-900" style="font-size: 2.5rem;">ENCUÉNTRANOS EN EL <span class="text-warning italic-serif">Corazón</span> DE LAGO AGRIO</h3>
+            <div class="divider-long mx-auto mt-3"></div>
+        </div>
+
+        <div class="row justify-content-center">
+            <div class="col-12">
+                <div class="map-container shadow-lg" style="border-radius: 30px; overflow: hidden; border: 1px solid #333; position: relative;">
+                    
+                    <iframe 
+                        src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d997.4539581781949!2d-76.88414883042897!3d0.06398144110018958!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x8e28218aa635e4cb%3A0x2fb061a405bfbc33!2sMancora%20Marisqueria!5e0!3m2!1ses!2sec!4v1770354990494!5m2!1ses!2sec" 
+                        width="100%" 
+                        height="450" 
+                        style="border:0;" 
+                        allowfullscreen="" 
+                        loading="lazy" 
+                        referrerpolicy="no-referrer-when-downgrade">
+                    </iframe>
+
+                    <div class="map-overlay" style="position: absolute; top: 20px; right: 20px; z-index: 5;">
+                        <span class="badge bg-warning text-dark px-3 py-2 fw-bold shadow" style="box-shadow: 0 0 15px rgba(204,255,0,0.4);">
+                            <i class="fas fa-location-dot me-2"></i>TE ESPERAMOS
+                        </span>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    @import url('https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@1,900&display=swap');
+    
+    .fw-900 { font-weight: 900; }
+    .text-neon-tag { color: #ccff00; font-weight: bold; letter-spacing: 5px; font-size: 0.7rem; text-shadow: 0 0 10px rgba(204,255,0,0.5); }
+    .text-italic-gold { font-family: 'Playfair Display', serif; font-style: italic; color: #ccff00; letter-spacing: -2px; }
+    .divider-long { width: 80px; height: 3px; background: #ccff00; border-radius: 2px; }
+    .text-description { color: rgba(255,255,255,0.6); font-size: 1.1rem; line-height: 1.8; max-width: 500px; }
+
+    /* Imagen Editorial */
+    .image-parallax-container { position: relative; padding: 20px; }
+    .img-hero-curved-wrapper { border-radius: 80px 10px 80px 10px; overflow: hidden; border: 1px solid rgba(255,255,255,0.1); }
+    .img-hero-curved { width: 100%; height: 500px; object-fit: cover; transition: 0.8s ease; }
+    .neon-border-frame { position: absolute; top: 0; left: 0; width: 100%; height: 100%; border: 2px solid #ccff00; border-radius: 80px 10px 80px 10px; z-index: -1; transform: translate(15px, 15px); opacity: 0.3; }
+    .floating-label { position: absolute; bottom: 60px; left: -10px; background: #ccff00; color: #000; padding: 12px 30px; font-weight: 900; border-radius: 4px; font-size: 0.8rem; }
+
+    /* Tarjetas con Profundidad */
+    .depth-card {
+        background: #0a0a0a; padding: 50px 40px; border-radius: 30px; height: 100%; transition: 0.5s;
+        box-shadow: 15px 15px 30px #050505, -5px -5px 15px rgba(255,255,255,0.02);
+        border: 1px solid rgba(255,255,255,0.05); display: flex; flex-direction: column; align-items: center; text-align: center;
+    }
+    .depth-card:hover { transform: translateY(-15px); box-shadow: 20px 20px 40px #000, 0 0 20px rgba(204,255,0,0.1); }
+    .depth-icon { width: 70px; height: 70px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.8rem; margin-bottom: 25px; background: #0a0a0a; box-shadow: inset 5px 5px 10px #050505, inset -2px -2px 5px rgba(255,255,255,0.05); }
+    .icon-cyan { color: #00eaff; text-shadow: 0 0 10px #00eaff; }
+    .icon-magenta { color: #ff00de; text-shadow: 0 0 10px #ff00de; }
+    .icon-yellow { color: #ccff00; text-shadow: 0 0 10px #ccff00; }
+
+    /* Galería */
+    .gallery-item { overflow: hidden; border-radius: 20px; border: 1px solid #222; }
+    .gallery-item img { transition: 0.5s; width: 100%; height: 200px; object-fit: cover; }
+    .gallery-item:hover img { transform: scale(1.1) rotate(2deg); }
+
+    /* Mapa */
+    .map-container { position: relative; border-radius: 30px; overflow: hidden; border: 1px solid #333; }
+    .map-overlay { position: absolute; top: 20px; right: 20px; z-index: 5; }
+
+    @media (max-width: 991px) {
+        .img-hero-curved { height: 350px; }
+        .depth-card { padding: 35px 25px; }
+        .reveal-content { text-align: center; }
+        .divider-long { margin: 0 auto 20px; }
+    }
+
+    /* Estilos de apoyo para la nueva sección */
+    .fw-900 { font-weight: 900; }
+    .italic-serif { font-family: 'Playfair Display', serif; font-style: italic; color: #ccff00; }
+    .divider-long { width: 60px; height: 3px; background: #ccff00; border-radius: 2px; }
+    
+    /* Efecto de elevación responsivo para el mapa */
+    .map-container {
+        transition: transform 0.4s ease;
+    }
+    .map-container:hover {
+        transform: scale(1.01);
+        border-color: #ccff00 !important;
+    }
+
+    @media (max-width: 768px) {
+        h3 { font-size: 1.8rem !important; }
+        .map-container iframe { height: 350px; }
+    }
+</style>
+
+{% include 'gestion/includes/footer.html' %}
+{% endblock %}

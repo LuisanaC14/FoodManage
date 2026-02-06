@@ -1,0 +1,76 @@
+<div class="row g-2 justify-content-center" id="product-grid" style="padding: 10px 5px;">
+    {% for producto in productos %}
+    <div class="col-6 col-md-4 col-xl-3 menu-item mb-2" 
+         data-category="{{ producto.categoria }}" 
+         data-price="{{ producto.precio }}">
+        
+        <div class="product-card h-100" style="display: flex; flex-direction: column; background: #111; border-radius: 12px; border: 1px solid #222; overflow: hidden;">
+            
+            <div class="product-img-wrapper">
+                {% if producto.imagen %}
+                    <img src="{{ producto.imagen.url }}" class="product-img" alt="{{ producto.nombre }}">
+                {% else %}
+                    <div class="no-photo">SIN FOTO</div>
+                {% endif %}
+            </div>
+
+            <div class="product-info">
+                <div class="text-section">
+                    <h5 class="product-title">{{ producto.nombre }}</h5>
+                    <p class="product-description">{{ producto.descripcion|default:"Sabor de Máncora." }}</p>
+                </div>
+                
+                <div class="product-footer">
+                    <div class="price-container">
+                        <span class="price-tag">${{ producto.precio }}</span>
+                    </div>
+
+                    <button class="btn-mancora-mobile" 
+                        onclick="agregarAlCarrito('{{ producto.id }}', '{{ producto.nombre }}', '{{ producto.precio }}')">
+                        <i class="fas fa-plus"></i> AGREGAR
+                    </button>
+                </div>
+            </div>
+        </div>
+    </div>
+    {% endfor %}
+</div>
+
+<style>
+    /* --- ESTILOS PARA COMPUTADORA (GRANDE) --- */
+    .product-img-wrapper {
+        width: 100%;
+        padding: 15px;
+        display: flex;
+        justify-content: center;
+        background: transparent;
+    }
+    .product-img {
+        width: 100%;
+        height: auto;
+        max-height: 220px; /* Tamaño grande para PC */
+        object-fit: contain;
+        filter: drop-shadow(0 10px 15px rgba(0,0,0,0.6));
+    }
+    .product-info { padding: 15px; flex-grow: 1; display: flex; flex-direction: column; justify-content: space-between; }
+    .product-title { color: #fff; font-weight: 800; text-transform: uppercase; font-size: 1.1rem; min-height: 40px; }
+    .product-description { color: #666; font-size: 0.85rem; margin-bottom: 10px; }
+    .price-tag { color: #ccff00; font-weight: 900; font-size: 1.3rem; }
+    .btn-mancora-mobile { 
+        background: #ccff00; color: #000; border: none; width: 100%; padding: 10px; 
+        font-size: 0.9rem; font-weight: 900; border-radius: 8px; text-transform: uppercase; 
+    }
+
+    /* --- ESTILOS EXCLUSIVOS PARA CELULAR (COMPACTO) --- */
+    @media (max-width: 767px) {
+        .product-img-wrapper { padding: 8px 8px 0 8px; }
+        .product-img { 
+            max-height: 110px !important; /* Aquí es donde achicamos solo para móvil */
+        }
+        .product-info { padding: 8px !important; }
+        .product-title { font-size: 0.75rem !important; min-height: 30px !important; }
+        .product-description { font-size: 0.6rem !important; -webkit-line-clamp: 1 !important; }
+        .price-tag { font-size: 1rem !important; }
+        .btn-mancora-mobile { font-size: 0.65rem !important; padding: 7px 2px !important; }
+    }
+</style>

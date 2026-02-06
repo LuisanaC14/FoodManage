@@ -1,0 +1,189 @@
+{% load static %}
+
+<style>
+    .footer-mancora {
+        background-color: #0f0f0f;
+        color: #fff;
+        padding: 50px 0 20px;
+        border-top: 3px solid #ccff00; /* Borde Neón Superior */
+        font-family: 'Segoe UI', sans-serif;
+        position: relative;
+        overflow: hidden;
+    }
+
+    .footer-container {
+        display: flex;
+        flex-wrap: wrap;
+        justify-content: space-between;
+        max-width: 1200px;
+        margin: 0 auto;
+        padding: 0 20px;
+        gap: 30px;
+    }
+
+    .footer-col {
+        flex: 1;
+        min-width: 250px; /* Para que se vea bien en celular */
+        margin-bottom: 20px;
+    }
+
+    /* Títulos */
+    .footer-col h3 {
+        color: #ccff00;
+        font-weight: 900;
+        text-transform: uppercase;
+        margin-bottom: 20px;
+        font-size: 1.2rem;
+        position: relative;
+        display: inline-block;
+    }
+    
+    /* Efecto subrayado neón */
+    .footer-col h3::after {
+        content: '';
+        position: absolute;
+        left: 0;
+        bottom: -5px;
+        width: 40px;
+        height: 2px;
+        background: #ccff00;
+        box-shadow: 0 0 10px #ccff00;
+    }
+
+    .footer-col p {
+        color: #aaa;
+        line-height: 1.6;
+        font-size: 0.9rem;
+    }
+
+    /* Enlaces rápidos */
+    .footer-links {
+        list-style: none;
+        padding: 0;
+    }
+    .footer-links li {
+        margin-bottom: 10px;
+    }
+    .footer-links a {
+        color: #fff;
+        text-decoration: none;
+        transition: 0.3s;
+        display: flex;
+        align-items: center;
+        gap: 8px;
+    }
+    .footer-links a:hover {
+        color: #ccff00;
+        transform: translateX(5px); /* Se mueve un poquito a la derecha */
+    }
+
+    /* REDES SOCIALES (Botones Circulares) */
+    .social-links {
+        display: flex;
+        gap: 15px;
+        margin-top: 15px;
+    }
+    .social-btn {
+        width: 45px;
+        height: 45px;
+        background: #1a1a1a;
+        border: 1px solid #333;
+        border-radius: 50%;
+        display: flex;
+        align-items: center;
+        justify-content: center;
+        color: #fff;
+        font-size: 1.2rem;
+        transition: all 0.3s ease;
+        text-decoration: none;
+    }
+
+    /* Colores específicos al pasar el mouse */
+    .social-btn.facebook:hover { background: #1877F2; border-color: #1877F2; box-shadow: 0 0 15px #1877F2; transform: scale(1.1); }
+    .social-btn.instagram:hover { background: #E1306C; border-color: #E1306C; box-shadow: 0 0 15px #E1306C; transform: scale(1.1); }
+    .social-btn.tiktok:hover { background: #00f2ea; border-color: #ff0050; box-shadow: -3px 0 10px #00f2ea, 3px 0 10px #ff0050; color: #000; transform: scale(1.1); }
+
+    /* Barra final de Copyright */
+    .footer-bottom {
+        text-align: center;
+        margin-top: 40px;
+        padding-top: 20px;
+        border-top: 1px solid #222;
+        color: #666;
+        font-size: 0.8rem;
+    }
+    .footer-bottom span { color: #ccff00; font-weight: bold; }
+
+    /* RESPONSIVE (Móviles) */
+    @media (max-width: 768px) {
+        .footer-container {
+            flex-direction: column;
+            text-align: center;
+        }
+        .footer-col h3::after {
+            left: 50%;
+            transform: translateX(-50%); /* Centrar la línea */
+        }
+        .footer-links a {
+            justify-content: center; /* Centrar enlaces */
+        }
+        .social-links {
+            justify-content: center; /* Centrar iconos */
+        }
+    }
+</style>
+
+<footer class="footer-mancora">
+    <div class="footer-container">
+        
+        <div class="footer-col">
+            <h3>MÁNCORA MARISQUERÍA</h3>
+            <p>
+                La verdadera sazón del mar en tu paladar. 
+                Ingredientes frescos y la mejor experiencia gastronómica de Lago Agrio.
+            </p>
+            <p style="margin-top: 15px;">
+                <i class="fas fa-map-marker-alt" style="color: #ccff00;"></i> Lago Agrio, Ecuador
+            </p>
+        </div>
+
+        <div class="footer-col">
+            <h3>NAVEGACIÓN</h3>
+            <ul class="footer-links">
+                <li><a href="/"><i class="fas fa-home"></i> Inicio</a></li>
+                <li><a href="#menu"><i class="fas fa-utensils"></i> Menú</a></li>
+                <li><a href="#reservas"><i class="fas fa-calendar-alt"></i> Reservar Mesa</a></li>
+                <li><a href="/carrito/"><i class="fas fa-shopping-cart"></i> Mi Pedido</a></li>
+            </ul>
+        </div>
+
+        <div class="footer-col">
+            <h3>SÍGUENOS</h3>
+            <p>Entérate de nuestras promociones y nuevos platos:</p>
+            
+            <div class="social-links">
+                <a href="https://www.facebook.com/profile.php?id=61555996801009&locale=es_ES" target="_blank" class="social-btn facebook" title="Facebook">
+                    <i class="fab fa-facebook-f"></i>
+                </a>
+
+                <a href="https://www.instagram.com/mancora_lagoagrio?utm_source=ig_web_button_share_sheet&igsh=ZDNlZDc0MzIxNw==" target="_blank" class="social-btn instagram" title="Instagram">
+                    <i class="fab fa-instagram"></i>
+                </a>
+
+                <a href="https://www.tiktok.com/@mancora_lago_agrio?is_from_webapp=1&sender_device=pc" target="_blank" class="social-btn tiktok" title="TikTok">
+                    <i class="fab fa-tiktok"></i>
+                </a>
+            </div>
+            
+            <br>
+            <a href="https://wa.me/593993103744" target="_blank" style="background: #25D366; color: #fff; padding: 10px 20px; border-radius: 30px; text-decoration: none; font-weight: bold; display: inline-block; box-shadow: 0 0 10px #25D366;">
+                <i class="fab fa-whatsapp"></i> Pedir por WhatsApp
+            </a>
+        </div>
+
+    </div>
+
+    <div class="footer-bottom">
+        &copy; {% now "Y" %} <span>MÁNCORA MARISQUERÍA</span>. Te Esperamos.
+    </div>
+</footer>

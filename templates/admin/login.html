@@ -1,0 +1,209 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Login - FoodManage</title>
+    
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <link rel="stylesheet" href="{% static 'vendor/fontawesome-free/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'vendor/adminlte/css/adminlte.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/login_custom.css' %}">
+
+    <style>
+        /* Diseño tipo "Píldora" para el mensaje de error */
+        .error-text {
+            color: #ffadad !important;       /* Rojo suave */
+            background: rgba(255, 0, 0, 0.2); /* Fondo rojizo transparente */
+            border: 1px solid rgba(255, 77, 77, 0.4);
+            font-size: 0.85rem !important;
+            font-weight: 600 !important;
+            margin-top: 8px !important;
+            padding: 5px 15px;
+            border-radius: 50px;            /* Bordes muy redondos */
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+            width: auto;
+        }
+
+        /* Borde rojo brillante para el input */
+        .input-error {
+            border: 1px solid #ff4d4d !important;
+            box-shadow: 0 0 10px rgba(255, 77, 77, 0.5) !important;
+        }
+
+        /* Animación de vibración */
+        @keyframes shake { 
+            0% { transform: translateX(0); } 
+            25% { transform: translateX(-5px); } 
+            75% { transform: translateX(5px); } 
+            100% { transform: translateX(0); } 
+        }
+        .shake { animation: shake 0.3s; }
+    </style>
+</head>
+
+<body class="hold-transition login-page" 
+      style="background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('{% static 'fondo_mancora.png' %}') no-repeat center center fixed; background-size: cover;">
+
+    <div class="login-box" style="width: 450px; margin: auto;">
+        
+        <div class="login-logo mb-4 text-center">
+            <img src="{% static 'logo_mancora.PNG' %}" 
+                 style="width: 100%; max-width: 400px; filter: drop-shadow(0 0 15px rgba(204,255,0,0.5));">
+        </div>
+
+        <div class="card" 
+             style="background: rgba(0, 0, 0, 0.4) !important; 
+                    backdrop-filter: blur(15px); 
+                    border: 2px solid #ccff00; 
+                    border-radius: 20px; 
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+            
+            <div class="card-body login-card-body" style="background: transparent !important; color: white;">
+                <p class="login-box-msg" style="font-size: 1.4rem; font-weight: bold; text-shadow: 2px 2px 4px #000;">
+                    Bienvenido al Sistema de Gestion FoodManage
+                </p>
+
+                <form action="{{ app_path }}" method="post" id="login-form" novalidate>
+                    {% csrf_token %}
+                    
+                    {% if form.non_field_errors %}
+                        <div class="mb-3 shake">
+                            <div class="error-text" style="width: 100%; justify-content: center; background: rgba(255, 0, 0, 0.25); border: 1px solid #ff4d4d; color: white !important;">
+                                <i class="fas fa-exclamation-triangle"></i> &nbsp;
+                                {% for error in form.non_field_errors %}
+                                    {{ error }}
+                                {% endfor %}
+                            </div>
+                        </div>
+                    {% endif %}
+
+                    <div class="mb-3">
+                        <div class="input-group">
+                            <input type="text" name="username" class="form-control" placeholder="Usuario" required
+                                   style="background: rgba(255,255,255,0.1) !important; border: 1px solid rgba(255,255,255,0.2); color: white !important;">
+                            <div class="input-group-append">
+                                <div class="input-group-text" style="background: rgba(255,255,255,0.1) !important; border: 1px solid rgba(255,255,255,0.2); color: white; border-left: none;">
+                                    <span class="fas fa-user"></span>
+                                </div>
+                            </div>
+                        </div>
+                        {% if form.username.errors %}
+                            <div class="error-text">
+                                <i class="fas fa-exclamation-circle"></i> {{ form.username.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3">
+                        <div class="input-group">
+                            <input type="password" name="password" class="form-control" placeholder="Contraseña" required
+                                   style="background: rgba(255,255,255,0.1) !important; border: 1px solid rgba(255,255,255,0.2); color: white !important;">
+                            <div class="input-group-append">
+                                <div class="input-group-text" id="toggle-password" style="background: rgba(255,255,255,0.1) !important; border: 1px solid rgba(255,255,255,0.2); color: white; border-left: none; cursor: pointer;">
+                                    <span class="fas fa-eye"></span>
+                                </div>
+                            </div>
+                        </div>
+                        {% if form.password.errors %}
+                            <div class="error-text">
+                                <i class="fas fa-exclamation-circle"></i> {{ form.password.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary btn-block" 
+                                    style="font-weight: bold; border-radius: 10px; height: 45px;">
+                                INGRESAR
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="mt-4 text-center" style="border-top: 1px solid rgba(255,255,255,0.2); padding-top: 20px;">
+                    <p class="mb-1">
+                        <a href="{% url 'password_reset' %}" style="color: #ccff00; font-weight: bold;">¿Olvidaste tu contraseña?</a>
+                    </p>
+                    <p class="mb-0">
+                        ¿No tienes cuenta? <a href="{% url 'register' %}" style="color: #ff0000; font-weight: bold; text-decoration: underline;">Regístrate aquí</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script src="{% static 'vendor/jquery/jquery.min.js' %}"></script>
+    <script src="{% static 'vendor/bootstrap/js/bootstrap.bundle.min.js' %}"></script>
+    <script src="{% static 'vendor/adminlte/js/adminlte.min.js' %}"></script>
+
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+            
+            // 1. FUNCIONALIDAD DEL OJO
+            const togglePassword = document.getElementById('toggle-password');
+            const passwordInput = document.querySelector('input[name="password"]');
+            
+            if (togglePassword && passwordInput) {
+                togglePassword.addEventListener('click', function() {
+                    const icon = this.querySelector('span');
+                    if (passwordInput.type === "password") {
+                        passwordInput.type = "text";
+                        icon.classList.replace('fa-eye', 'fa-eye-slash');
+                    } else {
+                        passwordInput.type = "password";
+                        icon.classList.replace('fa-eye-slash', 'fa-eye');
+                    }
+                });
+            }
+
+            // 2. VALIDACIÓN ROJA (Completa este campo)
+            const form = document.getElementById('login-form');
+            if (form) {
+                form.addEventListener('submit', function(e) {
+                    const inputs = form.querySelectorAll('input[required]');
+                    let hayErrores = false;
+
+                    inputs.forEach(input => {
+                        // Buscar el contenedor padre (.input-group)
+                        const inputGroup = input.closest('.input-group');
+                        const parentDiv = inputGroup.parentElement;
+
+                        // Limpiar errores previos
+                        const errorPrevio = parentDiv.querySelector('.error-text');
+                        if (errorPrevio) errorPrevio.remove();
+                        
+                        input.classList.remove('input-error');
+
+                        // Si está vacío
+                        if (input.value.trim() === "") {
+                            hayErrores = true;
+                            input.classList.add('input-error');
+                            input.classList.add('shake');
+                            setTimeout(() => input.classList.remove('shake'), 500);
+
+                            // Crear mensaje bonito
+                            const msg = document.createElement('div');
+                            msg.className = 'error-text';
+                            msg.innerHTML = '<i class="fas fa-exclamation-circle"></i> Este campo es obligatorio.';
+                            
+                            // Insertar debajo
+                            inputGroup.parentNode.insertBefore(msg, inputGroup.nextSibling);
+                        }
+                    });
+
+                    if (hayErrores) {
+                        e.preventDefault(); // Evita que se envíe si hay campos vacíos
+                    }
+                });
+            }
+        });
+    </script>
+</body>
+</html>

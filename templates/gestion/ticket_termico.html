@@ -1,0 +1,174 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Factura #{{ pedido.numero_diario }}</title>
+    <style>
+        /* CONFIGURACIÓN PAPEL TÉRMICO (80mm) */
+        @page {
+            margin: 0;
+            size: 80mm auto; /* Ancho fijo, largo infinito */
+        }
+        body {
+            font-family: 'Courier New', Courier, monospace; /* Fuente monoespaciada va mejor en térmicas */
+            margin: 0;
+            padding: 5px;
+            width: 72mm; /* Dejamos un pequeño margen de seguridad */
+            font-size: 11px;
+            color: #000;
+            background: #fff;
+            line-height: 1.2;
+        }
+
+        /* UTILIDADES */
+        .center { text-align: center; }
+        .left { text-align: left; }
+        .right { text-align: right; }
+        .bold { font-weight: bold; }
+        .uppercase { text-transform: uppercase; }
+
+        /* SEPARADORES */
+        .dashed-line {
+            border-top: 1px dashed #000;
+            margin: 5px 0;
+            width: 100%;
+            display: block;
+        }
+
+        /* LOGO */
+        .logo-termico {
+            width: 50%;
+            height: auto;
+            margin-bottom: 5px;
+            /* Filtro para que imprima bien en B/N */
+            filter: grayscale(100%) contrast(150%);
+        }
+
+        /* TABLA DE PRODUCTOS */
+        table { width: 100%; border-collapse: collapse; margin-top: 5px; }
+        th { text-align: left; border-bottom: 1px dashed #000; font-size: 10px; }
+        td { vertical-align: top; padding: 2px 0; }
+        
+        .col-cant { width: 10%; text-align: center; }
+        .col-desc { width: 60%; }
+        .col-total { width: 30%; text-align: right; }
+
+        /* TOTALES */
+        .totals-container {
+            margin-top: 5px;
+            text-align: right;
+        }
+        .total-row { display: flex; justify-content: space-between; }
+        
+        .gran-total {
+            font-size: 14px;
+            font-weight: bold;
+            border-top: 1px solid #000;
+            border-bottom: 1px solid #000;
+            padding: 5px 0;
+            margin-top: 5px;
+            text-align: center;
+        }
+    </style>
+</head>
+<body onload="window.print()">
+
+    <div class="center">
+        <img src="{% static 'logo_mancora.PNG' %}" class="logo-termico"><br>
+        <span class="bold" style="font-size: 12px;">MÁNCORA MARISQUERÍA</span><br>
+        RUC: 060XXXXXXX001<br>
+        Av. Principal y Calle 5<br>
+        Lago Agrio - Ecuador<br>
+        Tel: (09) 9123-4567<br>
+        Email: info@mancora.com
+    </div>
+
+    <div class="dashed-line"></div>
+
+    <div class="center">
+        <span class="bold" style="font-size: 12px;">FACTURA ELECTRÓNICA</span><br>
+        No. {{ pedido.numero_diario|stringformat:"05d" }}<br>
+        <span style="font-size: 9px;">Clave Acceso: 0402202601060...</span>
+    </div>
+
+    <div class="dashed-line"></div>
+
+    <div class="left">
+        <span class="bold">CLIENTE:</span> {{ pedido.cliente_nombre|upper }}<br>
+        <span class="bold">RUC/CI:</span> {{ pedido.cliente_cedula }}<br>
+        <span class="bold">FECHA:</span> {{ fecha|date:"d/m/Y H:i" }}<br>
+        
+        {% if pedido.cliente_direccion %}
+        <span class="bold">DIR:</span> {{ pedido.cliente_direccion }}<br>
+        {% endif %}
+        
+        {% if pedido.cliente_telefono %}
+        <span class="bold">TEL:</span> {{ pedido.cliente_telefono }}<br>
+        {% endif %}
+        
+        {% if pedido.cliente_email %}
+        <span class="bold">EMAIL:</span> {{ pedido.cliente_email }}<br>
+        {% endif %}
+    </div>
+
+    <div class="dashed-line"></div>
+
+    <table>
+        <thead>
+            <tr>
+                <th class="col-cant">C.</th>
+                <th class="col-desc">DESCRIPCIÓN</th>
+                <th class="col-total">TOTAL</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in pedido.detalles.all %}
+            <tr>
+                <td class="col-cant">{{ item.cantidad }}</td>
+                <td class="col-desc">
+                    {{ item.producto.nombre }}
+                    {% if item.nota %}
+                    <br><span style="font-size: 9px; font-style: italic;">({{ item.nota }})</span>
+                    {% endif %}
+                </td>
+                <td class="col-total">${{ item.subtotal|default:item.precio_unitario }}</td>
+            </tr>
+            {% endfor %}
+        </tbody>
+    </table>
+
+    <div class="dashed-line"></div>
+
+    <div class="totals-container">
+        <div class="total-row">
+            <span>SUBTOTAL 15%:</span>
+            <span>${{ subtotal }}</span>
+        </div>
+        <div class="total-row">
+            <span>SUBTOTAL 0%:</span>
+            <span>$0.00</span>
+        </div>
+        <div class="total-row">
+            <span>IVA 15%:</span>
+            <span>${{ iva }}</span>
+        </div>
+    </div>
+
+    <div class="gran-total">
+        TOTAL A PAGAR: ${{ pedido.total }}
+    </div>
+
+    <div class="center" style="margin-top: 10px; font-size: 10px;">
+        Forma de Pago: Efectivo / Transferencia<br>
+        Agente de Retención No. 12345<br>
+        <br>
+        <span class="bold">¡Gracias por su compra!</span><br>
+        Descargue su factura en:<br>
+        www.mancora.com
+    </div>
+
+    <br><br>
+
+</body>
+</html>

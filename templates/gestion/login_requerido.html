@@ -1,0 +1,68 @@
+{% extends 'gestion/index.html' %}
+{% load static %}
+
+{% block hero %}
+<div style="height: 100px; background: #000;"></div>
+{% endblock %}
+
+{% block content %}
+<div class="container d-flex align-items-center justify-content-center" style="min-height: 70vh;">
+    
+    <div class="text-center animate__animated animate__zoomIn">
+        
+        <div class="lock-icon mb-4">
+            <i class="fas fa-lock"></i>
+        </div>
+
+        <h2 class="text-white fw-bold text-uppercase mb-3">Acceso Restringido</h2>
+        
+        <p class="text-secondary fs-5 mb-5" style="max-width: 500px; margin: 0 auto;">
+            Para ver tu carrito, tus pedidos o gestionar tu cuenta, necesitas identificarte primero.
+        </p>
+
+        <div class="d-flex flex-column flex-md-row gap-3 justify-content-center">
+            <a href="{% url 'login' %}" class="btn btn-neon-fill btn-lg px-5">
+                <i class="fas fa-sign-in-alt me-2"></i> INICIAR SESIÓN
+            </a>
+            
+            <a href="{% url 'register' %}" class="btn btn-outline-light btn-lg px-5 rounded-pill">
+                CREAR CUENTA
+            </a>
+        </div>
+
+    </div>
+
+</div>
+
+<style>
+    .lock-icon {
+        width: 120px; height: 120px;
+        background: rgba(255, 255, 255, 0.05);
+        border: 3px solid #ccff00;
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        margin: 0 auto;
+        font-size: 3.5rem; color: #ccff00;
+        box-shadow: 0 0 30px rgba(204, 255, 0, 0.2);
+        animation: float 3s ease-in-out infinite;
+    }
+
+    .btn-neon-fill {
+        background: #ccff00; color: #000; border: 2px solid #ccff00;
+        border-radius: 50px; font-weight: 900;
+        box-shadow: 0 0 20px rgba(204, 255, 0, 0.4);
+        transition: 0.3s;
+    }
+    .btn-neon-fill:hover {
+        background: transparent; color: #ccff00;
+        transform: scale(1.05);
+        box-shadow: 0 0 40px rgba(204, 255, 0, 0.6);
+    }
+
+    @keyframes float {
+        0% { transform: translateY(0px); }
+        50% { transform: translateY(-10px); }
+        100% { transform: translateY(0px); }
+    }
+</style>
+{% endblock %}

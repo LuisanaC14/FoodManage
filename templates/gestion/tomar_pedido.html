@@ -1,0 +1,722 @@
+{% extends 'admin/base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* =========================================
+       1. ESTILOS GENERALES Y FONDO
+       ========================================= */
+    .content-wrapper { background: #0f0f0f !important; min-height: 100vh; }
+    
+    ::-webkit-scrollbar { width: 6px; height: 6px; }
+    ::-webkit-scrollbar-track { background: #1a1a1a; }
+    ::-webkit-scrollbar-thumb { background: #333; border-radius: 10px; }
+    ::-webkit-scrollbar-thumb:hover { background: #ccff00; }
+
+    /* =========================================
+       2. CATEGORÍAS (COMPACTAS Y SIN SCROLL)
+       ========================================= */
+    .cat-wrapper {
+        display: flex;
+        flex-wrap: wrap; /* CLAVE: Si no caben, bajan a la siguiente línea */
+        justify-content: flex-start; /* Alineados a la izquierda */
+        gap: 8px; /* Espacio reducido entre botones */
+        padding-bottom: 10px;
+    }
+
+    .btn-cat {
+        /* Tamaño flexible pero compacto */
+        background: #1a1a1a;
+        color: #aaa;
+        border: 1px solid #333;
+        
+        /* AJUSTE DE TAMAÑO PARA QUE QUEPAN MÁS */
+        padding: 9px 18px; /* Menos relleno que antes */
+        font-size: 1rem; /* Letra un poquito más pequeña */
+        
+        border-radius: 50px;
+        font-weight: 700;
+        text-transform: uppercase;
+        cursor: pointer;
+        transition: all 0.2s ease;
+        box-shadow: 0 2px 4px rgba(0,0,0,0.2);
+        
+        /* Asegura que no se rompa el texto */
+        white-space: nowrap;
+    }
+
+    .btn-cat:hover {
+        background: #252525;
+        color: #fff;
+        border-color: #555;
+        transform: translateY(-2px);
+    }
+
+    .btn-cat.active {
+        background: #ccff00;
+        color: #000;
+        border-color: #ccff00;
+        box-shadow: 0 0 10px rgba(204, 255, 0, 0.4);
+        transform: scale(1.02);
+        font-weight: 900;
+    }
+
+    /* =========================================
+       3. TARJETAS DE PRODUCTOS
+       ========================================= */
+    .card-producto {
+        background: #181818;
+        border: 1px solid rgba(255,255,255,0.05);
+        border-radius: 20px;
+        overflow: hidden;
+        position: relative;
+        cursor: pointer;
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        height: 100%;
+        display: flex;
+        flex-direction: column;
+    }
+
+    .card-producto:hover {
+        transform: translateY(-5px);
+        border-color: rgba(204, 255, 0, 0.5);
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    .card-producto:hover .img-bg { transform: scale(1.1); }
+    
+    .img-wrapper {
+        height: 150px;
+        overflow: hidden;
+        position: relative;
+        border-bottom: 1px solid #222;
+    }
+
+    .img-bg {
+        width: 100%; height: 100%;
+        object-fit: cover;
+        transition: transform 0.5s ease;
+    }
+
+    .precio-tag {
+        position: absolute; top: 10px; right: 10px;
+        background: rgba(0,0,0,0.9);
+        border: 1px solid #ccff00;
+        color: #ccff00;
+        padding: 4px 10px;
+        border-radius: 10px;
+        font-weight: 900;
+        font-size: 0.9rem;
+        box-shadow: 0 2px 10px rgba(0,0,0,0.5);
+    }
+
+    .card-body-custom {
+        padding: 15px;
+        text-align: left;
+        flex-grow: 1;
+        display: flex;
+        flex-direction: column;
+        justify-content: space-between;
+    }
+
+    .prod-title {
+        font-size: 1rem;
+        font-weight: 700;
+        color: #fff;
+        margin-bottom: 10px;
+        line-height: 1.2;
+        display: -webkit-box;
+        -webkit-line-clamp: 2;
+        -webkit-box-orient: vertical;
+        overflow: hidden;
+    }
+
+    /* BOTÓN AGREGAR VERDE NEÓN */
+    .btn-add-product {
+        background: #ccff00;
+        color: #000;
+        font-weight: 900;
+        font-size: 0.8rem;
+        text-transform: uppercase;
+        border: none;
+        border-radius: 8px;
+        padding: 8px 0;
+        width: 100%;
+        text-align: center;
+        transition: all 0.2s;
+        box-shadow: 0 2px 5px rgba(204, 255, 0, 0.2);
+    }
+    
+    .card-producto:hover .btn-add-product {
+        background: #eaff00;
+        box-shadow: 0 0 15px rgba(204, 255, 0, 0.5);
+    }
+
+    /* =========================================
+       4. TICKET FLOTANTE
+       ========================================= */
+    .ticket-container {
+        position: sticky;
+        top: 20px;
+        height: calc(615px - 40px);
+        background: #151515;
+        border: 1px solid #333;
+        border-radius: 15px;
+        display: flex;
+        flex-direction: column;
+        box-shadow: -10px 0 30px rgba(0,0,0,0.3);
+        overflow: hidden;
+    }
+
+    .ticket-header {
+        background: #1a1a1a;
+        padding: 15px;
+        border-bottom: 1px solid #333;
+        border-left: 4px solid #ccff00;
+    }
+
+    .ticket-body {
+        flex: 1;
+        overflow-y: auto;
+        padding: 0;
+        background: #121212;
+    }
+
+    .table-cart { width: 100%; border-collapse: collapse; }
+    .table-cart tr { border-bottom: 1px solid #222; }
+    .table-cart td { padding: 12px 10px; color: #ddd; vertical-align: middle; }
+    
+    /* Inputs */
+    .input-dark {
+        background: #0f0f0f;
+        border: 1px solid #333;
+        color: #fff !important; 
+        border-radius: 10px;
+        padding: 10px 15px;
+    }
+    .input-dark:focus {
+        background: #000;
+        border-color: #ccff00;
+        outline: none;
+    }
+
+    .btn-delete {
+        width: 28px; height: 28px;
+        border-radius: 50%;
+        background: rgba(255, 77, 77, 0.1);
+        color: #ff4d4d;
+        display: flex; align-items: center; justify-content: center;
+        cursor: pointer; transition: 0.2s;
+    }
+    .btn-delete:hover { background: #ff4d4d; color: white; }
+
+    .ticket-footer {
+        background: #1a1a1a;
+        padding: 20px;
+        border-top: 1px dashed #444;
+    }
+
+    .btn-cyber {
+        background: #ccff00;
+        color: #000;
+        font-weight: 900;
+        text-transform: uppercase;
+        width: 100%;
+        padding: 15px;
+        border-radius: 12px;
+        border: none;
+        box-shadow: 0 0 15px rgba(204, 255, 0, 0.2);
+        transition: all 0.3s ease;
+    }
+    .btn-cyber:hover {
+        background: #eaff00;
+        box-shadow: 0 0 25px rgba(204, 255, 0, 0.6);
+        transform: scale(1.02);
+    }
+
+    .click-effect { animation: pop 0.3s ease; }
+    @keyframes pop { 50% { transform: scale(0.95); } }
+
+/* =========================================
+       SELECTOR DE MESA "PREMIUM GRAY"
+       ========================================= */
+    .position-relative {
+        position: relative; /* Necesario para que los iconos floten */
+    }
+
+    .custom-select-box {
+        /* ESTILO VISUAL: GRIS ELEGANTE */
+        background-color: #1b1b1b !important; /* Gris un poco más claro que el fondo negro */
+        color: #fff !important;
+        border: 1px solid #1e1e1e !important;
+        border-radius: 8px !important;
+        height: 50px !important;
+        
+        /* ESPACIO PARA LOS ICONOS */
+        padding-left: 45px !important; /* Espacio para la silla */
+        padding-right: 40px !important; /* Espacio para la flecha */
+        
+        /* TIPOGRAFÍA */
+        font-weight: 600;
+        font-size: 1rem;
+        
+        /* QUITAMOS EL ESTILO NATIVO FEO */
+        appearance: none;
+        -webkit-appearance: none;
+        -moz-appearance: none;
+        cursor: pointer;
+        transition: all 0.3s ease;
+    }
+
+    /* EFECTO AL PASAR EL MOUSE O DAR CLICK */
+    .custom-select-box:hover, 
+    .custom-select-box:focus {
+        background-color: #2a2a2a !important;
+        border-color: #ccff00 !important; /* Borde verde neón */
+        box-shadow: 0 0 10px rgba(204, 255, 0, 0.1);
+        outline: none;
+    }
+
+    /* POSICIONAMIENTO DE LOS ICONOS */
+    .icon-left {
+        position: absolute;
+        left: 15px;
+        top: 44px; /* Ajusta según la altura del label */
+        color: #ccff00; /* Silla Verde Neón */
+        font-size: 1.1rem;
+        pointer-events: none; /* Click atraviesa el icono */
+        z-index: 5;
+    }
+
+    .icon-right {
+        position: absolute;
+        right: 15px;
+        top: 40px; /* Ajusta según la altura del label */
+        color: #888; /* Flecha gris discreta */
+        font-size: 0.9rem;
+        pointer-events: none;
+        z-index: 5;
+        transition: color 0.3s;
+    }
+
+    /* Cuando el usuario interactúa, la flecha se ilumina */
+    .custom-select-box:hover + .icon-right,
+    .custom-select-box:focus + .icon-right {
+        color: #fff;
+    }
+
+    /* OPCIONES DEL SELECTOR */
+    .custom-select-box option {
+        background-color: #252525;
+        color: white;
+        padding: 10px;
+    }
+    
+/* =========================================
+       NUEVO BOTÓN "MIS PEDIDOS" (CYBER BLUE)
+       ========================================= */
+    .btn-history-cyber {
+        background: rgba(0, 191, 255, 0.05); /* Fondo azul muy sutil */
+        border: 2px solid #00bfff;           /* Borde azul neón grueso */
+        color: #00bfff;
+        font-weight: 900;
+        text-transform: uppercase;
+        padding: 10px 25px;                  /* Más grande y cómodo */
+        border-radius: 12px;                 /* Bordes modernos */
+        font-size: 0.9rem;
+        letter-spacing: 1px;
+        text-decoration: none;
+        display: flex; align-items: center; gap: 12px; /* Icono y texto separados */
+        transition: all 0.3s cubic-bezier(0.25, 0.8, 0.25, 1);
+        box-shadow: inset 0 0 10px rgba(0, 191, 255, 0.1); /* Brillo interno sutil */
+    }
+
+    .btn-history-cyber:hover {
+        background: #00bfff;    /* Se rellena de azul */
+        color: #000 !important; /* Texto negro */
+        box-shadow: 0 0 30px rgba(0, 191, 255, 0.6); /* EXPLOSIÓN DE LUZ AZUL */
+        transform: translateY(-3px) scale(1.02); /* Se eleva y crece un poco */
+        text-decoration: none;
+        border-color: transparent;
+    }
+
+    .btn-history-cyber i { font-size: 1.2rem; } /* Icono más grande */
+
+    /* =========================================
+       5. RESPONSIVIDAD MÓVIL (SOLO SE ACTIVA EN CELULARES/TABLETS)
+       ========================================= */
+    @media (max-width: 991px) {
+        
+        /* 1. DESBLOQUEAR EL SCROLL (Vital para móvil) */
+        /* En PC el scroll está dentro del grid. En móvil, dejamos que scrollee toda la página */
+        .content-wrapper, .row.h-100, .col-lg-8 {
+            height: auto !important;
+            min-height: auto !important;
+            display: block !important; /* Quita el flex que fuerza la altura */
+        }
+
+        /* 2. ARREGLAR EL ENCABEZADO (Stack Vertical) */
+        /* Ponemos el título, el buscador y el botón uno debajo del otro */
+        .d-flex.justify-content-between.align-items-center.mb-4 {
+            flex-direction: column !important;
+            align-items: flex-start !important;
+            gap: 15px;
+        }
+        
+        /* Buscador ancho completo */
+        .mx-5.flex-grow-1 {
+            margin-left: 0 !important;
+            margin-right: 0 !important;
+            width: 100% !important;
+            max-width: 100% !important;
+        }
+
+        /* Botón "Mis Pedidos" ancho completo */
+        .btn-history-cyber {
+            width: 100%;
+            justify-content: center;
+        }
+
+        /* 3. CATEGORÍAS DESLIZABLES (Estilo App) */
+        /* En vez de ocupar muchas líneas, hacemos que se deslicen horizontalmente */
+        .cat-wrapper {
+            flex-wrap: nowrap !important;
+            overflow-x: auto !important;
+            padding-bottom: 15px;
+            -webkit-overflow-scrolling: touch; /* Suavidad en iPhone */
+            margin-bottom: 20px;
+        }
+        .btn-cat {
+            flex: 0 0 auto; /* No encoger botones */
+        }
+
+        /* 4. GRID DE PRODUCTOS */
+        /* Quitamos el scroll interno y dejamos que fluya */
+        #grid-productos {
+            overflow-y: visible !important;
+            height: auto !important;
+            padding-bottom: 0 !important;
+        }
+        
+        /* Ajuste de tarjetas para dedos */
+        .card-producto {
+            min-height: 260px; /* Altura mínima para que no se aplasten */
+        }
+
+        /* 5. TICKET (CARRITO) AL FINAL */
+        .ticket-container {
+            position: static !important; /* Ya no flota, cae al final */
+            height: auto !important; /* Altura automática según contenido */
+            max-height: none !important;
+            margin-top: 30px;
+            margin-bottom: 80px; /* Espacio extra abajo */
+            box-shadow: 0 -5px 20px rgba(0,0,0,0.5); /* Sombra hacia arriba */
+        }
+        
+        .ticket-body {
+            max-height: 400px; /* Límite para que no sea eterno */
+            overflow-y: auto;
+        }
+
+        /* Botón de confirmar gigante al final */
+        .ticket-footer {
+            padding-bottom: 30px;
+        }
+    }
+
+    /* AJUSTES EXTRA PARA PANTALLAS MUY PEQUEÑAS (iPhone SE, etc) */
+    @media (max-width: 576px) {
+        .col-6 {
+            padding-left: 5px !important;
+            padding-right: 5px !important;
+        }
+        .card-body-custom {
+            padding: 10px;
+        }
+        .prod-title {
+            font-size: 0.9rem;
+        }
+        .btn-add-product {
+            padding: 5px 0;
+            font-size: 0.7rem;
+        }
+    }
+</style>
+
+<div class="container-fluid pt-3 pb-3">
+    <div class="row h-100">
+        
+        <div class="col-lg-8 col-md-7 col-12 d-flex flex-column h-100">
+            
+            <div class="d-flex justify-content-between align-items-center mb-4 p-3 rounded" style="background: #151515; border-bottom: 2px solid #333; box-shadow: 0 10px 20px rgba(0,0,0,0.2);">
+                
+                <h2 class="text-white font-weight-black m-0 d-flex align-items-center" style="letter-spacing: 1px; font-size: 1.5rem;">
+                    <i class="fas fa-utensils mr-3" style="color: #666;"></i> MENÚ DISPONIBLE
+                </h2>
+                
+                <div class="mx-5 flex-grow-1" style="max-width: 500px;">
+                     <div class="input-group">
+                        <div class="input-group-prepend">
+                            <span class="input-group-text bg-dark border-secondary text-secondary" style="border-radius: 10px 0 0 10px;"><i class="fas fa-search"></i></span>
+                        </div>
+                        <input type="text" id="buscador" class="form-control bg-dark text-white border-secondary font-weight-bold" placeholder="Buscar platillo..." onkeyup="filtrarProductos()" style="height: 45px; border-radius: 0 10px 10px 0;">
+                    </div>
+                </div>
+
+                <a href="/admin/gestion/pedido/?mesero__id__exact={{ user.id }}" class="btn-history-cyber">
+                    <i class="fas fa-history"></i> MIS PEDIDOS / EDITAR
+                </a>
+            </div>
+
+            <div class="cat-wrapper mb-4">
+                <div class="btn-cat active" onclick="filtrarCategoria('todos', this)">
+                    <i class="fas fa-th-large mr-1"></i>Todos
+                </div>
+                <div class="btn-cat" onclick="filtrarCategoria('bebida', this)">
+                    <i class="fas fa-glass-martini-alt mr-1"></i>Bebidas
+                </div>
+                <div class="btn-cat" onclick="filtrarCategoria('arroz', this)">
+                    <i class="fas fa-utensils mr-1"></i>Arroces
+                </div>
+                <div class="btn-cat" onclick="filtrarCategoria('sopa', this)">
+                    <i class="fas fa-mug-hot mr-1"></i>Sopas
+                </div>
+                <div class="btn-cat" onclick="filtrarCategoria('porciones', this)">
+                    <i class="fas fa-drumstick-bite mr-1"></i>Porciones
+                </div>
+                <div class="btn-cat" onclick="filtrarCategoria('extra', this)">
+                    <i class="fas fa-plus mr-1"></i>Extras
+                </div>
+            </div>
+
+            <div class="row" id="grid-productos" style="overflow-y: auto; padding-bottom: 50px;">
+                {% for producto in productos %}
+                <div class="col-xl-3 col-lg-4 col-md-6 col-6 mb-4 item-producto animate__animated animate__fadeIn" 
+                     data-nombre="{{ producto.nombre|lower }}"
+                     data-categoria="{{ producto.categoria }}">
+                    
+                    <div class="card-producto" 
+                         onclick="agregarAlCarrito('{{ producto.id }}', '{{ producto.nombre|escapejs }}', '{{ producto.precio }}', this)">
+                        
+                        <div class="img-wrapper">
+                            {% if producto.imagen %}
+                                <img src="{{ producto.imagen.url }}" alt="{{ producto.nombre }}" class="img-bg">
+                            {% else %}
+                                <div class="w-100 h-100 d-flex align-items-center justify-content-center bg-dark">
+                                    <i class="fas fa-camera fa-2x text-secondary"></i>
+                                </div>
+                            {% endif %}
+                            <div class="precio-tag">${{ producto.precio }}</div>
+                        </div>
+
+                        <div class="card-body-custom">
+                            <div class="prod-title">{{ producto.nombre }}</div>
+                            <button class="btn-add-product">
+                                <i class="fas fa-plus-circle mr-1"></i> AGREGAR
+                            </button>
+                        </div>
+                    </div>
+
+                </div>
+                {% endfor %}
+            </div>
+        </div>
+
+        <div class="col-lg-4 col-md-5 col-12">
+            <div class="ticket-container">
+                
+                <div class="ticket-header d-flex justify-content-between align-items-center">
+                    <span class="text-white font-weight-bold h5 m-0">ORDEN ACTUAL</span>
+                    <span class="badge badge-warning text-dark" id="items-count">0 items</span>
+                </div>
+
+                <div class="p-3 bg-dark border-bottom border-secondary">
+                    <div class="form-group mb-0 position-relative">
+                        <label class="text-white small font-weight-bold text-uppercase mb-2" style="letter-spacing: 1px;">
+                            ASIGNAR MESA:
+                        </label>
+                        
+                        <i class="fas fa-chair icon-left"></i>
+                        
+                        <select id="mesa-select" class="form-control custom-select-box">
+                            <option value="" selected>-- SELECCIONAR MESA --</option>
+                            {% for mesa in mesas %}
+                                <option value="{{ mesa.id }}">MESA {{ mesa.numero }}</option>
+                            {% endfor %}
+                        </select>
+                        
+                        <i class="fas fa-chevron-down icon-right"></i>
+                    </div>
+                </div>
+
+                <div class="ticket-body">
+                    <table class="table-cart">
+                        <tbody id="tabla-carrito"></tbody>
+                    </table>
+
+                    <div id="mensaje-vacio" class="d-flex flex-column align-items-center justify-content-center h-100 text-muted" style="min-height: 200px;">
+                        <i class="fas fa-receipt fa-4x mb-3" style="opacity: 0.1;"></i>
+                        <p class="small font-weight-bold" style="opacity: 0.4;">AGREGA PRODUCTOS</p>
+                    </div>
+                </div>
+
+                <div class="ticket-footer">
+                    <div class="form-group mb-3">
+                        <label class="text-white small font-weight-bold text-uppercase" style="letter-spacing: 1px;">
+                            <i class="fas fa-pen mr-1"></i> Notas de Cocina:
+                        </label>
+                        <textarea id="nota-pedido" class="form-control input-dark" rows="2" placeholder="Ej: Sin cebolla..."></textarea>
+                    </div>
+
+                    <div class="d-flex justify-content-between align-items-end mb-3">
+                        <span class="text-white font-weight-bold" style="font-size: 1.1rem;">TOTAL A PAGAR</span>
+                        <span id="total-general" class="h1 font-weight-bold text-white m-0" style="text-shadow: 0 0 10px rgba(255,255,255,0.3);">$0.00</span>
+                    </div>
+
+                    <button id="btn-confirmar" onclick="enviarPedido()" class="btn-cyber">
+                        CONFIRMAR PEDIDO <i class="fas fa-arrow-right ml-2"></i>
+                    </button>
+                </div>
+
+            </div>
+        </div>
+
+    </div>
+</div>
+
+<script>
+    let carrito = [];
+
+    function filtrarCategoria(categoria, btn) {
+        document.querySelectorAll('.btn-cat').forEach(b => b.classList.remove('active'));
+        btn.classList.add('active');
+
+        const items = document.querySelectorAll('.item-producto');
+        items.forEach(item => {
+            const itemCat = item.getAttribute('data-categoria');
+            item.style.display = (categoria === 'todos' || itemCat === categoria) ? 'block' : 'none';
+        });
+    }
+
+    function filtrarProductos() {
+        const busqueda = document.getElementById('buscador').value.toLowerCase();
+        document.querySelectorAll('.item-producto').forEach(item => {
+            const nombre = item.getAttribute('data-nombre');
+            item.style.display = nombre.includes(busqueda) ? 'block' : 'none';
+        });
+    }
+
+    function agregarAlCarrito(id, nombre, precioRaw, elemento) {
+        elemento.classList.add('click-effect');
+        setTimeout(() => elemento.classList.remove('click-effect'), 300);
+
+        let precio = parseFloat(String(precioRaw).replace(',', '.').replace('$', ''));
+        if (isNaN(precio)) return;
+
+        let item = carrito.find(i => i.id === id);
+        if (item) {
+            item.cantidad++;
+            item.subtotal = item.cantidad * item.precio;
+        } else {
+            carrito.push({ id: id, nombre: nombre, precio: precio, cantidad: 1, subtotal: precio });
+        }
+        actualizarVista();
+    }
+
+    function eliminarItem(id) {
+        carrito = carrito.filter(i => i.id !== id);
+        actualizarVista();
+    }
+
+    function actualizarVista() {
+        const tbody = document.getElementById('tabla-carrito');
+        const emptyMsg = document.getElementById('mensaje-vacio');
+        const totalDisplay = document.getElementById('total-general');
+        const countDisplay = document.getElementById('items-count');
+        
+        tbody.innerHTML = '';
+        let total = 0;
+        let itemsCount = 0;
+
+        if (carrito.length === 0) {
+            emptyMsg.style.display = 'flex';
+        } else {
+            emptyMsg.style.display = 'none';
+            carrito.forEach(item => {
+                total += item.subtotal;
+                itemsCount += item.cantidad;
+                tbody.innerHTML += `
+                    <tr>
+                        <td width="55%">
+                            <div class="font-weight-bold text-white" style="line-height:1.2; font-size: 0.9rem;">${item.nombre}</div>
+                            <small class="text-muted">$${item.precio.toFixed(2)}</small>
+                        </td>
+                        <td class="text-center">
+                            <span class="badge badge-dark border border-secondary text-white p-2">${item.cantidad}</span>
+                        </td>
+                        <td class="text-right font-weight-bold text-white">$${item.subtotal.toFixed(2)}</td>
+                        <td class="text-right pl-2">
+                            <div class="btn-delete" onclick="eliminarItem('${item.id}')"><i class="fas fa-times"></i></div>
+                        </td>
+                    </tr>`;
+            });
+        }
+        
+        totalDisplay.innerText = '$' + total.toFixed(2);
+        totalDisplay.dataset.valor = total;
+        countDisplay.innerText = itemsCount + ' items';
+    }
+
+    function enviarPedido() {
+        const mesaId = document.getElementById('mesa-select').value;
+        const totalCalculado = parseFloat(document.getElementById('total-general').dataset.valor || 0);
+        const nota = document.getElementById('nota-pedido').value;
+
+        if (!mesaId) { alert('⚠️ SELECCIONA UNA MESA PRIMERO'); return; }
+        if (carrito.length === 0) { alert('⚠️ AGREGAR PRODUCTOS AL CARRITO'); return; }
+
+        const btn = document.getElementById('btn-confirmar');
+        const textoOriginal = btn.innerHTML;
+        btn.innerHTML = '<i class="fas fa-spinner fa-spin"></i> ENVIANDO...';
+        btn.style.opacity = "0.7";
+        btn.disabled = true;
+
+        const data = {
+            mesa_id: mesaId,
+            total: totalCalculado,
+            productos: carrito,
+            observaciones: nota 
+        };
+
+        fetch('/guardar_pedido/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify(data)
+        })
+        .then(res => res.json())
+        .then(data => {
+            if(data.status === 'success') {
+                alert('✅ PEDIDO ENVIADO');
+                window.location.reload(); 
+            } else {
+                alert('❌ Error: ' + data.message);
+                restaurarBoton(btn, textoOriginal);
+            }
+        })
+        .catch(err => {
+            alert('❌ Error de conexión.');
+            console.error(err);
+            restaurarBoton(btn, textoOriginal);
+        });
+    }
+
+    function restaurarBoton(btn, texto){
+        btn.innerHTML = texto;
+        btn.style.opacity = "1";
+        btn.disabled = false;
+    }
+</script>
+{% endblock %}

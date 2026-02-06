@@ -1,0 +1,282 @@
+{% extends "gestion/index.html" %} 
+{% load static %}
+
+{% block hero %}{% endblock %} 
+
+{% block content %}
+<div class="reserva-page-wrapper" style="margin-top: 0; background: #000; color: #fff; min-height: 100vh;"> 
+    
+    <div class="reserva-hero" style="background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.8)), url('{% static 'fondo_mancora.png' %}'); background-size: cover; background-position: center; padding: 100px 0 60px 0; text-align: center; border-bottom: 2px solid #ccff00;">
+        <div class="container">
+            <h1 class="fw-bold" style="color: #ccff00; font-size: clamp(2rem, 5vw, 3.5rem); text-shadow: 0 0 15px rgba(0,0,0,0.8);">Reserva tu Experiencia</h1>
+            <p class="text-white letter-spacing-4" style="font-weight: 300;">MÁNCORA MARISQUERÍA - LAGO AGRIO</p>
+        </div>
+    </div>
+
+    <div class="container py-5">
+        <div class="row g-4">
+            <div class="col-lg-5 order-2 order-lg-1">
+                <div class="info-card p-4" style="background: #111; border: 1px solid #333; border-radius: 20px;">
+                    <h2 class="text-warning mb-4" style="font-weight: 800;"><i class="fas fa-utensils me-2"></i>Nuestros Ambientes</h2>
+                    <p class="text-light opacity-75">Disfruta de la mejor gastronomía marina. Contamos con áreas al aire libre y una espectacular terraza.</p>
+                    <div class="row g-2 mt-4">
+                        <div class="col-6">
+                            <img src="{% static 'fondo_mancora.png' %}" class="img-fluid rounded border border-secondary" alt="Local">
+                        </div>
+                        <div class="col-6">
+                            <div class="p-3 bg-dark rounded border border-secondary h-100 d-flex flex-column justify-content-center">
+                                <span class="text-warning fw-bold">Horarios</span>
+                                <small class="text-white">Lun - Dom: 08:00 - 17:00</small>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="galeria-zonas-inferior mt-4">
+                    <h5 class="text-warning mb-3 small fw-bold text-uppercase">
+                        <i class="fas fa-images me-2"></i> Galería de Referencia
+                    </h5>
+                    <div class="row g-2">
+                        <div class="col-6">
+                            <div class="foto-zona-wrapper" onclick="ampliarImagen(this)" style="cursor: zoom-in;">
+                                <img src="{% static 'img/zonas/libre.JPG' %}" class="img-fluid rounded border border-secondary" alt="Zona Libre">
+                                <span class="badge-foto">Zona Libre</span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="foto-zona-wrapper" onclick="ampliarImagen(this)" style="cursor: zoom-in;">
+                                <img src="{% static 'img/zonas/cubierta.JPG' %}" class="img-fluid rounded border border-secondary" alt="Zona Cubierta">
+                                <span class="badge-foto">Cubierta</span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="foto-zona-wrapper" onclick="ampliarImagen(this)" style="cursor: zoom-in;">
+                                <img src="{% static 'img/zonas/calle.JPG' %}" class="img-fluid rounded border border-secondary" alt="Vista Calle">
+                                <span class="badge-foto">Vista Calle</span>
+                            </div>
+                        </div>
+                        <div class="col-6">
+                            <div class="foto-zona-wrapper" onclick="ampliarImagen(this)" style="cursor: zoom-in;">
+                                <img src="{% static 'img/zonas/piso2.JPG' %}" class="img-fluid rounded border border-secondary" alt="Terraza">
+                                <span class="badge-foto" style="color: #00eaff;">Terraza</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <style>
+                    .foto-zona-wrapper { position: relative; overflow: hidden; border-radius: 8px; }
+                    .foto-zona-wrapper img { transition: 0.3s; width: 100%; height: 100px; object-fit: cover; }
+                    .foto-zona-wrapper:hover img { transform: scale(1.1); filter: brightness(1.2); }
+                    .badge-foto { 
+                        position: absolute; bottom: 5px; left: 5px; 
+                        background: rgba(0,0,0,0.7); color: #ccff00; 
+                        font-size: 0.6rem; font-weight: bold; 
+                        padding: 2px 6px; border-radius: 4px;
+                        text-transform: uppercase;
+                    }
+                </style>
+            </div>
+
+            <div class="col-lg-7 order-1 order-lg-2">
+                <div class="card bg-dark border-0 shadow-lg" style="border-radius: 20px;">
+                    <div class="card-body p-4">
+                        <form id="form-reserva-web">
+                            <div class="row g-3">
+                                <div class="col-md-6">
+                                    <label class="form-label text-warning small fw-bold">NOMBRE COMPLETO</label>
+                                    <input type="text" id="nombre_cli" class="form-control bg-black text-white border-secondary">
+                                </div>
+                                <div class="col-md-6">
+                                    <label class="form-label text-warning small fw-bold">TELÉFONO</label>
+                                    <input type="tel" id="telefono_cli" class="form-control bg-black text-white border-secondary">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label text-warning small fw-bold">PERSONAS</label>
+                                    <input type="number" id="personas_cli" class="form-control bg-black text-white border-secondary" value="---">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label text-warning small fw-bold">FECHA</label>
+                                    <input type="date" id="fecha_cli" class="form-control bg-black text-white border-secondary">
+                                </div>
+                                <div class="col-md-4">
+                                    <label class="form-label text-warning small fw-bold">HORA</label>
+                                    <input type="time" id="hora_cli" class="form-control bg-black text-white border-secondary">
+                                </div>
+                            </div>
+
+                            <hr class="my-4 border-secondary">
+                            
+                            <div class="d-flex justify-content-between align-items-center mb-3">
+                                <h5 class="text-white m-0"><i class="fas fa-chair text-warning me-2"></i>SELECCIONA TU MESA</h5>
+                                <div class="btn-group btn-group-sm">
+                                    <button type="button" class="btn btn-outline-warning floor-btn active" data-target="map-piso1">PLANTA BAJA</button>
+                                    <button type="button" class="btn btn-outline-warning floor-btn" data-target="map-piso2">TERRAZA</button>
+                                </div>
+                            </div>
+                            
+                            <div class="map-viewport" style="width: 100%; overflow-x: auto; background: #080808; padding: 20px; border-radius: 15px; border: 1px solid #222;">
+                                <div style="min-width: 600px; position: relative; height: 450px;">
+                                    {% include "admin/gestion/reserva/includes/mapa_visual.html" %}
+                                </div>
+                            </div>
+
+                            <div id="mesa-selected-badge" class="alert mt-3 text-center d-none" style="background: #ccff00; color: #000; font-weight: 900;">
+                                <i class="fas fa-check-circle me-2"></i> MESA #<span id="num-mesa-txt">0</span> SELECCIONADA
+                            </div>
+                            
+                            <input type="hidden" id="res-mesa-num" value="">
+
+                            <button type="button" onclick="enviarReservaWhatsApp()" class="btn btn-warning w-100 py-3 mt-4 fw-bold shadow-neon" style="border-radius: 50px;">
+                                <i class="fab fa-whatsapp me-2"></i>SOLICITAR RESERVA POR WHATSAPP
+                            </button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="lightboxModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered modal-xl">
+        <div class="modal-content bg-transparent border-0">
+            <div class="modal-body p-0 text-center position-relative">
+                <button type="button" class="btn-close-custom" data-bs-dismiss="modal" aria-label="Close">
+                    <i class="fas fa-times"></i>
+                </button>
+                
+                <img src="" id="lightboxImg" class="img-fluid rounded shadow-lg" style="max-height: 85vh; border: 2px solid #ccff00;">
+                <h3 id="lightboxTitle" class="mt-3" style="color: #ccff00; font-weight: 900; text-transform: uppercase; text-shadow: 2px 2px 10px #000;"></h3>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.getElementById('fecha_cli').min = new Date().toISOString().split("T")[0];
+
+    // Lógica de cambio de pisos
+    const floorBtns = document.querySelectorAll('.floor-btn');
+    floorBtns.forEach(btn => {
+        btn.addEventListener('click', function() {
+            floorBtns.forEach(b => b.classList.remove('active', 'btn-warning'));
+            floorBtns.forEach(b => b.classList.add('btn-outline-warning'));
+            this.classList.add('active', 'btn-warning');
+            this.classList.remove('btn-outline-warning');
+
+            const target = this.getAttribute('data-target');
+            document.querySelectorAll('.floor-map').forEach(m => m.classList.remove('active'));
+            document.getElementById(target).classList.add('active');
+        });
+    });
+
+    // Lógica de selección de mesa
+    document.addEventListener('click', function(e) {
+        const spot = e.target.closest('.mesa-spot');
+        if (spot) {
+            document.querySelectorAll('.mesa-spot').forEach(m => m.classList.remove('selected-cliente'));
+            spot.classList.add('selected-cliente');
+            const mesaNum = spot.querySelector('.mesa-shape').innerText.trim();
+            document.getElementById('res-mesa-num').value = mesaNum;
+            document.getElementById('mesa-selected-badge').classList.remove('d-none');
+            document.getElementById('num-mesa-txt').innerText = mesaNum;
+        }
+    });
+
+    function enviarReservaWhatsApp() {
+        const nombre = document.getElementById('nombre_cli').value;
+        const telefono = document.getElementById('telefono_cli').value;
+        const personas = document.getElementById('personas_cli').value;
+        const fecha = document.getElementById('fecha_cli').value;
+        const hora = document.getElementById('hora_cli').value;
+        const mesaId = document.getElementById('res-mesa-num').value;
+
+        if (!nombre || !telefono || !fecha || !hora || !mesaId) {
+            alert("⚠️ Por favor completa todos los campos y selecciona una mesa.");
+            return;
+        }
+
+        let texto = `*=== SOLICITUD DE RESERVA ===*\n*Máncora Marisquería*\n\n*CLIENTE:* ${nombre.toUpperCase()}\n*TELÉFONO:* ${telefono}\n----------------------------------\n*MESA:* #${mesaId}\n*PERSONAS:* ${personas}\n*FECHA:* ${fecha}\n*HORA:* ${hora}\n----------------------------------\n\n_Enviado desde la Web Máncora._`;
+        
+        // Abrir WhatsApp
+        window.open(`https://wa.me/593991414440?text=${encodeURIComponent(texto)}`, '_blank');
+
+        setTimeout(() => {
+            // Limpia los campos de texto
+            document.getElementById('form-reserva-web').reset();
+            
+            // Limpia la selección visual de la mesa
+            document.querySelectorAll('.mesa-spot').forEach(m => m.classList.remove('selected-cliente'));
+            document.getElementById('res-mesa-num').value = "";
+
+            document.getElementById('mesa-selected-badge').classList.add('d-none');
+
+            alert("¡Solicitud generada! Te esperamos en WhatsApp.");
+        }, 1000);
+    }
+
+    function ampliarImagen(elemento) {
+        const src = elemento.querySelector('img').src;
+        const titulo = elemento.querySelector('.badge-foto').innerText;
+        
+        document.getElementById('lightboxImg').src = src;
+        document.getElementById('lightboxTitle').innerText = titulo;
+        
+        var myModal = new bootstrap.Modal(document.getElementById('lightboxModal'));
+        myModal.show();
+    }
+</script>
+
+<style>
+    .floor-map { display: none; }
+    .floor-map.active { display: block !important; }
+    .mesa-spot { position: absolute !important; cursor: pointer !important; transition: 0.2s; }
+    .mesa-shape { border: 2px solid #555; background: #222; color: #fff; display: flex; align-items: center; justify-content: center; font-weight: bold; }
+    .selected-cliente .mesa-shape { background: #ccff00 !important; color: #000 !important; box-shadow: 0 0 15px #ccff00; border-color: #fff !important; }
+    .floor-tabs, .stage-title, .zona-grava, .zona-deck, .mesa-capacidad { display: none !important; }
+    .mesa-redonda .mesa-shape { border-radius: 50% !important; width: 45px; height: 45px; }
+    .mesa-cuadrada .mesa-shape { border-radius: 6px !important; width: 45px; height: 45px; }
+    .mesa-larga .mesa-shape { border-radius: 8px !important; width: 85px; height: 40px; }
+
+    /* Botón de cerrar personalizado */
+.btn-close-custom {
+    position: absolute;
+    top: -20px;
+    right: -20px;
+    width: 45px;
+    height: 45px;
+    background: #ccff00; /* Color neón Máncora */
+    color: #000 !important;
+    border: 2px solid #fff;
+    border-radius: 50%;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    font-size: 1.5rem;
+    cursor: pointer;
+    z-index: 1050;
+    transition: all 0.3s ease;
+    box-shadow: 0 0 15px rgba(204, 255, 0, 0.5);
+}
+
+.btn-close-custom:hover {
+    transform: rotate(90deg) scale(1.1);
+    background: #fff;
+    color: #ccff00 !important;
+    box-shadow: 0 0 25px rgba(204, 255, 0, 0.8);
+}
+
+/* Ajuste para móviles: Mueve la X dentro de la imagen si la pantalla es pequeña */
+@media (max-width: 768px) {
+    .btn-close-custom {
+        top: 10px;
+        right: 10px;
+        width: 35px;
+        height: 35px;
+        font-size: 1.2rem;
+    }
+}
+</style>
+
+{% endblock %}

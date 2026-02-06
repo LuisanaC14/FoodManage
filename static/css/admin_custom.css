@@ -1,0 +1,646 @@
+@import url("login_custom.css");
+@import url("asistencia_custom.css");
+@import url("estilos_marca.css");
+@import url("visual_mesa.css");
+
+/* 1. FONDO Y TABLA GENERAL */
+#changelist { background-color: #0f0f0f !important; padding: 20px; }
+#result_list { border-collapse: separate !important; border-spacing: 0 15px !important; width: 100%; }
+#result_list thead th { background: transparent !important; color: #888 !important; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; border: none !important; }
+
+/* 2. TRANSFORMACIÓN DE FILAS EN TARJETAS */
+#result_list tbody tr { background: #1a1a1a !important; box-shadow: 0 5px 15px rgba(0,0,0,0.3); transition: all 0.3s ease; }
+#result_list tbody tr:hover { transform: translateY(-5px); background: #222 !important; box-shadow: 0 10px 25px rgba(0,0,0,0.5); border-left: 4px solid #ccff00; }
+#result_list td { padding: 15px !important; border-top: 1px solid #333 !important; border-bottom: 1px solid #333 !important; color: #fff; vertical-align: middle !important; font-size: 1rem; }
+#result_list td:first-child { border-left: 1px solid #333; border-radius: 10px 0 0 10px; border-left: 4px solid transparent; }
+#result_list td:last-child { border-right: 1px solid #333; border-radius: 0 10px 10px 0; }
+#result_list tr:hover td:first-child { border-left-color: #ccff00 !important; }
+
+/* 3. ESTILOS DE ESTADO (BADGES) */
+.badge-status { padding: 5px 12px; border-radius: 50px; font-weight: 900; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px; }
+.status-pendiente { background: rgba(255, 174, 0, 0.15); color: #ffae00; border: 1px solid #ffae00; }
+.status-completado { background: rgba(204, 255, 0, 0.15); color: #ccff00; border: 1px solid #ccff00; }
+
+/* 4. BOTONES Y TEXTOS */
+.btn-admin-edit { background: #00bfff; color: #000; padding: 8px 20px; border-radius: 6px; font-weight: 900; text-transform: uppercase; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 5px; transition: 0.3s; text-decoration: none !important; }
+.btn-admin-edit:hover { background: #fff; box-shadow: 0 0 15px #00bfff; transform: scale(1.05); }
+.text-mesa { font-weight: bold; color: #fff; font-size: 1.1rem; }
+.text-total { font-family: 'Consolas', monospace; color: #00eaff; font-size: 1.2rem; font-weight: bold; }
+
+/* 5. LOGIN CYBERPUNK */
+body.login-page { background: radial-gradient(circle at center, #1e1e1e 0%, #000000 100%) !important; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+.login-box { background: rgba(15, 15, 15, 0.95) !important; border: 2px solid #ccff00 !important; border-radius: 20px !important; box-shadow: 0 0 50px rgba(204, 255, 0, 0.2), inset 0 0 20px rgba(204, 255, 0, 0.1) !important; padding: 10px !important; width: 450px !important; margin-top: 0 !important; }
+.login-logo a { color: #ffffff !important; font-weight: 900 !important; text-transform: uppercase; letter-spacing: 4px; text-shadow: 0 0 10px rgba(204, 255, 0, 0.8), 0 0 30px rgba(0, 191, 255, 0.6) !important; font-size: 2rem !important; }
+.login-page .brand-link { background: transparent !important; border: none !important; }
+.login-card-body { background: transparent !important; padding: 30px !important; border: none !important; color: #fff !important; }
+.login-box-msg { color: #aaa !important; font-weight: bold; text-transform: uppercase; font-size: 0.9rem; }
+.login-card-body input.form-control { background-color: #0f0f0f !important; border: 1px solid #333 !important; border-right: none !important; color: #fff !important; border-radius: 10px 0 0 10px !important; padding: 15px !important; font-weight: bold; font-size: 1.1rem; height: 55px; }
+.login-card-body .input-group-text { background-color: #0f0f0f !important; border: 1px solid #333 !important; border-left: none !important; color: #ccff00 !important; border-radius: 0 10px 10px 0 !important; }
+.login-card-body input.form-control:focus, .login-card-body input.form-control:focus + .input-group-append .input-group-text { border-color: #ccff00 !important; box-shadow: 0 0 15px rgba(204, 255, 0, 0.2) !important; }
+.login-card-body button[type="submit"] { background: linear-gradient(135deg, #ccff00, #aacc00) !important; color: #000 !important; border: none !important; padding: 15px !important; border-radius: 50px !important; font-weight: 900 !important; text-transform: uppercase; letter-spacing: 2px; font-size: 1.1rem; width: 100%; box-shadow: 0 5px 20px rgba(204, 255, 0, 0.4) !important; transition: all 0.3s ease; margin-top: 20px; }
+.login-card-body button[type="submit"]:hover { transform: scale(1.05); box-shadow: 0 0 40px rgba(204, 255, 0, 0.7) !important; }
+.login-card-body .icheck-primary, .login-card-body p.mb-1, .login-card-body p.mb-0 { display: none !important; }
+.login-card-body a { color: #00bfff !important; }
+
+/* 6. MENÚ LATERAL Y ICONOS */
+.nav-sidebar .nav-link[href*="/bebida/"] i { color: #ff00de !important; text-shadow: 0 0 10px rgba(255, 0, 222, 0.6); transition: transform 0.3s; }
+.nav-sidebar .nav-link[href*="/arroz/"] i { color: #ffae00 !important; text-shadow: 0 0 10px rgba(255, 174, 0, 0.6); }
+.nav-sidebar .nav-link[href*="/sopa/"] i { color: #ccff00 !important; text-shadow: 0 0 10px rgba(204, 255, 0, 0.6); }
+.nav-sidebar .nav-link[href*="/extra/"] i { color: #00eaff !important; text-shadow: 0 0 10px rgba(0, 234, 255, 0.6); }
+.nav-sidebar .nav-link[href*="/catalogo/"] i, .nav-sidebar .nav-link[href*="/producto/"] i { color: #be00ff !important; text-shadow: 0 0 10px rgba(190, 0, 255, 0.6); }
+.nav-sidebar .nav-link[href*="/gasto/"] i { color: #ff4d4d !important; text-shadow: 0 0 10px rgba(255, 77, 77, 0.6); }
+.nav-sidebar .nav-link:hover i { transform: scale(1.2); filter: brightness(1.3); }
+
+/* 7. PANTALLA ELIMINAR Y ALERTAS */
+.callout.callout-danger, .alert-danger { background: rgba(255, 0, 0, 0.1) !important; border: 1px solid #ff4d4d !important; border-left: 5px solid #ff4d4d !important; color: #ff4d4d !important; box-shadow: 0 0 20px rgba(255, 77, 77, 0.2); border-radius: 8px; }
+.callout.callout-danger h5, .alert-danger h5 { font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
+.content .card { background: #111 !important; border: 1px solid #333 !important; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+.content .card-header { background: #1a1a1a !important; border-bottom: 1px solid #333; color: #fff; }
+.content ul li { color: #ddd; list-style-type: none; padding: 5px 0; font-family: monospace; font-size: 1rem; }
+.content ul li:before { content: ">> "; color: #ff4d4d; font-weight: bold; }
+.btn-danger, input[type="submit"][value*="seguro"] { background: transparent !important; border: 2px solid #ff4d4d !important; color: #ff4d4d !important; font-weight: 900 !important; text-transform: uppercase; letter-spacing: 1px; padding: 12px 25px; border-radius: 5px; box-shadow: 0 0 10px rgba(255, 77, 77, 0.2); transition: all 0.3s ease; }
+.btn-danger:hover, input[type="submit"][value*="seguro"]:hover { background: #ff4d4d !important; color: #000 !important; box-shadow: 0 0 30px rgba(255, 77, 77, 0.6); transform: scale(1.05); }
+.btn-default, .btn-secondary, a.btn-default { background: transparent !important; border: 1px solid #444 !important; color: #aaa !important; text-transform: uppercase; font-weight: bold; padding: 12px 25px; border-radius: 5px; margin-top: 10px; }
+.btn-default:hover, .btn-secondary:hover { border-color: #fff !important; color: #fff !important; background: #222 !important; }
+.card-body .float-right, .card-body .col-md-3 { background: #1a1a1a; padding: 15px; border-radius: 10px; border: 1px solid #333; }
+.card-body h4 { color: #fff; text-transform: uppercase; font-size: 1rem; border-bottom: 2px solid #ff4d4d; padding-bottom: 5px; margin-bottom: 15px; display: inline-block; }
+
+/* 8. ACCIONES MASIVAS Y GLOBAL */
+.btn-neon-delete { background: rgba(255, 0, 0, 0.1); border: 2px solid #ff4d4d; color: #ff4d4d !important; padding: 10px 25px; border-radius: 8px; font-weight: 900; text-transform: uppercase; display: inline-flex; align-items: center; gap: 10px; transition: 0.3s; font-size: 0.9rem; cursor: pointer; margin-right: 15px; text-decoration: none !important; }
+.btn-neon-delete:hover { background: #ff4d4d; color: #000 !important; box-shadow: 0 0 25px rgba(255, 77, 77, 0.8); transform: scale(1.05); }
+.actions .action-counter { color: #888; font-weight: bold; font-family: monospace; font-size: 1rem; }
+.content-wrapper { background-color: #1c1c1d !important; min-height: calc(100vh - 100px) !important; }
+.main-footer { background-color: #181818 !important; border: none !important; color: #666 !important; padding: 10px 20px !important; }
+.main-header { border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important; background: rgba(20, 20, 20, 0.9) !important; backdrop-filter: blur(5px); }
+
+/* 9. SCROLLBAR Y SELECCIÓN */
+::-webkit-scrollbar { width: 10px; height: 10px; background-color: #000; }
+::-webkit-scrollbar-track { background: #050505; }
+::-webkit-scrollbar-thumb { background-color: #333; border-radius: 5px; border: 1px solid #444; }
+::-webkit-scrollbar-thumb:hover { background-color: #ccff00; border-color: #ccff00; box-shadow: 0 0 10px #ccff00; }
+::selection { background: #ff00de; color: #fff; text-shadow: 0 0 5px rgba(255, 0, 222, 0.5); }
+
+/* 10. HISTORIAL Y NOTAS */
+a.historylink, .btn-secondary { font-size: 0 !important; border: 2px solid #007bff !important; color: #007bff !important; background-color: #1a1a1a !important; width: 100% !important; height: 50px !important; border-radius: 8px !important; margin-top: 15px !important; display: flex !important; justify-content: center !important; align-items: center !important; transition: 0.3s; text-decoration: none !important; }
+a.historylink::before, .btn-secondary::before { content: "\f1da" !important; font-family: "Font Awesome 5 Free"; font-weight: 900; font-size: 1.1rem !important; margin-right: 10px !important; }
+a.historylink::after, .btn-secondary::after { content: "HISTORIAL DE CAMBIOS" !important; font-size: 0.9rem !important; font-weight: 900 !important; text-transform: uppercase !important; letter-spacing: 1px !important; }
+a.historylink:hover, .btn-secondary:hover { background: linear-gradient(135deg, #007bff, #0056b3) !important; box-shadow: 0 0 20px rgba(0, 123, 255, 0.6) !important; transform: scale(1.01); }
+a.historylink:hover::before, a.historylink:hover::after, .btn-secondary:hover::before, .btn-secondary:hover::after { color: #fff !important; }
+
+body .tabular td input[type="text"], body .tabular td textarea { background-color: #151515 !important; color: #fff !important; border: 1px solid #444 !important; }
+textarea[name*="nota"], input[name*="nota"] { background-color: #000 !important; color: #ccff00 !important; font-weight: 900 !important; font-size: 1.1rem !important; border: 2px solid #ccff00 !important; min-width: 250px !important; padding: 10px !important; border-radius: 5px !important; }
+textarea[name*="nota"]:focus, input[name*="nota"]:focus { box-shadow: 0 0 15px rgba(204, 255, 0, 0.5) !important; outline: none !important; }
+
+/* 11. SISTEMA DELETE Y AGREGAR */
+.inline-group .tabular tr.form-row td.delete { display: flex !important; justify-content: center !important; align-items: center !important; height: 55px !important; width: 60px !important; padding: 0 !important; border-bottom: 1px solid #333 !important; }
+.btn-trash-custom, a.inline-deletelink { display: flex !important; justify-content: center; align-items: center; margin: 0 !important; padding: 0 !important; float: none !important; position: static !important; width: 38px !important; height: 38px !important; border: 2px solid #ff4d4d !important; border-radius: 8px !important; color: #ff4d4d !important; font-size: 1.2rem !important; transition: 0.2s !important; text-decoration: none !important; }
+a.inline-deletelink { font-size: 0 !important; }
+a.inline-deletelink::before { content: "\f2ed"; font-family: "Font Awesome 5 Free" !important; font-weight: 900 !important; font-size: 1.2rem !important; }
+.btn-trash-custom:hover, .btn-trash-custom.active, a.inline-deletelink:hover { background-color: #ff4d4d !important; color: #fff !important; box-shadow: 0 0 10px rgba(255, 77, 77, 0.6) !important; transform: scale(1.1); }
+a.inline-deletelink:hover::before { color: #fff !important; }
+td.delete input[type="checkbox"] { display: none !important; }
+tr.row-deleted td:not(.delete) { opacity: 0.5 !important; text-decoration: line-through !important; color: #ff8888 !important; }
+
+.inline-group .tabular tr.add-row td { display: table-cell !important; width: auto !important; text-align: left !important; padding: 10px !important; }
+.inline-group .tabular tr.add-row a { display: inline-block !important; width: auto !important; }
+.field-producto .related-widget-wrapper-link, .inline-group .tabular tr.add-row { display: none !important; }
+.field-producto a.add-related, .field-producto a.change-related, .field-producto a.delete-related, .field-producto a.view-related { display: none !important; visibility: hidden !important; }
+.field-producto select { width: 100% !important; max-width: 100% !important; }
+.inline-group .tabular { border-bottom: 2px solid #333 !important; margin-bottom: 20px !important; }
+
+/* 12. CENTRADO DE TICKETS */
+.field-numero_diario, th.column-numero_diario, .field-id_decorado, th.column-id_decorado { text-align: center !important; }
+#result_list td.field-numero_diario, #result_list td.field-id_decorado { padding-left: 0 !important; padding-right: 0 !important; }
+
+/* =============================================================
+   ARREGLO FINAL V2: CHECKBOXS Y TICKET (SIN BLOQUEOS)
+   ============================================================= */
+
+/* 1. RESET: Permitimos clics en toda la cabecera primero */
+#result_list thead th {
+    pointer-events: auto !important; 
+    cursor: default !important;
+}
+
+/* 2. DESACTIVAR ORDENAMIENTO (Solo matamos los enlaces de texto) */
+/* Esto hace que no puedas dar clic a "CLIENTE" o "FECHA" para ordenar */
+#result_list thead th a {
+    pointer-events: none !important;
+    color: #888 !important; /* Gris */
+    text-decoration: none !important;
+}
+
+/* 3. REVIVIR EL CHECKBOX "SELECCIONAR TODO" (CORREGIDO) */
+/* Apuntamos directo al ID del checkbox maestro de Django */
+#result_list thead th.action-checkbox-column, 
+#action-toggle {
+    pointer-events: auto !important;
+    cursor: pointer !important;
+    z-index: auto !important; /* <--- CAMBIO CLAVE: AUTO (No flota) */
+    overflow: visible !important;
+}
+
+/* Hacemos el checkbox maestro clickeable y con estilo */
+#action-toggle {
+    display: inline-block !important;
+    width: 20px !important;
+    height: 20px !important;
+    position: relative !important; 
+    top: 3px;
+    accent-color: #ccff00; /* <--- AHORA ES VERDE NEÓN TAMBIÉN */
+    z-index: 0 !important; /* Lo forzamos al piso */
+}
+
+/* 4. ARREGLO FINAL DEL CUADRO (MODO LIMPIO Y SEGURO) */
+td.action-checkbox {
+    overflow: hidden !important; 
+    width: 35px !important;
+    text-align: center !important;
+    vertical-align: middle !important;
+    /* Quitamos z-index aquí porque en celdas estáticas no sirve */
+}
+
+td.action-checkbox input {
+    appearance: auto !important; 
+    -webkit-appearance: auto !important;
+    
+    /* LA SOLUCIÓN MAESTRA: */
+    position: static !important; /* Quieto, sin capas, sin flotar */
+    z-index: auto !important;    /* Sin prioridad */
+    
+    display: inline-block !important;
+    margin: 0 !important;
+    width: 18px !important;
+    height: 18px !important;
+    cursor: pointer !important;
+    border: 1px solid #444 !important;
+    accent-color: #ccff00 !important; /* Verde Neón */
+}
+
+/* Aseguramos que no haya fantasmas del tema Jazzmin */
+td.action-checkbox input::before,
+td.action-checkbox input::after {
+    display: none !important;
+    content: "" !important;
+}
+
+/* 5. CENTRAR EL NÚMERO DE TICKET (1) */
+/* Centramos la celda */
+td.field-numero_diario, th.column-numero_diario {
+    text-align: center !important;
+    vertical-align: middle !important;
+}
+
+/* Centramos el enlace verde */
+td.field-numero_diario a {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    width: 100% !important;
+    height: 100% !important;
+    color: #ccff00 !important;
+    font-weight: 900 !important;
+    font-size: 1.2rem !important;
+    text-decoration: none !important;
+}
+
+/* ============================================================
+   13. ADAPTABILIDAD MÓVIL (RESPONSIVE DESIGN)
+   ============================================================ */
+
+/* Reglas para Tablets y Celulares (Pantallas menores a 992px) */
+@media (max-width: 991.98px) {
+    
+    /* 1. EL MENÚ LATERAL VUELVE A SU SITIO */
+    /* En móvil, el menú debe estar oculto y no empujar el contenido */
+    .main-sidebar, .main-sidebar::before {
+        box-shadow: none !important;
+        width: 250px !important; /* Volvemos al ancho estándar en móvil */
+    }
+    
+    /* El contenido ocupa toda la pantalla */
+    .content-wrapper, .main-header, .main-footer {
+        margin-left: 0 !important; 
+        width: 100% !important;
+    }
+
+    /* 2. TABLAS CON SCROLL HORIZONTAL (Vital para que no rompa el diseño) */
+    /* Si la tabla es muy ancha, que aparezca una barra de scroll abajo */
+    .card-body.p-0 .table-responsive,
+    .results {
+        display: block !important;
+        overflow-x: auto !important;
+        width: 100% !important;
+        -webkit-overflow-scrolling: touch; /* Suavidad en iPhone */
+    }
+    
+    /* Barra de scroll neón para la tabla en móvil */
+    .results::-webkit-scrollbar { height: 8px; }
+    .results::-webkit-scrollbar-thumb { background: #ccff00; border-radius: 4px; }
+
+    /* 3. FILTROS Y BUSCADOR */
+    /* Que ocupen todo el ancho para ser fáciles de tocar */
+    #changelist-search input[type="text"] {
+        width: 100% !important;
+        max-width: none !important;
+        margin-bottom: 10px !important;
+    }
+    #changelist-search input[type="submit"] {
+        width: 100% !important;
+        margin-left: 0 !important;
+    }
+    
+    /* Los filtros laterales (si los hay) pasan abajo */
+    #changelist-filter {
+        position: static !important;
+        width: 100% !important;
+        margin-top: 20px !important;
+        border-left: none !important;
+        border-top: 1px solid #333 !important;
+    }
+}
+
+/* Reglas EXCLUSIVAS para Celulares (Pantallas menores a 576px) */
+@media (max-width: 575.98px) {
+
+    /* 4. LOGIN ADAPTABLE */
+    /* En vez de 450px fijos, usa el 90% de la pantalla */
+    .login-box {
+        width: 90% !important;
+        margin: 20px auto !important;
+    }
+    
+    /* Letras del logo un poco más chicas para que quepan */
+    .login-logo a {
+        font-size: 1.5rem !important;
+    }
+
+    /* 5. TARJETAS DE RESULTADOS (Compactas) */
+    #result_list td {
+        padding: 10px 5px !important; /* Menos relleno */
+        font-size: 0.85rem !important; /* Letra un poco más chica */
+        white-space: nowrap !important; /* Evita que el texto ocupe 10 líneas */
+    }
+
+    /* 6. BOTONES GRANDES (Fáciles de tocar con el dedo) */
+    .btn-admin-edit, .btn-danger, .btn-secondary, input[type="submit"] {
+        width: 100% !important; /* Botones de ancho completo */
+        margin-bottom: 5px !important;
+        justify-content: center !important;
+    }
+
+    /* 7. OCULTAR ELEMENTOS INNECESARIOS EN MÓVIL */
+    /* Ocultamos la columna de checkboxes para ganar espacio (opcional) */
+    /* .action-checkbox-column, .action-checkbox { display: none !important; } */
+    
+    /* El breadcrumb (Inicio > Gestión > Pedidos) ocupa mucho espacio */
+    .content-header .breadcrumb {
+        float: none !important;
+        margin-top: 10px !important;
+        padding-left: 0 !important;
+    }
+    
+    /* Ajuste de título */
+    .content-header h1 {
+        font-size: 1.2rem !important;
+    }
+}
+
+/* ============================================================
+   13. ADAPTABILIDAD MÓVIL (RESPONSIVE DESIGN)
+   ============================================================ */
+
+/* Reglas para Tablets y Celulares (Pantallas menores a 992px) */
+@media (max-width: 991.98px) {
+    
+    /* 1. EL MENÚ LATERAL VUELVE A SU SITIO */
+    /* En móvil, el menú debe estar oculto y no empujar el contenido */
+    .main-sidebar, .main-sidebar::before {
+        box-shadow: none !important;
+        width: 250px !important; /* Volvemos al ancho estándar en móvil */
+    }
+    
+    /* El contenido ocupa toda la pantalla */
+    .content-wrapper, .main-header, .main-footer {
+        margin-left: 0 !important; 
+        width: 100% !important;
+    }
+
+    /* 2. TABLAS CON SCROLL HORIZONTAL (Vital para que no rompa el diseño) */
+    /* Si la tabla es muy ancha, que aparezca una barra de scroll abajo */
+    .card-body.p-0 .table-responsive,
+    .results {
+        display: block !important;
+        overflow-x: auto !important;
+        width: 100% !important;
+        -webkit-overflow-scrolling: touch; /* Suavidad en iPhone */
+    }
+    
+    /* Barra de scroll neón para la tabla en móvil */
+    .results::-webkit-scrollbar { height: 8px; }
+    .results::-webkit-scrollbar-thumb { background: #ccff00; border-radius: 4px; }
+
+    /* 3. FILTROS Y BUSCADOR */
+    /* Que ocupen todo el ancho para ser fáciles de tocar */
+    #changelist-search input[type="text"] {
+        width: 100% !important;
+        max-width: none !important;
+        margin-bottom: 10px !important;
+    }
+    #changelist-search input[type="submit"] {
+        width: 100% !important;
+        margin-left: 0 !important;
+    }
+    
+    /* Los filtros laterales (si los hay) pasan abajo */
+    #changelist-filter {
+        position: static !important;
+        width: 100% !important;
+        margin-top: 20px !important;
+        border-left: none !important;
+        border-top: 1px solid #333 !important;
+    }
+}
+
+/* Reglas EXCLUSIVAS para Celulares (Pantallas menores a 576px) */
+@media (max-width: 575.98px) {
+
+    /* 4. LOGIN ADAPTABLE */
+    /* En vez de 450px fijos, usa el 90% de la pantalla */
+    .login-box {
+        width: 90% !important;
+        margin: 20px auto !important;
+    }
+    
+    /* Letras del logo un poco más chicas para que quepan */
+    .login-logo a {
+        font-size: 1.5rem !important;
+    }
+
+    /* 5. TARJETAS DE RESULTADOS (Compactas) */
+    #result_list td {
+        padding: 10px 5px !important; /* Menos relleno */
+        font-size: 0.85rem !important; /* Letra un poco más chica */
+        white-space: nowrap !important; /* Evita que el texto ocupe 10 líneas */
+    }
+
+    /* 6. BOTONES GRANDES (Fáciles de tocar con el dedo) */
+    .btn-admin-edit, .btn-danger, .btn-secondary, input[type="submit"] {
+        width: 100% !important; /* Botones de ancho completo */
+        margin-bottom: 5px !important;
+        justify-content: center !important;
+    }
+
+    /* 7. OCULTAR ELEMENTOS INNECESARIOS EN MÓVIL */
+    /* Ocultamos la columna de checkboxes para ganar espacio (opcional) */
+    /* .action-checkbox-column, .action-checkbox { display: none !important; } */
+    
+    /* El breadcrumb (Inicio > Gestión > Pedidos) ocupa mucho espacio */
+    .content-header .breadcrumb {
+        float: none !important;
+        margin-top: 10px !important;
+        padding-left: 0 !important;
+    }
+    
+    /* Ajuste de título */
+    .content-header h1 {
+        font-size: 1.2rem !important;
+    }
+}
+
+/* ============================================================
+   13. ARREGLO DE FILTROS LATERALES (CORRIGE LAS CAJAS BLANCAS)
+   ============================================================ */
+
+/* 1. Contenedor del filtro (Fondo oscuro) */
+#changelist-filter {
+    background-color: #121212 !important;
+    border-left: 1px solid #333 !important;
+    padding: 15px !important;
+}
+
+/* 2. Título "FILTRAR" */
+#changelist-filter h2 {
+    background-color: transparent !important;
+    color: #ccff00 !important; /* Verde Neón */
+    font-weight: 900 !important;
+    text-transform: uppercase;
+    letter-spacing: 2px;
+    border-bottom: 2px solid #ccff00;
+    padding-bottom: 10px !important;
+    margin-bottom: 15px !important;
+}
+
+/* 3. Títulos de cada filtro (Ej: "Por estado") */
+#changelist-filter h3 {
+    color: #00eaff !important; /* Azul Cyan */
+    font-weight: bold !important;
+    font-size: 0.9rem !important;
+    margin-top: 15px !important;
+    margin-bottom: 5px !important;
+}
+
+/* 4. LAS CAJAS DE SELECCIÓN (SELECTS) - AQUÍ ESTABA EL ERROR */
+#changelist-filter select {
+    background-color: #000 !important;   /* Fondo Negro */
+    color: #fff !important;              /* Letra Blanca */
+    border: 1px solid #444 !important;   /* Borde Gris */
+    border-radius: 8px !important;
+    padding: 10px !important;
+    width: 100% !important;
+    outline: none !important;
+    font-size: 0.9rem !important;
+}
+
+/* Cuando le das clic al select */
+#changelist-filter select:focus {
+    border-color: #ccff00 !important;
+    box-shadow: 0 0 10px rgba(204, 255, 0, 0.3) !important;
+}
+
+/* 5. Estilo para los enlaces de filtro (si no son selects) */
+#changelist-filter ul li a {
+    color: #aaa !important;
+    transition: 0.3s;
+}
+#changelist-filter ul li.selected a {
+    color: #ccff00 !important;
+    font-weight: bold !important;
+    padding-left: 5px;
+    border-left: 3px solid #ccff00;
+}
+#changelist-filter ul li a:hover {
+    color: #fff !important;
+    padding-left: 5px;
+}
+
+/* ============================================================
+   14. RESPONSIVIDAD TOTAL (MÓVIL Y TABLET)
+   ============================================================ */
+
+@media (max-width: 992px) {
+    
+    /* 1. ELIMINAR BARRA LATERAL FIJA Y MOVER FILTROS ABAJO */
+    #changelist-filter {
+        position: static !important; /* Deja de estar pegado a la derecha */
+        width: 100% !important;      /* Ocupa todo el ancho */
+        height: auto !important;
+        margin-top: 20px !important;
+        border-left: none !important;
+        border-top: 2px solid #ccff00 !important;
+        display: flex !important;
+        flex-wrap: wrap !important;
+        gap: 10px !important;
+    }
+    
+    /* Hacemos que cada filtro ocupe la mitad en móvil para ahorrar espacio */
+    #changelist-filter > div, #changelist-filter h3, #changelist-filter ul {
+        flex: 1 1 45% !important; /* 2 columnas */
+        min-width: 200px !important;
+    }
+
+    /* 2. TABLAS DESLIZABLES (SCROLL) */
+    /* Esto evita que la tabla rompa la pantalla */
+    .results, .card-body.p-0 {
+        display: block !important;
+        width: 100% !important;
+        overflow-x: auto !important; /* Scroll horizontal si no cabe */
+        -webkit-overflow-scrolling: touch;
+    }
+
+    /* 3. BOTONES GRANDES PARA DEDOS */
+    .object-tools a, .btn-admin-edit {
+        display: block !important;
+        width: 100% !important;
+        margin-bottom: 10px !important;
+        text-align: center !important;
+        padding: 12px !important;
+    }
+
+    /* 4. BARRA DE BÚSQUEDA ADAPTABLE */
+    #toolbar {
+        display: flex !important;
+        flex-direction: column !important;
+    }
+    #changelist-search {
+        width: 100% !important;
+    }
+    #changelist-search input[type="text"] {
+        width: 100% !important;
+        margin-bottom: 10px !important;
+        font-size: 1rem !important; /* Letra más grande para escribir fácil */
+        padding: 12px !important;
+    }
+    #changelist-search input[type="submit"] {
+        width: 100% !important;
+        padding: 12px !important;
+        background: #222 !important;
+        border: 1px solid #444 !important;
+        color: #ccff00 !important;
+    }
+
+    /* 5. AJUSTAR EL MENÚ PRINCIPAL */
+    .main-sidebar, .main-sidebar::before {
+        width: 250px !important; /* Ancho normal al abrir */
+    }
+    .content-wrapper, .main-footer, .main-header {
+        margin-left: 0 !important; /* Contenido ocupa todo */
+    }
+}
+
+/* ============================================================
+   18. REINGENIERÍA DEL ENCABEZADO (DISTRIBUCIÓN ORDENADA)
+   ============================================================ */
+
+/* 1. CONTENEDOR PRINCIPAL: Usamos Flexbox para ordenar todo */
+.content-header .row {
+    display: flex !important;
+    align-items: center !important; /* Centrado vertical perfecto */
+    justify-content: space-between !important; /* Separa Título (Izq) y Botón (Der) */
+    width: 100% !important;
+    margin: 0 !important;
+    padding: 15px 10px !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05); /* Línea separadora sutil */
+}
+
+/* 2. LADO IZQUIERDO: Título y Ruta (Agrupados) */
+.content-header .col-sm-6:first-child {
+    display: flex !important;
+    flex-direction: column-reverse !important; /* TRUCO: Pone el Título abajo y la Ruta arriba */
+    align-items: flex-start !important;
+    justify-content: center !important;
+    max-width: 70% !important;
+    padding-left: 0 !important;
+}
+
+/* 3. EL TÍTULO (H1) */
+.content-header h1 {
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important; /* Quitamos bordes viejos */
+    font-size: 2rem !important; /* Título grande y claro */
+    line-height: 1.2 !important;
+}
+
+/* 4. LA RUTA (BREADCRUMBS) - Ahora va arriba del título como subtítulo */
+.breadcrumb {
+    background: transparent !important;
+    padding: 0 !important;
+    margin-bottom: 5px !important; /* Espacio entre ruta y título */
+    font-size: 0.75rem !important; /* Letra pequeña y discreta */
+    text-transform: uppercase;
+    opacity: 0.7;
+    float: none !important; /* Quitamos la flotación derecha por defecto */
+}
+
+/* Limpiamos los items de la ruta */
+.breadcrumb-item + .breadcrumb-item::before {
+    content: "›" !important; /* Flecha simple y elegante */
+    color: #ccff00 !important;
+    padding: 0 5px !important;
+}
+
+/* 5. LADO DERECHO: Solo el Botón de Acción */
+.content-header .col-sm-6:last-child {
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-end !important; /* Lo empuja totalmente a la derecha */
+    max-width: 30% !important;
+    padding-right: 0 !important;
+}
+
+/* Forzamos al botón a estar quieto y visible */
+.content-header .col-sm-6:last-child .btn {
+    margin: 0 !important;
+    position: relative !important;
+    top: auto !important;
+    right: auto !important;
+    float: none !important;
+    min-width: 160px; /* Tamaño uniforme para todos los botones */
+    justify-content: center;
+}
+
+/* ============================================================
+   AJUSTE PARA MÓVIL (Para que no se rompa en celular)
+   ============================================================ */
+@media (max-width: 576px) {
+    .content-header .row {
+        flex-direction: column !important; /* Uno debajo del otro */
+        align-items: flex-start !important;
+        gap: 15px;
+    }
+    
+    .content-header .col-sm-6:first-child,
+    .content-header .col-sm-6:last-child {
+        max-width: 100% !important;
+        width: 100% !important;
+        align-items: flex-start !important;
+        justify-content: flex-start !important;
+    }
+    
+    /* En celular, el botón ocupa todo el ancho para ser fácil de tocar */
+    .content-header .col-sm-6:last-child .btn {
+        width: 100% !important;
+    }
+}
+

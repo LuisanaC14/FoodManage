@@ -1,0 +1,47 @@
+/* static/css/estilos_marca.css */
+
+/* Colores de marca: Rojo, Amarillo y Negro */
+
+/* Encabezados de tabla con toque Rojo */
+#result_list thead th {
+    color: #ffcc00 !important; /* Amarillo */
+    background: #000 !important; /* Negro */
+    border-bottom: 2px solid #ff0000 !important; /* Rojo */
+}
+
+/* Filas de la tabla */
+#result_list tbody tr {
+    background: #111 !important;
+    border-bottom: 1px solid #222 !important;
+}
+
+#result_list tbody tr:hover {
+    background: #1a1a1a !important;
+    border-left: 5px solid #ff0000 !important; /* Resalte en Rojo */
+}
+
+/* Botones Principales */
+.submit-row input[name="_save"] {
+    background: #ffcc00 !important; /* Amarillo */
+    color: #000 !important;
+    font-weight: bold !important;
+    border: none !important;
+    box-shadow: 0 4px 0 #b38f00;
+}
+
+.submit-row input[name="_save"]:hover {
+    background: #ffdb4d !important;
+    transform: translateY(-2px);
+}
+
+/* Estilo para los campos del formulario */
+.vDateField, .vTimeField, select {
+    border: 1px solid #ff000066 !important;
+    background: #000 !important;
+    color: #fff !important;
+}
+
+/* Iconos de Piso */
+.field-piso_badge span {
+    box-shadow: 0 0 10px rgba(255, 204, 0, 0.4);
+}

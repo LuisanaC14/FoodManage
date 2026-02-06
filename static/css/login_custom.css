@@ -1,0 +1,395 @@
+/* ============================================================
+   1. ESTRUCTURA Y FONDO
+   ============================================================ */
+:root {
+    --sidebar-width: 250px;
+}
+
+.main-sidebar, .main-sidebar::before {
+    background-color: #151719 !important;
+    box-shadow: 5px 0 15px rgba(0,0,0,0.5);
+    border-right: none !important;
+}
+
+.main-sidebar .sidebar {
+    padding-top: 0 !important; 
+    margin-top: 0 !important;
+    overflow: visible !important; /* CRUCIAL: Deja que el brillo salga */
+}
+
+/* ============================================================
+   2. LOGO
+   ============================================================ */
+.brand-link {
+    width: 100% !important; 
+    height: auto !important; 
+    min-height: 50px !important;
+    padding: 10px 15px 8px 15px !important; 
+    display: flex !important;
+    align-items: center !important; 
+    position: sticky !important; 
+    top: 0;
+    z-index: 1000;
+    background-color: #151719 !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.brand-link .brand-image {
+    max-height: 40px !important; 
+    min-width: 40px !important;
+    width: auto !important;
+    margin-right: 10px !important;
+    opacity: 1 !important;
+}
+
+.brand-link .brand-text {
+    color: #fff !important;
+    font-size: 0.9rem !important; 
+    font-weight: 800 !important;   
+    line-height: 1.1 !important;   
+    white-space: normal !important; 
+    text-transform: uppercase;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* ESTADO CERRADO */
+.sidebar-collapse .brand-link {
+    padding: 10px 0 !important;
+    justify-content: center !important;
+    min-height: 50px !important;
+}
+.sidebar-collapse .brand-link .brand-text { display: none !important; opacity: 0 !important; }
+.sidebar-collapse .brand-link .brand-image { margin-right: 0 !important; }
+
+/* HOVER EXPANDIR LOGO */
+.sidebar-mini.sidebar-collapse .main-sidebar:hover .brand-link {
+    justify-content: flex-start !important;
+    padding: 10px 15px 8px 15px !important;
+    width: 250px !important;
+}
+.sidebar-mini.sidebar-collapse .main-sidebar:hover .brand-text {
+    display: block !important;
+    opacity: 1 !important;
+    visibility: visible !important;
+    width: auto !important;
+}
+
+/* ============================================================
+   3. USUARIO
+   ============================================================ */
+.user-panel {
+    margin-top: 0 !important;
+    padding-top: 10px !important;
+    padding-bottom: 15px !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+    display: flex !important;
+    align-items: center !important;
+}
+.user-panel .image { padding-left: 10px !important; }
+.user-panel .info { padding-left: 10px !important; }
+.user-panel .info a { color: #fff !important; font-weight: 600; }
+
+/* ============================================================
+   4. BOTÓN "PANEL DE CONTROL" (ALINEADO A LA IZQUIERDA)
+   ============================================================ */
+.nav-sidebar > .nav-item:first-child > .nav-link {
+    /* ESTILO VISUAL (NEÓN) */
+    background: rgba(0, 0, 0, 0.3) !important;
+    border: 2px solid #ccff00 !important;
+    color: #ccff00 !important;
+    text-shadow: 0 0 5px rgba(204, 255, 0, 0.5) !important;
+    box-shadow: 0 0 10px rgba(204, 255, 0, 0.2), inset 0 0 10px rgba(204, 255, 0, 0.1) !important;
+    
+    /* TAMAÑO SEGURO */
+    width: calc(100% - 20px) !important;
+    margin: 15px auto !important;
+    height: 45px !important;
+    border-radius: 50px !important;
+    
+    /* --- AQUÍ MOVEMOS EL TEXTO --- */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important; /* Alineación a la IZQUIERDA */
+    padding-left: 20px !important;          /* Espacio desde el borde izquierdo */
+    
+    /* AJUSTE DE TEXTO PARA QUE QUEPA BIEN */
+    font-weight: 900 !important;
+    text-transform: uppercase !important;
+    font-size: 0.85rem !important; /* Un poquitín más chico para asegurar que quepa */
+    letter-spacing: 0.5px !important;
+    
+    overflow: hidden !important; 
+    white-space: nowrap !important;
+    transition: all 0.3s ease !important;
+}
+
+/* --- ESTADO HOVER (BRILLO INTENSO) --- */
+.nav-sidebar > .nav-item:first-child > .nav-link:hover {
+    background: linear-gradient(135deg, #ccff00, #aacc00) !important;
+    color: #000000 !important;
+    text-shadow: none !important;
+    box-shadow: 0 0 25px #ccff00, 0 0 50px rgba(204, 255, 0, 0.6) !important;
+    
+    /* MANTENEMOS LA POSICIÓN FIJA */
+    width: calc(100% - 20px) !important;
+    margin: 15px auto !important;
+    padding-left: 20px !important; /* Mantiene el texto a la izquierda */
+    transform: none !important;
+}
+
+/* --- ELEMENTOS INTERNOS --- */
+.nav-sidebar > .nav-item:first-child > .nav-link p {
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    transform: none !important;
+    display: inline-block !important;
+    transition: color 0.3s ease !important;
+}
+
+.nav-sidebar > .nav-item:first-child > .nav-link i {
+    margin-right: 15px !important; /* Separación bonita entre icono y texto */
+    margin-left: 0 !important;
+    transform: none !important;
+    font-size: 1.2rem !important;
+    color: #ccff00 !important;
+    transition: color 0.3s ease !important;
+}
+
+/* CAMBIO DE COLOR EN HOVER */
+.nav-sidebar > .nav-item:first-child > .nav-link:hover p,
+.nav-sidebar > .nav-item:first-child > .nav-link:hover i {
+    color: #000000 !important;
+}
+
+/* --- ESTADO CERRADO (CÍRCULO) --- */
+/* Cuando se cierra, el botón se hace un círculo perfecto y centrado */
+.sidebar-collapse .nav-sidebar > .nav-item:first-child > .nav-link {
+    width: 42px !important; 
+    height: 42px !important;
+    margin: 15px auto !important; 
+    padding: 0 !important; /* Sin padding para centrar el icono */
+    border-radius: 50% !important;
+    justify-content: center !important; /* Centrado total */
+}
+.sidebar-collapse .nav-sidebar > .nav-item:first-child > .nav-link p { display: none !important; }
+.sidebar-collapse .nav-sidebar > .nav-item:first-child > .nav-link i { margin: 0 !important; }
+
+/* --- HOVER ESTANDO CERRADO (EXPANDIRSE) --- */
+.sidebar-mini.sidebar-collapse .main-sidebar:hover .nav-sidebar > .nav-item:first-child > .nav-link {
+    width: calc(100% - 20px) !important;
+    margin: 15px auto !important;
+    border-radius: 50px !important;
+    
+    /* RECUPERAMOS LA ALINEACIÓN IZQUIERDA */
+    justify-content: flex-start !important; 
+    padding-left: 20px !important;
+}
+.sidebar-mini.sidebar-collapse .main-sidebar:hover .nav-sidebar > .nav-item:first-child > .nav-link p { 
+    display: inline-block !important; 
+}
+.sidebar-mini.sidebar-collapse .main-sidebar:hover .nav-sidebar > .nav-item:first-child > .nav-link i { 
+    margin-right: 15px !important; 
+}
+
+/* ============================================================
+   5. RESTO DE ITEMS (ESTOS SÍ SE MUEVEN)
+   ============================================================ */
+.nav-sidebar .nav-item > .nav-link {
+    color: #aeb9c0 !important;
+    margin: 4px 10px !important;
+    border-radius: 10px !important;
+    padding: 10px 15px !important;
+    transition: all 0.3s ease !important;
+    border: 1px solid transparent;
+}
+/* EFECTO MOVIMIENTO SOLO PARA LOS OTROS, NO EL PRIMERO */
+.nav-sidebar > .nav-item:not(:first-child) > .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.08) !important;
+    color: #fff !important;
+    transform: translateX(5px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.nav-sidebar > .nav-item:not(:first-child) > .nav-link:hover i {
+    color: #ccff00 !important;
+    transform: scale(1.1);
+}
+.nav-sidebar .nav-item > .nav-link.active {
+    background: rgba(204, 255, 0, 0.15) !important;
+    color: #ccff00 !important;
+    border-left: 3px solid #ccff00 !important;
+    box-shadow: inset 0 0 15px rgba(204, 255, 0, 0.05);
+}
+.nav-sidebar .nav-item > .nav-link.active i { color: #ccff00 !important; }
+
+.nav-header {
+    background: transparent !important;
+    color: #6c757d !important;
+    font-weight: bold;
+    padding-left: 20px !important;
+    margin-top: 15px;
+    font-size: 0.8rem;
+}
+
+/* ============================================================
+   6. INPUTS Y FORMULARIOS (TU CÓDIGO INTACTO)
+   ============================================================ */
+.form-control, 
+.card-body form input[type="password"] {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    color: white !important;
+    border-radius: 8px !important;
+    height: 48px !important;
+    transition: all 0.3s ease;
+    display: block !important;
+    visibility: visible !important;
+    width: 100% !important;
+}
+
+.form-control:focus {
+    background: rgba(255, 255, 255, 0.2) !important;
+    border-color: #ccff00 !important;
+}
+
+.input-group-text {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    color: white !important;
+    border-left: none !important;
+}
+
+.input-group {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    width: 100% !important;
+}
+.input-group .form-control {
+    width: 1% !important;
+    flex: 1 1 auto !important;
+}
+
+.card-body form p {
+    display: block !important;
+    visibility: visible !important;
+    margin-bottom: 15px !important;
+    color: white !important;
+}
+
+/* ============================================================
+   7. BOTÓN DEL LOGIN
+   ============================================================ */
+.login-box button[type="submit"], 
+.login-box input[type="submit"] {
+    background: linear-gradient(135deg, #007bff, #0056b3) !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-weight: bold !important;
+    letter-spacing: 1px;
+    height: 48px !important;
+    box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+    text-transform: uppercase;
+    color: white !important;
+    width: 100% !important;
+}
+
+/* ============================================================
+   8. PANEL DE ADMINISTRACIÓN (ICONOS NEÓN)
+   ============================================================ */
+.main-header .btn-primary, .navbar .btn-primary { display: none !important; }
+
+.nav-sidebar .nav-link[href*="/producto/"] i { color: #ccff00 !important; text-shadow: 0 0 8px rgba(204, 255, 0, 0.8); }
+.nav-sidebar .nav-link[href*="/venta/"] i { color: #fc9c00 !important; text-shadow: 0 0 8px rgba(255, 200, 0, 0.8); }
+.nav-sidebar .nav-link[href*="/reserva/"] i { color: #00eaff !important; text-shadow: 0 0 8px rgba(0, 234, 255, 0.8); }
+.nav-sidebar .nav-link[href*="/asistencia/"] i { color: #07a511 !important; text-shadow: 0 0 8px rgba(0, 249, 33, 0.414); }
+.nav-sidebar .nav-link[href*="/mesa/"] i { color: #da6e01a9 !important; text-shadow: 0 0 8px rgba(255, 119, 0, 0.434) !important;}
+.nav-sidebar .nav-link[href*="cocina"] i { color: #ff3131 !important; text-shadow: 0 0 8px rgba(255, 49, 49, 0.8) !important; }
+.nav-sidebar .nav-link i.fa-list-alt { color: #f200ff !important; text-shadow: 0 0 10px rgb(182, 0, 172) !important; }
+.nav-sidebar .nav-link i.fa-money-bill-wave {color: #00fd83 !important; text-shadow: 0 0 8px rgba(0, 230, 118, 0.8) !important;}
+.nav-sidebar .nav-link i.fa-cash-register { color: #1275ff !important; text-shadow: 0 0 10px rgb(23, 84, 252) !important;}
+.nav-sidebar .nav-link[href*="/porcion/"] i { color: #ff3333 !important; text-shadow: 0 0 10px rgba(255, 51, 51, 0.6)!important; transition: transform 0.3s;}
+.nav-sidebar .nav-link[href*="/user/"] i, .nav-sidebar .nav-link[href*="/group/"] i { color: #00bfff !important; text-shadow: 0 0 8px rgba(0, 191, 255, 0.8); }
+.nav-sidebar .nav-link:hover i { transform: scale(1.2); filter: brightness(1.3); }
+
+/* ============================================================
+   9. MENSAJES DE ERROR
+   ============================================================ */
+.errorlist {
+    display: block !important;
+    color: #ff6b6b !important;
+    background-color: rgba(50, 0, 0, 0.5) !important;
+    border: 1px solid #ff4d4d !important;
+    padding: 10px !important;
+    margin-bottom: 15px !important;
+    list-style: none !important;
+    text-align: center !important;
+}
+
+.error-text {
+    color: #ff4d4d !important;
+    font-size: 0.85rem !important;
+    font-weight: bold !important;
+    margin-top: 5px !important;
+    display: block !important;
+    text-align: left !important;
+    background: rgba(0,0,0,0.6);
+    padding: 2px 5px;
+    border-radius: 4px;
+}
+
+.input-error {
+    border: 2px solid #ff4d4d !important;
+    box-shadow: 0 0 8px rgba(255, 77, 77, 0.6) !important;
+}
+
+@keyframes shake { 0% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } 100% { transform: translateX(0); } }
+.shake { animation: shake 0.3s; }
+
+/* ============================================================
+   10. SELECTOR DE PERMISOS (COMPACTO Y NEGRO)
+   ============================================================ */
+.selector { display: flex !important; width: 100% !important; justify-content: space-between !important; margin: 20px 0 !important; align-items: center; background: transparent !important; }
+.selector-available, .selector-chosen { flex: 1 !important; min-width: 225px !important; display: flex !important; flex-direction: column !important; background: rgba(20, 20, 20, 0.8) !important; border-radius: 12px; border: 1px solid rgba(204, 255, 0, 0.2); overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+.selector h2 { background: #111 !important; color: #ccff00 !important; font-size: 0.95rem !important; font-weight: bold !important; text-transform: uppercase; text-align: center !important; margin: 0 !important; padding: 10px 5px !important; border-bottom: 1px solid #333; height: 50px !important; display: flex !important; align-items: center !important; justify-content: center !important; }
+.selector-filter { background: #222 !important; border-bottom: 1px solid #333 !important; padding: 10px !important; }
+.selector-filter label { display: none !important; }
+.selector-filter input { width: 100% !important; background: #000 !important; border: 1px solid #444 !important; color: white !important; border-radius: 6px; padding: 8px 12px; }
+.selector-filter input:focus { border-color: #ccff00 !important; outline: none; }
+.selector select { height: 350px !important; background: transparent !important; color: #eee !important; border: none !important; }
+.selector select option { padding: 10px 15px !important; border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important; }
+.selector select option:checked { background: rgba(204, 255, 0, 0.15) !important; color: #ccff00 !important; border-left: 4px solid #ccff00 !important; }
+
+/* Flechas Centrales: Fondo Transparente/Negro */
+ul.selector-chooser { width: 80px !important; display: flex !important; flex-direction: column !important; justify-content: center !important; align-items: center !important; padding: 0 !important; margin: 0 15px !important; background: transparent !important; border: none !important; box-shadow: none !important; }
+ul.selector-chooser li { list-style: none !important; margin: 10px 0 !important; }
+ul.selector-chooser li:before { display: none !important; }
+.selector-add, .selector-remove { background: linear-gradient(135deg, #1abc9c, #16a085) !important; border: 1px solid rgba(255,255,255,0.2) !important; width: 45px !important; height: 45px !important; border-radius: 50% !important; display: block !important; position: relative; text-indent: -9999px !important; overflow: hidden; box-shadow: 0 0 15px rgba(26, 188, 156, 0.5); transition: 0.3s; }
+.selector-remove { background: linear-gradient(135deg, #ff6b6b, #ee5253) !important; box-shadow: 0 0 15px rgba(255, 107, 107, 0.5); }
+.selector-add:after, .selector-remove:after { font-family: "Font Awesome 5 Free"; font-weight: 900; color: white; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.2rem; pointer-events: none; text-indent: 0; }
+.selector-add:after { content: "\f061"; } .selector-remove:after { content: "\f060"; }
+.selector-add:hover, .selector-remove:hover { transform: scale(1.15); filter: brightness(1.2); }
+
+/* Botones Inferiores */
+a.selector-chooseall, a.selector-clearall { display: block !important; text-align: center !important; padding: 12px !important; font-weight: bold !important; text-transform: uppercase; font-size: 0.8rem !important; transition: 0.3s; background: #1a1a1a !important; }
+a.selector-chooseall { color: #1abc9c !important; border-top: 1px solid #1abc9c; }
+a.selector-chooseall:hover { background: #1abc9c !important; color: #fff !important; }
+a.selector-clearall { color: #ff6b6b !important; border-top: 1px solid #ff6b6b; }
+a.selector-clearall:hover { background: #ff6b6b !important; color: #fff !important; }
+
+/* ============================================================
+   11. BOTONES ESTILO NEÓN AZUL (GUARDAR/BORRAR/HISTORIAL)
+   ============================================================ */
+input[name="_save"], input[name="_addanother"], input[name="_continue"], .submit-row a.deletelink, .submit-row a.historylink, .card-footer a.deletelink, .card-footer a.historylink, .btn-danger, .btn-secondary {
+    background: #1a1a1a !important; border: 2px solid #007bff !important; color: #007bff !important;
+    width: 100% !important; height: 50px !important; border-radius: 8px !important;
+    font-weight: 900 !important; text-transform: uppercase !important; font-size: 0.9rem !important; text-decoration: none !important;
+    display: flex !important; justify-content: center !important; align-items: center !important;
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.1) !important; cursor: pointer !important; transition: all 0.3s ease !important; margin-bottom: 10px !important;
+}
+
+input[name="_save"]:hover, input[name="_addanother"]:hover, input[name="_continue"]:hover, .submit-row a.deletelink:hover, .submit-row a.historylink:hover, .card-footer a.deletelink:hover, .card-footer a.historylink:hover, .btn-danger:hover, .btn-secondary:hover {
+    background: linear-gradient(135deg, #007bff, #0056b3) !important; color: white !important;
+    box-shadow: 0 0 20px rgba(0, 123, 255, 0.6) !important; transform: scale(1.01);
+}

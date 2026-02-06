@@ -1,0 +1,176 @@
+{% extends 'gestion/index.html' %}
+{% load static %}
+
+{% block hero %}
+<div style="height: 100px; background: #000;"></div>
+{% endblock %}
+
+{% block content %}
+<div class="container mb-5 mt-4" style="min-height: 80vh;">
+
+    <div class="row mb-4 animate__animated animate__fadeInDown">
+        <div class="col-12">
+            <h2 class="fw-bold text-white border-bottom border-secondary pb-3">
+                <i class="fas fa-user-cog me-2 text-warning"></i> MI <span style="color: #ccff00;">CUENTA</span>
+            </h2>
+        </div>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-md-8 col-lg-6 animate__animated animate__fadeInUp">
+            
+            {% if messages %}
+                {% for message in messages %}
+                <div class="alert alert-success bg-dark text-white border-success d-flex align-items-center mb-4 shadow">
+                    <i class="fas fa-check-circle text-success me-2"></i> {{ message }}
+                </div>
+                {% endfor %}
+            {% endif %}
+
+            <div class="card-neon-form">
+                
+                <div class="card-header text-center pt-5 pb-0 border-0 bg-transparent">
+                    <div class="avatar-neon mx-auto mb-3">
+                        <span class="initials">{{ usuario.username|make_list|first|upper }}</span>
+                    </div>
+                    
+                    <h4 class="text-white fw-bold mb-0">{{ usuario.username }}</h4>
+                    
+                    <p class="text-white small" style="opacity: 0.9; letter-spacing: 1px;">CLIENTE</p>
+                </div>
+
+                <div class="card-body p-4 p-md-5">
+                    
+                    <form method="POST" action="{% url 'mi_cuenta' %}">
+                        {% csrf_token %}
+                        
+                        <div class="row g-4">
+                            <div class="col-md-6">
+                                <label class="text-secondary small mb-1 fw-bold">NOMBRE</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-dark border-secondary text-secondary"><i class="fas fa-user"></i></span>
+                                    <input type="text" name="first_name" class="form-control bg-dark text-white border-secondary" value="{{ usuario.first_name }}" placeholder="Tu nombre">
+                                </div>
+                            </div>
+                            
+                            <div class="col-md-6">
+                                <label class="text-secondary small mb-1 fw-bold">APELLIDO</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-dark border-secondary text-secondary"><i class="fas fa-user-tag"></i></span>
+                                    <input type="text" name="last_name" class="form-control bg-dark text-white border-secondary" value="{{ usuario.last_name }}" placeholder="Tu apellido">
+                                </div>
+                            </div>
+
+                            <div class="col-12">
+                                <label class="text-secondary small mb-1 fw-bold">CORREO ELECTRÓNICO</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-dark border-secondary text-secondary"><i class="fas fa-envelope"></i></span>
+                                    <input type="email" name="email" class="form-control bg-dark text-white border-secondary" value="{{ usuario.email }}" placeholder="ejemplo@correo.com">
+                                </div>
+                            </div>
+
+                            <div class="col-12 mt-4">
+                                <button type="submit" class="btn btn-neon-block w-100">
+                                    <i class="fas fa-save me-2"></i> GUARDAR CAMBIOS
+                                </button>
+                            </div>
+                        </div>
+                    </form>
+
+                    <div class="text-center mt-4 pt-3">
+                        <a href="{% url 'password_reset' %}" class="text-warning text-decoration-none small fw-bold link-pass">
+                            <i class="fas fa-lock me-1"></i> ¿Cambiar Contraseña?
+                        </a>
+                    </div>
+
+                    <div class="mt-5 pt-4 border-top border-secondary">
+                        <h6 class="text-danger fw-bold text-uppercase" style="font-size: 0.8rem; letter-spacing: 1px;">
+                            <i class="fas fa-exclamation-triangle me-1"></i> Zona de Peligro
+                        </h6>
+                        <p class="text-white small mb-3" style="opacity: 0.9;">
+                            Si eliminas tu cuenta, perderás todo tu historial de pedidos permanentemente.
+                        </p>
+                        
+                        <button type="button" class="btn btn-outline-danger w-100 fw-bold" data-bs-toggle="modal" data-bs-target="#modalEliminar">
+                            ELIMINAR MI CUENTA
+                        </button>
+                    </div>
+
+                </div>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<div class="modal fade" id="modalEliminar" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content" style="background: #111; border: 1px solid #dc3545; box-shadow: 0 0 20px rgba(220, 53, 69, 0.4);">
+            <div class="modal-header border-0">
+                <h5 class="modal-title text-danger fw-bold"><i class="fas fa-radiation"></i> ¿Estás seguro?</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            <div class="modal-body text-white">
+                <p>Estás a punto de eliminar la cuenta de <strong>{{ usuario.username }}</strong>.</p>
+                <p class="mb-0 text-secondary small">Esta acción no se puede deshacer y perderás el acceso a tus pedidos históricos.</p>
+            </div>
+            <div class="modal-footer border-0">
+                <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Cancelar</button>
+                
+                <form action="{% url 'eliminar_cuenta' %}" method="POST">
+                    {% csrf_token %}
+                    <button type="submit" class="btn btn-danger fw-bold">SÍ, ELIMINAR</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    .card-neon-form {
+        background: #111;
+        border: 1px solid #333;
+        border-radius: 20px;
+        position: relative;
+        overflow: hidden;
+        box-shadow: 0 20px 50px rgba(0,0,0,0.5);
+    }
+    .card-neon-form::before {
+        content: ''; position: absolute; top: 0; left: 0; width: 100%; height: 4px;
+        background: linear-gradient(90deg, #ccff00, #00bfff);
+        box-shadow: 0 0 15px #ccff00;
+    }
+
+    .avatar-neon {
+        width: 90px; height: 90px;
+        background: #1a1a1a;
+        border: 2px solid #ccff00;
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        box-shadow: 0 0 20px rgba(204, 255, 0, 0.2);
+    }
+    .initials { font-size: 2.8rem; font-weight: 900; color: #ccff00; }
+
+    .form-control:focus {
+        background: #000; color: #fff;
+        border-color: #ccff00;
+        box-shadow: 0 0 10px rgba(204, 255, 0, 0.2);
+    }
+
+    .btn-neon-block {
+        background: #ccff00; color: #000;
+        font-weight: 900; padding: 12px;
+        border-radius: 50px; border: none;
+        transition: 0.3s; text-transform: uppercase; letter-spacing: 1px;
+    }
+    .btn-neon-block:hover {
+        background: #fff; color: #000;
+        box-shadow: 0 0 25px rgba(204, 255, 0, 0.6);
+        transform: scale(1.02);
+    }
+
+    .link-pass:hover { color: #fff !important; text-decoration: underline !important; }
+</style>
+
+{% include 'gestion/includes/footer.html' %}
+{% endblock %}

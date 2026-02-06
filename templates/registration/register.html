@@ -1,0 +1,195 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Registro - FoodManage</title>
+    
+    <link rel="stylesheet" href="https://fonts.googleapis.com/css?family=Source+Sans+Pro:300,400,400i,700&display=fallback">
+    <link rel="stylesheet" href="{% static 'vendor/fontawesome-free/css/all.min.css' %}">
+    <link rel="stylesheet" href="{% static 'vendor/adminlte/css/adminlte.min.css' %}">
+    <link rel="stylesheet" href="{% static 'css/login_custom.css' %}">
+
+    <style>
+        .error-text {
+            color: #ffadad !important;
+            background: rgba(255, 0, 0, 0.2);
+            border: 1px solid rgba(255, 77, 77, 0.4);
+            font-size: 0.85rem !important;
+            font-weight: 600 !important;
+            margin-top: 8px !important;
+            padding: 5px 15px;
+            border-radius: 50px;
+            display: inline-flex;
+            align-items: center;
+            gap: 8px;
+            box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+            backdrop-filter: blur(5px);
+            width: auto;
+        }
+
+        .input-error {
+            border: 1px solid #ff4d4d !important;
+            box-shadow: 0 0 10px rgba(255, 77, 77, 0.5) !important;
+        }
+
+        @keyframes shake { 
+            0% { transform: translateX(0); } 
+            25% { transform: translateX(-5px); } 
+            75% { transform: translateX(5px); } 
+            100% { transform: translateX(0); } 
+        }
+        .shake { animation: shake 0.3s; }
+    </style>
+</head>
+
+<body class="hold-transition login-page" 
+      style="background: linear-gradient(rgba(0,0,0,0.5), rgba(0,0,0,0.5)), url('{% static 'fondo_mancora.png' %}') no-repeat center center fixed; background-size: cover;">
+
+    <div class="login-box" style="width: 450px;">
+        
+        <div class="login-logo mb-4">
+            <img src="{% static 'logo_mancora.PNG' %}" alt="FoodManage Logo" 
+                 style="width: 100%; max-width: 500px; height: auto; filter: drop-shadow(0 0 15px rgba(204,255,0,0.5));">
+        </div>
+
+        <div class="card" 
+             style="background: rgba(0, 0, 0, 0.4) !important; 
+                    backdrop-filter: blur(15px); 
+                    border: 2px solid #ccff00; 
+                    border-radius: 20px; 
+                    box-shadow: 0 10px 30px rgba(0,0,0,0.5);">
+            
+            <div class="card-body login-card-body" style="background: transparent !important; color: white;">
+                <p class="login-box-msg" style="font-size: 1.5rem; font-weight: bold; text-shadow: 2px 2px 4px #000;">
+                    Registrar Nueva Cuenta
+                </p>
+
+                <form method="post" id="registerForm" novalidate>
+                    {% csrf_token %}
+                    
+                    {% for field in form %}
+                    <div class="mb-3"> <div class="input-group">
+                            <input type="{{ field.field.widget.input_type }}" 
+                                   name="{{ field.name }}" 
+                                   class="form-control" 
+                                   placeholder="{{ field.label }}"
+                                   required style="background: rgba(255,255,255,0.1) !important; border: 1px solid rgba(255,255,255,0.2); color: white !important;">
+                            
+                            <div class="input-group-append">
+                                <div class="input-group-text" style="background: rgba(255,255,255,0.1) !important; border: 1px solid rgba(255,255,255,0.2); color: white; border-left: none;">
+                                    <span class="fas fa-edit"></span>
+                                </div>
+                            </div>
+                        </div>
+
+                        {% if field.errors %}
+                            <div class="error-text">
+                                <i class="fas fa-exclamation-circle"></i> {{ field.errors.0 }}
+                            </div>
+                        {% endif %}
+                    </div>
+                    {% endfor %}
+
+                    <div class="row mt-4">
+                        <div class="col-12">
+                            <button type="submit" class="btn btn-primary btn-block" style="font-weight: bold; border-radius: 10px; height: 45px;">
+                                REGISTRARSE
+                            </button>
+                        </div>
+                    </div>
+                </form>
+
+                <div class="mt-4 text-center" style="border-top: 1px solid rgba(255,255,255,0.2); padding-top: 20px;">
+                    <p class="mb-0">
+                        ¿Ya tienes cuenta? <a href="{% url 'admin_login' %}" style="color: #ccff00; font-weight: bold;">INGRESA AQUÍ</a>
+                    </p>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        (function() {
+            // 1. CONFIGURACIÓN DEL OJO (Tu lógica original)
+            const setupEyeToggle = () => {
+                const passwordInputs = document.querySelectorAll('input[type="password"]');
+                
+                passwordInputs.forEach((input, index) => {
+                    const toggleId = `toggle-eye-reg-${index}`;
+                    if (!document.getElementById(toggleId)) {
+                        const appendDiv = input.parentElement.querySelector('.input-group-append');
+                        if (appendDiv) {
+                            appendDiv.innerHTML = `
+                                <div class="input-group-text" id="${toggleId}" style="cursor: pointer; background: rgba(255,255,255,0.1); border-left: none; color: white;">
+                                    <i class="fas fa-eye"></i>
+                                </div>
+                            `;
+                            const toggleBtn = document.getElementById(toggleId);
+                            const icon = toggleBtn.querySelector('i');
+
+                            toggleBtn.addEventListener('click', () => {
+                                if (input.type === "password") {
+                                    input.type = "text";
+                                    icon.classList.replace('fa-eye', 'fa-eye-slash');
+                                } else {
+                                    input.type = "password";
+                                    icon.classList.replace('fa-eye-slash', 'fa-eye');
+                                }
+                            });
+                        }
+                    }
+                });
+            };
+
+            // 2. VALIDACIÓN DE CAMPOS VACÍOS (Nuevo estilo píldora roja)
+            const setupValidation = () => {
+                const form = document.getElementById('registerForm');
+                if (form) {
+                    form.addEventListener('submit', function(e) {
+                        const inputs = form.querySelectorAll('input[required]'); // Busca inputs obligatorios
+                        let hayErrores = false;
+
+                        inputs.forEach(input => {
+                            // Buscar el contenedor padre .input-group
+                            const inputGroup = input.closest('.input-group');
+                            const parentDiv = inputGroup.parentElement; // El div .mb-3 que envuelve todo
+
+                            // Limpiar errores previos generados por JS
+                            const errorPrevio = parentDiv.querySelector('.error-text-js');
+                            if (errorPrevio) errorPrevio.remove();
+                            
+                            input.classList.remove('input-error');
+
+                            if (input.value.trim() === "") {
+                                hayErrores = true;
+                                input.classList.add('input-error');
+                                input.classList.add('shake');
+                                setTimeout(() => input.classList.remove('shake'), 500);
+
+                                // Crear mensaje de error bonito
+                                const msg = document.createElement('div');
+                                msg.className = 'error-text error-text-js'; // Clase extra para identificarlo
+                                msg.innerHTML = '<i class="fas fa-exclamation-circle"></i> Este campo es obligatorio.';
+                                
+                                // Insertar debajo del input-group
+                                parentDiv.appendChild(msg);
+                            }
+                        });
+
+                        if (hayErrores) {
+                            e.preventDefault(); // Detener envío si faltan datos
+                        }
+                    });
+                }
+            };
+
+            document.addEventListener("DOMContentLoaded", () => {
+                setupEyeToggle();
+                setupValidation();
+            });
+        })();
+    </script>
+</body>
+</html>

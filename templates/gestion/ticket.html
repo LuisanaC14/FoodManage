@@ -1,0 +1,249 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Factura #{{ pedido.numero_diario }}</title>
+    <style>
+        @page {
+            size: a4 portrait;
+            margin: 1.5cm;
+            padding: 0;
+        }
+        body {
+            font-family: Helvetica, Arial, sans-serif;
+            font-size: 11px;
+            color: #000; /* Texto negro puro para contraste */
+            background: #fff;
+            /* REGLA DE ORO: SIN ESPACIOS EXTRA */
+            line-height: 1.0; 
+            text-align: left !important;
+        }
+
+        /* --- CABECERA NEGRA (IMPACTANTE) --- */
+        table.header-negro {
+            width: 100%;
+            background-color: #000000;
+            color: #ffffff;
+            border-bottom: 5px solid #ccff00; /* Borde más grueso */
+            margin-bottom: 20px;
+        }
+        td.header-cell {
+            padding: 10px 20px; /* Padding reducido para aprovechar espacio */
+            vertical-align: middle;
+        }
+
+        /* --- CAJA DE INFORMACIÓN (COMPACTA AL EXTREMO) --- */
+        table.info-box {
+            width: 100%;
+            border: 1px solid #ccc;
+            margin-bottom: 15px;
+        }
+        td.info-cell {
+            padding: 10px;
+            vertical-align: top;
+            width: 50%;
+        }
+
+        /* --- TABLA DE PRODUCTOS --- */
+        table.items-table {
+            width: 100%;
+            border-collapse: collapse;
+            margin-bottom: 15px;
+        }
+        .items-table th {
+            background-color: #000000;
+            color: #ccff00;
+            font-weight: bold;
+            padding: 6px;
+            text-align: left;
+            font-size: 11px; 
+            text-transform: uppercase;
+            border-bottom: 2px solid #ccff00;
+        }
+        .items-table td {
+            padding: 6px;
+            border-bottom: 1px solid #ccc;
+            text-align: left; 
+            font-size: 11px;
+        }
+
+        /* --- TOTALES --- */
+        table.totals-table { width: 100%; font-size: 12px; }
+        .total-final {
+            background-color: #000000;
+            color: #ccff00;
+            font-weight: bold;
+            font-size: 16px;
+            padding: 10px;
+        }
+
+        /* --- ESTILOS DE TEXTO --- */
+        .company-title { 
+            color: #ccff00; 
+            font-weight: bold; 
+            text-transform: uppercase; 
+            font-size: 28px; /* TÍTULO GIGANTE */
+            margin-bottom: 5px; 
+            text-align: right; 
+            line-height: 1.0;
+        }
+        .company-info {
+            color: #eeeeee; font-size: 10px; text-align: right; line-height: 1.2;
+        }
+        
+        /* ETIQUETAS Y DATOS: EL SECRETO DEL ESPACIO CERO */
+        .label { 
+            font-size: 8px; 
+            color: #666; 
+            font-weight: bold; 
+            text-transform: uppercase; 
+            display: block; 
+            margin: 0; padding: 0; /* Cero margen */
+            line-height: 1.0;
+        }
+        .data { 
+            font-size: 12px; 
+            font-weight: bold; 
+            color: #000; 
+            display: block; 
+            margin-top: 1px; /* Pegado a la etiqueta */
+            margin-bottom: 7px; /* Espacio solo para el siguiente grupo */
+            line-height: 1.0;
+        }
+
+        /* UTILIDADES */
+        .align-left { text-align: left !important; }
+        .align-right { text-align: right !important; }
+        .align-center { text-align: center !important; }
+    </style>
+</head>
+<body>
+
+    <table class="header-negro" cellpadding="0" cellspacing="0">
+        <tr>
+            <td class="header-cell" style="width: 45%; text-align: left;">
+                <img src="{% static 'logo_mancora.PNG' %}" width="240" height="90">
+            </td>
+            <td class="header-cell" style="width: 55%; text-align: right;">
+                <div class="company-title">MÁNCORA MARISQUERÍA</div>
+                <div class="company-info">
+                    RUC: 060XXXXXXX001<br>
+                    Av. Principal y Calle 5, Lago Agrio - Ecuador<br>
+                    Tel: (09) 9123-4567 | info@mancora.com
+                </div>
+            </td>
+        </tr>
+    </table>
+
+    <table width="100%" style="margin-bottom: 10px;">
+        <tr>
+            <td class="align-left" style="font-size: 18px; font-weight: bold; color: #000;">
+                FACTURA ELECTRÓNICA
+            </td>
+            <td class="align-right">
+                <span style="background:#ccff00; color:#000; font-weight:bold; padding:5px 10px; border-radius:0px; font-size:14px; border:2px solid #000;">
+                    Nº {{ pedido.numero_diario|stringformat:"05d" }}
+                </span>
+            </td>
+        </tr>
+    </table>
+
+    <table class="info-box" cellpadding="0" cellspacing="0">
+        <tr>
+            <td class="info-cell">
+                <span class="label">RAZÓN SOCIAL / NOMBRES:</span>
+                <span class="data">{{ pedido.cliente_nombre|upper }}</span>
+
+                <span class="label">RUC / C.I.:</span>
+                <span class="data">{{ pedido.cliente_cedula }}</span>
+
+                {% if pedido.cliente_direccion %}
+                <span class="label">DIRECCIÓN:</span>
+                <span class="data">{{ pedido.cliente_direccion }}</span>
+                {% endif %}
+
+                {% if pedido.cliente_telefono %}
+                <span class="label">TELÉFONO:</span>
+                <span class="data">{{ pedido.cliente_telefono }}</span>
+                {% endif %}
+                
+                {% if pedido.cliente_email %}
+                <span class="label">EMAIL:</span>
+                <span class="data" style="text-transform: lowercase;">{{ pedido.cliente_email }}</span>
+                {% endif %}
+            </td>
+
+            <td class="info-cell align-right">
+                <span class="label">FECHA DE EMISIÓN:</span>
+                <span class="data">{{ fecha|date:"d/m/Y" }}</span>
+
+                <span class="label">HORA DE EMISIÓN:</span>
+                <span class="data">{{ fecha|date:"H:i" }}</span>
+
+                <span class="label">ESTADO:</span>
+                <span class="data" style="color: green;">PAGADO</span>
+            </td>
+        </tr>
+    </table>
+
+    <table class="items-table">
+        <thead>
+            <tr>
+                <th width="10%" class="align-center">CANT.</th>
+                <th width="60%" class="align-left">DESCRIPCIÓN</th>
+                <th width="15%" class="align-right">P. UNIT</th>
+                <th width="15%" class="align-right">TOTAL</th>
+            </tr>
+        </thead>
+        <tbody>
+            {% for item in pedido.detalles.all %}
+            <tr>
+                <td class="align-center" style="vertical-align: top;">{{ item.cantidad }}</td>
+                <td class="align-left">
+                    <b style="font-size: 11px;">{{ item.producto.nombre }}</b>
+                    {% if item.nota %}
+                        <br><span style="color:#666; font-size:9px;">({{ item.nota }})</span>
+                    {% endif %}
+                </td>
+                <td class="align-right" style="vertical-align: top;">${{ item.precio_unitario }}</td>
+                <td class="align-right" style="vertical-align: top;"><b>${{ item.subtotal|default:item.precio_unitario }}</b></td>
+            </tr>
+            {% endfor %}
+            <tr><td colspan="4" style="height: 5px; border:none;"></td></tr>
+        </tbody>
+    </table>
+
+    <table width="100%">
+        <tr>
+            <td width="55%"></td>
+            <td width="45%">
+                <table class="totals-table">
+                    <tr>
+                        <td class="align-right" style="padding: 2px;">SUBTOTAL 15%:</td>
+                        <td class="align-right" style="padding: 2px;">${{ subtotal }}</td>
+                    </tr>
+                    <tr>
+                        <td class="align-right" style="padding: 2px;">SUBTOTAL 0%:</td>
+                        <td class="align-right" style="padding: 2px;">$0.00</td>
+                    </tr>
+                    <tr>
+                        <td class="align-right" style="padding: 2px;">IVA 15%:</td>
+                        <td class="align-right" style="padding: 2px;">${{ iva }}</td>
+                    </tr>
+                    <tr><td colspan="2" style="height: 5px;"></td></tr>
+                    <tr>
+                        <td class="total-final align-right">TOTAL A PAGAR:</td>
+                        <td class="total-final align-right">${{ pedido.total }}</td>
+                    </tr>
+                </table>
+            </td>
+        </tr>
+    </table>
+
+    <div style="text-align: center; margin-top: 30px; border-top: 1px dotted #ccc; padding-top: 5px; color: #aaa; font-size: 9px;">
+        Gracias por su preferencia - Documento generado el {{ fecha|date:"d/m/Y H:i" }}
+    </div>
+
+</body>
+</html>

@@ -1,0 +1,264 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block content %}
+<script src='https://cdn.jsdelivr.net/npm/fullcalendar@6.1.8/index.global.min.js'></script>
+
+<style>
+    /* =========================================
+       ESTILO CALENDARIO CYBERPUNK (CORREGIDO)
+       ========================================= */
+    .content-wrapper { background: #0f0f0f !important; }
+    
+    /* CONTENEDOR PRINCIPAL */
+    .calendar-wrapper {
+        display: flex; gap: 20px; height: 80vh; margin-top: 20px;
+    }
+
+    /* 1. SECCIÓN CALENDARIO (IZQUIERDA) */
+    .calendar-col {
+        flex: 1;
+        background: #1a1a1a;
+        border: 1px solid #333;
+        border-radius: 20px;
+        padding: 20px;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+    }
+
+    /* COLORES GENERALES (TEXTO BLANCO) */
+    .fc { color: #fff !important; font-family: sans-serif; }
+    .fc a { color: #fff !important; text-decoration: none; } /* Enlaces blancos por defecto */
+    
+    /* BOTONES ARRIBA */
+    .fc-toolbar-title { font-weight: 900; text-transform: uppercase; color: #ccff00; letter-spacing: 1px; }
+    .fc-button { background: #333 !important; border: 1px solid #555 !important; font-weight: bold; text-transform: uppercase; color: #fff !important; }
+    .fc-button-active { background: #ccff00 !important; color: #000 !important; border-color: #ccff00 !important; }
+    
+    /* =========================================
+       ARREGLO DE LA LISTA (FOREGROUND)
+       ========================================= */
+    
+    /* 1. BARRA DE DÍA (Lunes, Martes...) - GRIS OSCURO PARA SEPARAR */
+    .fc-list-day-cushion, .fc-theme-standard .fc-list-day-cushion {
+        background-color: #2a2a2a !important; /* Un poco más claro que el fondo */
+        border: 1px solid #444 !important;
+    }
+
+    /* 2. TEXTO DEL DÍA (FORCE NEON) */
+    .fc-list-day-text, .fc-list-day-side-text,
+    .fc-list-day-cushion a {
+        color: #ccff00 !important; /* Amarillo Neón */
+        font-weight: 900 !important;
+        text-transform: uppercase !important;
+        font-size: 1.1rem !important;
+        text-decoration: none !important;
+    }
+
+    /* 3. FILAS DE EVENTOS (Negro con borde) */
+    .fc-list-event td {
+        background-color: #1a1a1a !important;
+        border-color: #333 !important;
+        color: #fff !important;
+    }
+    .fc-list-event:hover td {
+        background-color: #222 !important; /* Efecto Hover sutil */
+        cursor: pointer;
+    }
+
+    /* 4. HORA Y TÍTULO */
+    .fc-list-event-time { color: #00bfff !important; font-weight: bold; }
+    .fc-list-event-title { color: #fff !important; }
+    .fc-list-event-dot { border-color: #ccff00 !important; }
+
+    /* =========================================
+       PANEL DERECHO (DETALLES)
+       ========================================= */
+    .details-col {
+        width: 350px;
+        background: #151515;
+        border: 1px solid #333;
+        border-radius: 20px;
+        padding: 25px;
+        display: flex; flex-direction: column; 
+        justify-content: center; align-items: center; text-align: center;
+        box-shadow: -10px 0 30px rgba(0,0,0,0.3);
+    }
+    /* (El resto de estilos del panel derecho se mantienen igual...) */
+    .detail-placeholder { opacity: 0.3; color: #fff; }
+    .detail-content { display: none; width: 100%; animation: fadeIn 0.3s ease; }
+    .avatar-circle { width: 80px; height: 80px; background: linear-gradient(135deg, #be00ff, #00bfff); border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 2.5rem; color: #fff; margin: 0 auto 20px; box-shadow: 0 0 20px rgba(190, 0, 255, 0.5); }
+    .detail-label { color: #888; font-size: 0.8rem; text-transform: uppercase; letter-spacing: 1px; margin-bottom: 5px; }
+    .detail-value { color: #fff; font-size: 1.2rem; font-weight: bold; margin-bottom: 20px; text-shadow: 0 0 10px rgba(255,255,255,0.1); }
+    .status-badge { display: inline-block; padding: 8px 20px; border-radius: 50px; background: #333; color: #fff; font-weight: 900; text-transform: uppercase; margin-bottom: 20px; }
+    .btn-action { width: 100%; padding: 12px; border-radius: 10px; border: none; font-weight: 900; background: #ccff00; color: #000; cursor: pointer; text-transform: uppercase; margin-top: 10px; transition: 0.3s; }
+    .btn-action:hover { box-shadow: 0 0 20px rgba(204, 255, 0, 0.6); }
+    @keyframes fadeIn { from { opacity:0; transform:translateY(10px); } to { opacity:1; transform:translateY(0); } }
+
+    /* =========================================
+       BOTÓN VOLVER CON EFECTO NEÓN
+       ========================================= */
+    .btn-neon-back {
+        background: #333;
+        color: #fff;
+        border: 1px solid #555;
+        font-weight: 900;
+        text-transform: uppercase;
+        padding: 10px 25px;
+        border-radius: 50px; /* Más redondo = más moderno */
+        transition: all 0.3s ease; /* Suavidad */
+        text-decoration: none;
+        display: inline-flex;
+        align-items: center;
+    }
+
+    /* CUANDO PASAS EL MOUSE (EL BRILLO) */
+    .btn-neon-back:hover {
+        background: #ccff00;       /* Fondo Verde Neón */
+        color: #000;               /* Letra Negra */
+        border-color: #ccff00;
+        box-shadow: 0 0 25px #ccff00; /* <--- AQUÍ ESTÁ LA MAGIA DEL BRILLO */
+        transform: scale(1.05);    /* Se agranda un poquito */
+    }
+
+    /* CUANDO LO APLASTAS (CLICK) */
+    .btn-neon-back:active {
+        transform: scale(0.95);    /* Se achica como un botón real */
+        box-shadow: 0 0 5px #ccff00; /* El brillo baja intensidad */
+    }
+</style>
+
+<div class="container-fluid">
+
+    <div class="row mb-2">
+        <div class="col-12 d-flex justify-content-end align-items-center" style="padding-top: 15px;">
+            <a href="{% url 'admin:gestion_reserva_changelist' %}" class="btn-neon-back">
+                <i class="fas fa-arrow-left mr-2"></i> VOLVER A LISTA
+            </a>
+        </div>
+    </div>
+
+    <div class="calendar-wrapper">
+        
+        <div class="calendar-col">
+            <div id='calendar'></div>
+        </div>
+
+        <div class="details-col">
+            
+            <div id="empty-state" class="detail-placeholder">
+                <i class="far fa-calendar-check fa-4x mb-3"></i>
+                <p>SELECCIONA UNA RESERVA<br>PARA VER DETALLES</p>
+            </div>
+
+            <div id="detail-content" class="detail-content">
+                <div class="avatar-circle">
+                    <i class="fas fa-user"></i>
+                </div>
+
+                <div class="detail-label">Cliente</div>
+                <div id="det-cliente" class="detail-value">---</div>
+
+                <div class="detail-label">Ubicación</div>
+                <div id="det-mesa" class="detail-value">---</div>
+
+                <div class="row w-100">
+                    <div class="col-6">
+                        <div class="detail-label">Hora</div>
+                        <div id="det-hora" class="detail-value" style="color: #ccff00;">---</div>
+                    </div>
+                    <div class="col-6">
+                        <div class="detail-label">Personas</div>
+                        <div id="det-personas" class="detail-value">---</div>
+                    </div>
+                </div>
+
+                <div id="det-estado" class="status-badge">Confirmada</div>
+
+                <div style="width: 100%; text-align: left; background: #0f0f0f; border: 1px solid #333; border-radius: 10px; padding: 15px; margin-bottom: 20px;">
+                    <div style="color: #ff00de; font-size: 0.75rem; font-weight: 900; text-transform: uppercase; margin-bottom: 8px; letter-spacing: 1px;">
+                        <i class="fas fa-utensils"></i> Pre-Orden:
+                    </div>
+                    <div id="det-platos" style="color: #fff; font-size: 0.9rem; line-height: 1.4;">
+                        ---
+                    </div>
+                </div>
+
+                <hr style="border-color: #333; width: 100%;">
+
+                <button id="btn-editar" class="btn-action">
+                    <i class="fas fa-edit"></i> EDITAR RESERVA
+                </button>
+            </div>
+
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        var calendarEl = document.getElementById('calendar');
+        
+        // --- CORRECCIÓN IMPORTANTE AQUÍ ---
+        // Quitamos JSON.parse y las comillas simples.
+        // Django ya nos da el formato correcto directamente.
+        var eventos = {{ eventos_json|safe }}; 
+
+        var calendar = new FullCalendar.Calendar(calendarEl, {
+            initialView: 'dayGridMonth', // Vista mensual por defecto
+            locale: 'es',
+            headerToolbar: {
+                left: 'prev,next today',
+                center: 'title',
+                right: 'dayGridMonth,timeGridWeek,listWeek'
+            },
+            height: '100%',
+            events: eventos,
+            
+            // Personalización de la hora en la vista de mes (para que se vea neón)
+            eventTimeFormat: {
+                hour: '2-digit',
+                minute: '2-digit',
+                meridiem: false
+            },
+
+            // CUANDO HACES CLICK EN UNA RESERVA
+            eventClick: function(info) {
+                mostrarDetalles(info.event);
+            }
+        });
+
+        calendar.render();
+    });
+
+    function mostrarDetalles(evento) {
+        // 1. Ocultar Placeholder y Mostrar Contenido
+        document.getElementById('empty-state').style.display = 'none';
+        document.getElementById('detail-content').style.display = 'block';
+
+        // 2. Llenar Datos
+        const props = evento.extendedProps;
+        // Usamos || '---' para evitar errores si falta algún dato
+        document.getElementById('det-cliente').innerText = props.cliente || 'Sin nombre';
+        document.getElementById('det-mesa').innerText = props.mesa || 'Sin mesa';
+        document.getElementById('det-hora').innerText = props.hora || '--:--';
+        document.getElementById('det-personas').innerText = (props.personas || '0') + " pers.";
+        
+        // AQUÍ CARGAMOS LOS PLATOS (HTML SEGURO)
+        document.getElementById('det-platos').innerHTML = props.platos || '<span style="color:#666">Sin pre-orden</span>';
+        
+        // 3. Color del Estado
+        const badge = document.getElementById('det-estado');
+        badge.innerText = props.estado || 'Desconocido';
+        
+        if(props.estado === 'Confirmada') badge.style.background = '#00bfff';
+        else if(props.estado === 'Pendiente') badge.style.background = '#ffae00';
+        else badge.style.background = '#333';
+
+        const btnEditar = document.getElementById('btn-editar');
+        
+        btnEditar.onclick = function() {
+            window.location.href = '/admin/gestion/reserva/' + props.id + '/change/';
+        };
+    }
+</script>
+{% endblock %}

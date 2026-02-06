@@ -1,0 +1,499 @@
+{% extends 'admin/base.html' %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* =========================================
+       ESTILO MONITOR COCINA (DARK NEON)
+       ========================================= */
+    .content-wrapper { background: #0f0f0f !important; min-height: 100vh; }
+    
+    .kitchen-header {
+        background: #1a1a1a;
+        border-bottom: 2px solid #333;
+        padding: 15px 30px;
+        display: flex; justify-content: space-between; align-items: center;
+        box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+        margin-bottom: 30px;
+    }
+
+    .kitchen-title {
+        font-weight: 900; color: #fff; text-transform: uppercase; font-size: 1.8rem;
+        display: flex; align-items: center; gap: 15px;
+    }
+    .kitchen-title i { color: #ff6b00; text-shadow: 0 0 15px rgba(255, 107, 0, 0.6); }
+
+    /* BOTONES SUPERIORES */
+    .header-actions { display: flex; gap: 15px; }
+    .btn-action {
+        background: #222; border: 1px solid #444; color: #fff;
+        font-weight: 700; padding: 10px 20px; border-radius: 8px;
+        transition: 0.3s; cursor: pointer; display: flex; align-items: center; gap: 8px;
+    }
+    .btn-action:hover { background: #333; border-color: #fff; }
+    .btn-config { border-color: #00bfff; color: #00bfff; }
+
+    /* TARJETA DE PEDIDO */
+    .ticket-card {
+        background: #181818; border-radius: 12px; border: 1px solid #333;
+        display: flex; flex-direction: column; height: 100%; position: relative;
+        overflow: hidden; transition: transform 0.3s ease;
+    }
+    .ticket-card:hover { transform: translateY(-5px); border-color: #555; }
+
+    /* HEADER TICKET */
+    .ticket-header {
+        background: #252525; padding: 12px 15px;
+        display: flex; justify-content: space-between; align-items: center;
+        border-bottom: 1px solid #333;
+        border-left: 5px solid #ccff00; /* Estado Normal */
+    }
+    
+    /* --- NUEVOS ESTILOS DE INTENSIDAD --- */
+
+    /* 1. ESTADO NORMAL (Verde Neón sutil) */
+    .status-normal {
+        border-left: 5px solid #ccff00 !important;
+        background: #252525; /* Fondo oscuro normal */
+    }
+
+    /* 2. ALERTA MEDIA (Fondo Naranja Intenso) */
+    .status-medium {
+        background: linear-gradient(45deg, #ffae00, #ff8800) !important;
+        border-left: none !important; /* Quitamos borde lateral */
+        box-shadow: 0 5px 15px rgba(255, 174, 0, 0.4);
+    }
+    /* Cambiamos texto a negro para que se lea bien sobre naranja */
+    .status-medium .mesa-badge, 
+    .status-medium .timer-badge {
+        color: #000 !important;
+        border-color: #000 !important;
+        background: rgba(255,255,255,0.2) !important;
+    }
+
+    /* 3. ALERTA CRÍTICA (Rojo Fuego + Parpadeo) */
+    .status-late {
+        background: linear-gradient(45deg, #ff0000, #cc0000) !important;
+        border-left: none !important;
+        animation: latidoHeader 1.5s infinite; /* El fondo palpita */
+    }
+    .status-late .mesa-badge {
+        color: #fff !important;
+        text-shadow: 0 2px 4px rgba(0,0,0,0.5);
+    }
+    .status-late .timer-badge {
+        background: #fff !important;
+        color: #ff0000 !important;
+        font-weight: 900 !important;
+        box-shadow: 0 0 10px #fff;
+        animation: parpadeoReloj 0.5s infinite; /* El reloj parpadea rápido */
+    }
+
+    /* BORDES PARA TODA LA TARJETA (Se aplican con JS) */
+    .card-border-late {
+        border: 3px solid #ff0000 !important;
+        box-shadow: 0 0 30px rgba(255, 0, 0, 0.6) !important;
+        transform: scale(1.02); /* Se hace un poco más grande */
+        z-index: 10;
+    }
+
+    /* ANIMACIONES */
+    @keyframes parpadeoReloj {
+        0% { opacity: 1; transform: scale(1); }
+        50% { opacity: 0.8; transform: scale(1.1); }
+        100% { opacity: 1; transform: scale(1); }
+    }
+    @keyframes latidoHeader {
+        0% { box-shadow: 0 0 10px rgba(255,0,0,0.5); }
+        50% { box-shadow: 0 0 30px rgba(255,0,0,1); }
+        100% { box-shadow: 0 0 10px rgba(255,0,0,0.5); }
+    }
+
+    /* SUB-HEADER INFO */
+    .ticket-sub {
+        background: #1f1f1f; padding: 8px 15px;
+        display: flex; justify-content: space-between; align-items: center;
+        border-bottom: 1px solid #2a2a2a;
+    }
+    .waiter-name { color: #aaa; font-size: 0.85rem; font-weight: 600; }
+    
+    /* BOTÓN HISTORIAL (CORREGIDO) */
+    .btn-history {
+        background: transparent; border: 1px solid #00bfff; color: #00bfff;
+        font-size: 0.7rem; padding: 4px 10px; border-radius: 4px; cursor: pointer;
+        text-transform: uppercase; font-weight: bold; text-decoration: none;
+    }
+    .btn-history:hover { background: #00bfff; color: #000; text-decoration: none; }
+
+    /* CUERPO PEDIDO */
+    .ticket-body { padding: 0; flex-grow: 1; overflow-y: auto; max-height: 400px; }
+
+    .section-divider {
+        background: #111; color: #666; font-size: 0.75rem; font-weight: 900;
+        text-transform: uppercase; padding: 5px 15px; letter-spacing: 1px;
+        border-bottom: 1px solid #222; border-top: 1px solid #222;
+        display: flex; align-items: center; gap: 8px; margin-top: 5px;
+    }
+    .divider-kitchen { color: #ffae00; }
+    .divider-bar { color: #00eaff; }
+
+    .item-row {
+        padding: 10px 15px; border-bottom: 1px dashed #333; display: flex; align-items: center;
+    }
+    .item-qty {
+        font-size: 1.2rem; font-weight: 800; color: #fff; background: #333;
+        width: 35px; height: 35px; display: flex; justify-content: center; align-items: center;
+        border-radius: 50%; margin-right: 12px;
+    }
+    .item-name { color: #ddd; font-weight: 600; font-size: 0.95rem; line-height: 1.2; }
+
+    /* NOTAS */
+    .notes-section {
+        background: #2a2200; border-top: 2px solid #ffae00;
+        padding: 12px 15px; color: #ffae00;
+    }
+    .notes-text { font-weight: bold; font-size: 0.95rem; color: #fff; font-style: italic; }
+
+    /* FOOTER */
+    .ticket-footer { padding: 10px; background: #181818; }
+    .btn-done {
+        width: 100%; background: linear-gradient(135deg, #ccff00, #aacc00);
+        color: #000; border: none; padding: 15px; border-radius: 8px;
+        font-weight: 900; text-transform: uppercase; cursor: pointer;
+    }
+    .btn-done:hover { transform: scale(1.02); box-shadow: 0 0 20px rgba(204, 255, 0, 0.5); }
+
+    /* MODAL */
+    .modal-overlay { position: fixed; top: 0; left: 0; width: 100%; height: 100%; background: rgba(0,0,0,0.8); z-index: 9999; display: none; justify-content: center; align-items: center; backdrop-filter: blur(5px); }
+    .modal-config { background: #1a1a1a; width: 350px; padding: 30px; border-radius: 20px; border: 1px solid #444; text-align: center; }
+    .config-input { background: #0f0f0f; border: 1px solid #333; color: #fff; width: 100%; padding: 12px; border-radius: 8px; margin-bottom: 15px; font-size: 1.1rem; text-align: center; }
+    .btn-save { background: #00bfff; color: #000; font-weight: 900; padding: 12px; width: 100%; border: none; border-radius: 8px; cursor: pointer; }
+
+    /* =========================================
+       RESPONSIVIDAD MONITOR COCINA (AJUSTE FINO)
+       ========================================= */
+    @media (max-width: 992px) {
+        .kitchen-header {
+            flex-direction: column;
+            gap: 10px;
+            padding: 10px;
+        }
+        .kitchen-title { font-size: 1.1rem; }
+    }
+
+    /* AJUSTE PARA FORZAR 2 COLUMNAS SIN DESCUADRES (Móvil) */
+    @media (max-width: 768px) {
+        .container-fluid.px-4 .row {
+            display: flex !important;
+            margin-right: -5px !important;
+            margin-left: -5px !important;
+        }
+
+        .container-fluid.px-4 .col-12 {
+            flex: 0 0 50% !important;
+            max-width: 50% !important;
+            padding-left: 4px !important;
+            padding-right: 4px !important;
+        }
+
+        /* --- REDUCCIÓN DE FUENTES PARA QUE NADA SE SALGA --- */
+        
+        /* 1. Encabezado del Ticket */
+        .order-id span { font-size: 0.6rem !important; } /* Palabra "ORDEN" */
+        .order-id h2 { font-size: 1.5rem !important; }   /* Número #28 */
+        .order-time span { font-size: 0.9rem !important; } /* Hora 13:05 */
+        .timer-badge { font-size: 0.7rem !important; padding: 1px 5px !important; }
+
+        /* 2. Cuerpo del Ticket */
+        .ticket-sub { padding: 5px 8px !important; }
+        .mesa-badge { font-size: 0.75rem !important; padding: 2px 6px !important; }
+        .waiter-name { font-size: 0.65rem !important; }
+
+        /* 3. Items de Comida */
+        .item-row { padding: 5px 8px !important; }
+        .item-qty { 
+            min-width: 22px !important; 
+            height: 22px !important; 
+            font-size: 0.8rem !important;
+            margin-right: 5px !important;
+        }
+        .item-name { 
+            font-size: 0.75rem !important; 
+            line-height: 1.1 !important; 
+        }
+
+        /* 4. Notas y Secciones */
+        .section-divider { font-size: 0.6rem !important; padding: 2px 8px !important; }
+        .notes-section { margin: 0 8px 8px !important; padding: 6px !important; }
+        .notes-text { font-size: 0.7rem !important; }
+
+        /* 5. BOTÓN DESPACHAR (Compacto) */
+        .btn-done {
+            padding: 8px !important;
+            font-size: 0.7rem !important;
+            letter-spacing: 0 !important;
+        }
+        .btn-done i { font-size: 0.8rem !important; }
+    }
+</style>
+
+<div class="container-fluid p-0">
+    <div class="kitchen-header">
+        <div class="kitchen-title"><i class="fas fa-fire"></i> MONITOR DE COCINA</div>
+        <div class="header-actions">
+            <button class="btn-action btn-config" onclick="abrirConfiguracion()"><i class="fas fa-stopwatch"></i> TIEMPOS</button>
+            <button class="btn-action" onclick="location.reload()"><i class="fas fa-sync-alt"></i> ACTUALIZAR</button>
+        </div>
+    </div>
+
+    <div class="container-fluid px-4">
+        <div class="row" id="kitchen-grid">
+            
+            {% if pedidos %}
+                {% for pedido in pedidos %}
+                <div class="col-xl-3 col-lg-4 col-md-6 col-12 mb-4">
+                    <div class="ticket-card animate__animated animate__fadeInUp" id="pedido-{{ pedido.id }}" style="border-radius: 15px; overflow: hidden; background: #0a0a0a; border: 1px solid #333;">
+                        
+                        <div class="order-top-bar ticket-header status-normal" style="padding: 15px; border-bottom: 2px solid #ccff00;">
+                            <div class="d-flex justify-content-between align-items-center">
+                                <div class="order-id">
+                                    <span style="color: #ccff00; font-size: 0.8rem; font-weight: bold; display: block; margin-bottom: -5px; opacity: 0.8;">ORDEN</span>
+                                    <h2 style="color: #ccff00; font-weight: 900; margin: 0; font-size: 2.5rem; line-height: 1; text-shadow: 0 0 10px rgba(204,255,0,0.4);">#{{ pedido.numero_diario }}</h2>
+                                </div>
+                                <div class="order-time text-end">
+                                    <span style="color: #fff; font-size: 1.2rem; font-weight: bold; font-family: monospace; display: block;">{{ pedido.fecha_pedido|date:"H:i" }}</span>
+                                    <span class="timer-badge" data-start="{{ pedido.fecha_pedido|date:'c' }}" style="background: #222; color: #fff; padding: 2px 8px; border-radius: 4px; font-size: 0.8rem; border: 1px solid #444;">00:00</span>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div class="ticket-sub" style="background: #111; padding: 10px 15px; display: flex; justify-content: space-between; align-items: center; border-bottom: 1px solid #222;">
+                            <div class="mesa-badge" style="background: #ccff00; color: #000; padding: 2px 10px; border-radius: 4px; font-weight: 900; font-size: 0.9rem;">MESA {{ pedido.mesa.numero }}</div>
+                            <div class="waiter-name" style="color: #888; font-size: 0.8rem;"><i class="fas fa-user"></i> {{ pedido.usuario.username|title }}</div>
+                        </div>
+
+                        <div class="ticket-body" style="padding: 15px;">
+                            <div class="section-divider divider-kitchen" style="color: #ffae00; font-weight: bold; font-size: 0.8rem; text-transform: uppercase; border-bottom: 1px solid #333; margin-bottom: 10px; padding-bottom: 5px;">
+                                <i class="fas fa-utensils"></i> Cocina
+                            </div>
+                            
+                            {% for item in pedido.detalles.all %}
+                                {% if "bebida" not in item.producto.categoria|lower %}
+                                <div class="item-row d-flex align-items-start mb-2">
+                                    <div class="item-qty" style="background: #222; color: #ccff00; min-width: 28px; text-align: center; border-radius: 4px; font-weight: bold; margin-right: 10px; border: 1px solid #ccff0033;">{{ item.cantidad }}</div>
+                                    <div class="item-name" style="color: #fff; font-weight: 500;">
+                                        {{ item.producto.nombre }}
+                                        {% if item.nota %}
+                                            <div style="color: #ccff00; font-size: 0.75rem; font-style: italic; margin-top: 2px;">• {{ item.nota }}</div>
+                                        {% endif %}
+                                    </div>
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+
+                            <div class="section-divider divider-bar" style="color: #00eaff; font-weight: bold; font-size: 0.8rem; text-transform: uppercase; border-bottom: 1px solid #333; margin: 15px 0 10px; padding-bottom: 5px;">
+                                <i class="fas fa-cocktail"></i> Barra
+                            </div>
+                            
+                            {% for item in pedido.detalles.all %}
+                                {% if "bebida" in item.producto.categoria|lower %}
+                                <div class="item-row d-flex align-items-start mb-2">
+                                    <div class="item-qty" style="background: #111; color: #00eaff; min-width: 28px; text-align: center; border-radius: 4px; font-weight: bold; margin-right: 10px; border: 1px solid #00eaff33;">{{ item.cantidad }}</div>
+                                    <div class="item-name" style="color: #fff; font-weight: 500;">{{ item.producto.nombre }}</div>
+                                </div>
+                                {% endif %}
+                            {% endfor %}
+                        </div>
+
+                        {% if pedido.observaciones %}
+                        <div class="notes-section" style="background: rgba(255, 174, 0, 0.05); border-left: 3px solid #ffae00; margin: 0 15px 15px; padding: 10px;">
+                            <div class="notes-title" style="color: #ffae00; font-size: 0.7rem; font-weight: bold; text-transform: uppercase;"><i class="fas fa-exclamation-triangle"></i> Observación General:</div>
+                            <div class="notes-text" style="color: #fff; font-size: 0.85rem;">"{{ pedido.observaciones }}"</div>
+                        </div>
+                        {% endif %}
+
+                        <div class="ticket-footer" style="padding: 0 15px 15px;">
+                            <button class="btn-done w-100" onclick="marcarListo('{{ pedido.id }}')" style="background: #ccff00; color: #000; border: none; padding: 12px; border-radius: 8px; font-weight: 900; text-transform: uppercase; transition: 0.3s; box-shadow: 0 4px 15px rgba(204, 255, 0, 0.2);">
+                                <i class="fas fa-check-double"></i> ¡Despachar Pedido!
+                            </button>
+                        </div>
+                    </div>
+                </div>
+                {% endfor %}
+            {% else %}
+                <div class="col-12 text-center" style="padding-top: 100px;">
+                    <i class="fas fa-check-circle fa-5x text-secondary mb-3" style="opacity: 0.1;"></i>
+                    <h2 class="text-white" style="opacity: 0.3; letter-spacing: 2px;">TODO LISTO, CHEF</h2>
+                </div>
+            {% endif %}
+
+        </div>
+    </div>
+</div>
+
+<div id="modal-config" style="display:none; position:fixed; top:0; left:0; width:100%; height:100%; background:rgba(0,0,0,0.8); z-index:9999; align-items:center; justify-content:center;">
+    
+    <div style="background:#111; border:2px solid #333; padding:30px; border-radius:15px; width:350px; text-align:center; box-shadow:0 0 30px rgba(0,0,0,0.5);">
+        
+        <h3 style="color:#fff; margin-bottom:20px; font-weight:900;">
+            <i class="fas fa-stopwatch" style="color:#ccff00;"></i> AJUSTAR TIEMPOS
+        </h3>
+        
+        <p style="color:#aaa; font-size:0.8rem; margin-bottom:20px;">
+            Si hay platos grandes, aumenta estos tiempos para evitar alertas falsas.
+        </p>
+
+        <div style="margin-bottom:15px; text-align:left;">
+            <label style="color:#ffae00; font-weight:bold; font-size:0.9rem;">Alerta Media (Min):</label>
+            <input type="number" id="input-media" value="{{ alerta_media|default:20 }}" 
+                   style="width:100%; padding:10px; background:#222; border:1px solid #444; color:#fff; border-radius:5px; font-weight:bold; text-align:center;">
+        </div>
+
+        <div style="margin-bottom:25px; text-align:left;">
+            <label style="color:#ff4d4d; font-weight:bold; font-size:0.9rem;">Alerta Crítica (Min):</label>
+            <input type="number" id="input-critica" value="{{ alerta_critica|default:30 }}" 
+                   style="width:100%; padding:10px; background:#222; border:1px solid #444; color:#fff; border-radius:5px; font-weight:bold; text-align:center;">
+        </div>
+
+        <button onclick="guardarConfiguracion()" 
+                style="width:100%; padding:12px; background:#00bfff; border:none; color:#000; font-weight:900; border-radius:5px; cursor:pointer; margin-bottom:10px; text-transform:uppercase;">
+            GUARDAR CAMBIOS
+        </button>
+        
+        <button onclick="cerrarModal()" 
+                style="background:transparent; border:none; color:#888; cursor:pointer; font-size:0.9rem; text-decoration:underline;">
+            Cancelar
+        </button>
+    </div>
+</div>
+
+<script>
+    // --- VARIABLES DE TIEMPO (Vienen de Django) ---
+    // Si cambias los tiempos en el modal, estas variables se actualizarán al recargar
+    let timeMed = {{ alerta_media|default:20 }};
+    let timeHigh = {{ alerta_critica|default:30 }};
+
+    // 1. FUNCIONES DEL MODAL (TIEMPOS)
+    function abrirConfiguracion() {
+        document.getElementById('modal-config').style.display = 'flex';
+    }
+
+    function cerrarModal() {
+        document.getElementById('modal-config').style.display = 'none';
+    }
+
+    function guardarConfiguracion() {
+        const media = document.getElementById('input-media').value;
+        const critica = document.getElementById('input-critica').value;
+        const btn = document.querySelector('button[onclick="guardarConfiguracion()"]');
+
+        const textoOriginal = btn.innerText;
+        btn.innerText = "GUARDANDO...";
+        btn.disabled = true;
+
+        fetch('/api/config-cocina/', {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': '{{ csrf_token }}'
+            },
+            body: JSON.stringify({ media: media, critica: critica })
+        })
+        .then(response => response.json())
+        .then(data => {
+            if(data.status === 'success') {
+                alert('✅ Tiempos ajustados correctamente.');
+                location.reload(); // Recargamos para que el reloj use los nuevos tiempos
+            } else {
+                alert('❌ Error: ' + data.message);
+                btn.innerText = textoOriginal;
+                btn.disabled = false;
+            }
+        })
+        .catch(error => {
+            console.error('Error:', error);
+            btn.innerText = textoOriginal;
+            btn.disabled = false;
+        });
+    }
+
+    // 2. EL RELOJ (CON INTENSIDAD VISUAL)
+
+    function actualizarRelojes() {
+        const badges = document.querySelectorAll('.timer-badge');
+        
+        badges.forEach(badge => {
+            const startStr = badge.getAttribute('data-start');
+            if (!startStr) return;
+
+            const startTime = new Date(startStr).getTime();
+            const now = new Date().getTime();
+            const diff = now - startTime;
+
+            if (diff < 0) return;
+
+            const totalSeconds = Math.floor(diff / 1000);
+            const minutes = Math.floor(totalSeconds / 60);
+            const seconds = totalSeconds % 60;
+
+            badge.innerText = `${minutes < 10 ? "0" + minutes : minutes}:${seconds < 10 ? "0" + seconds : seconds}`;
+
+            // REFERENCIAS AL DOM (Asegúrate que estas clases existan arriba)
+            const ticketHeader = badge.closest('.ticket-header');
+            const ticketCard = badge.closest('.ticket-card'); 
+            
+            if(!ticketHeader || !ticketCard) return;
+
+            // LÓGICA DE COLORES
+            ticketHeader.classList.remove('status-normal', 'status-medium', 'status-late');
+            ticketCard.classList.remove('card-border-late');
+
+            if (minutes >= timeHigh) {
+                ticketHeader.classList.add('status-late'); 
+                ticketCard.classList.add('card-border-late'); 
+            } else if (minutes >= timeMed) {
+                ticketHeader.classList.add('status-medium'); 
+            } else {
+                ticketHeader.classList.add('status-normal'); 
+            }
+        });
+    }
+
+    setInterval(actualizarRelojes, 1000);
+    actualizarRelojes();
+    // 3. FUNCIÓN MARCAR LISTO (Completar pedido)
+    function marcarListo(id) {
+        const card = document.getElementById('pedido-' + id);
+        const btn = card.querySelector('.btn-done');
+
+        btn.innerHTML = '<i class="fas fa-check-circle"></i> ¡LISTO!';
+        btn.style.background = '#00ff00';
+        btn.style.color = '#000';
+        card.style.opacity = '0.5';
+        card.style.pointerEvents = 'none';
+
+        fetch(`/admin/gestion/pedido/${id}/set_listo/`, {
+            method: 'POST',
+            headers: {
+                'X-CSRFToken': '{{ csrf_token }}',
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({})
+        })
+        .then(res => {
+            if(res.ok) {
+                setTimeout(() => {
+                    card.remove();
+                    if (document.querySelectorAll('.ticket-card').length === 0) {
+                        location.reload();
+                    }
+                }, 500);
+            }
+        });
+    }
+
+    // INICIAR EL RELOJ
+    setInterval(actualizarRelojes, 1000);
+    actualizarRelojes(); // Ejecutar inmediatamente al cargar
+</script>
+{% endblock %}

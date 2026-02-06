@@ -1,0 +1,265 @@
+<div class="modal fade" id="reserveModal" tabindex="-1" aria-hidden="true">
+    <div class="modal-dialog modal-xl modal-dialog-centered">
+        <div class="modal-content bg-dark border-warning" style="border-radius: 25px; border: 2px solid #ccff00 !important;">
+            <div class="modal-header border-secondary text-center p-4">
+                <h5 class="modal-title text-warning fw-bold w-100" style="font-size: 1.5rem; letter-spacing: 2px;">RESERVA TU MESA FAVORITA</h5>
+                <button type="button" class="btn-close btn-close-white" data-bs-dismiss="modal"></button>
+            </div>
+            
+            <div class="modal-body p-4">
+                <div class="row">
+                    <div class="col-lg-8 mb-4">
+                        <div class="d-flex justify-content-center gap-2 mb-3">
+                            <button type="button" class="btn btn-sm btn-warning floor-btn active" data-target="map-piso1">PLANTA BAJA</button>
+                            <button type="button" class="btn btn-sm btn-outline-warning floor-btn" data-target="map-piso2">PLANTA ALTA</button>
+                        </div>
+                        
+                        <div class="map-wrapper" style="background:#080808; min-height:500px; border-radius:15px; border: 1px solid #333; position: relative; overflow: hidden; display: flex; justify-content: center; align-items: center;">
+                            <div id="mapa-cliente-container" style="width: 100%; height: 100%;">
+                                {% include "admin/gestion/reserva/includes/mapa_visual.html" %}
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="col-lg-4">
+                        <div class="p-4 bg-black rounded border border-secondary h-100">
+                            <h6 class="text-warning mb-4 fw-bold text-center border-bottom border-secondary pb-2">DATOS DE CONTACTO</h6>
+                            
+                            <div class="mb-3 text-start">
+                                <label class="small text-white-50 mb-1">NOMBRE COMPLETO</label>
+                                <input type="text" id="res-name" class="form-control bg-dark text-white border-secondary py-2" placeholder="Tu nombre...">
+                            </div>
+
+                            <div class="row">
+                                <div class="col-6 mb-3 text-start">
+                                    <label class="small text-white-50 mb-1">TELÉFONO</label>
+                                    <input type="tel" id="res-phone" class="form-control bg-dark text-white border-secondary py-2" placeholder="099...">
+                                </div>
+                                <div class="col-6 mb-3 text-start">
+                                    <label class="small text-white-50 mb-1">PERSONAS</label>
+                                    <input type="number" id="res-people" class="form-control bg-dark text-white border-secondary py-2" value="2" min="1">
+                                </div>
+                            </div>
+
+                            <div class="row">
+                                <div class="col-6 mb-3 text-start">
+                                    <label class="small text-white-50 mb-1">FECHA</label>
+                                    <input type="date" id="res-date" class="form-control bg-dark text-white border-secondary py-2">
+                                </div>
+                                <div class="col-6 mb-3 text-start">
+                                    <label class="small text-white-50 mb-1">HORA</label>
+                                    <input type="time" id="res-time" class="form-control bg-dark text-white border-secondary py-2">
+                                </div>
+                            </div>
+
+                            <input type="hidden" id="res-mesa-num" value="">
+
+                            <div id="mesa-label" class="alert alert-dark text-center fw-bold mb-4" style="border: 1px dashed #ccff00; color: #ccff00; background: rgba(204, 255, 0, 0.05);">
+                                <i class="fas fa-chair me-2"></i> SELECCIONA UNA MESA EN EL MAPA
+                            </div>
+
+                            <button class="btn btn-warning w-100 py-3 fw-bold shadow-neon" 
+                                    onclick="reservarWhatsapp_EstiloTexto()" 
+                                    style="border-radius: 12px; font-size: 1.1rem; background: #ffc107;">
+                                <i class="fab fa-whatsapp me-2"></i> SOLICITAR POR WHATSAPP
+                            </button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+
+<style>
+    /* Forzar visibilidad y tamaño del mapa incluido */
+    .floor-map { display: none; width: 100% !important; height: 450px !important; position: relative !important; margin: 0 auto; }
+    .floor-map.active { display: block !important; }
+    
+    /* Estilo de las mesas en el modal */
+    .mesa-spot { position: absolute !important; cursor: pointer !important; transition: 0.3s; }
+    .mesa-shape { 
+        border: 2px solid #444 !important; 
+        background: #222 !important; 
+        color: #fff !important; 
+        display: flex !important; 
+        align-items: center; 
+        justify-content: center;
+        border-radius: 8px;
+    }
+
+    /* Estado seleccionado: Amarillo Neón Máncora */
+    .mesa-spot.selected-cliente .mesa-shape {
+        background: #ccff00 !important;
+        color: #000 !important;
+        box-shadow: 0 0 20px rgba(204, 255, 0, 0.6) !important;
+        transform: scale(1.2);
+        border: 2px solid #fff !important;
+    }
+
+    /* Ocultar elementos innecesarios del admin */
+    .map-wrapper .floor-tabs, .map-wrapper .stage-title, .map-wrapper .zona-grava, .map-wrapper .zona-deck { 
+        display: none !important; 
+    }
+
+    .shadow-neon:hover {
+        box-shadow: 0 0 20px rgba(255, 193, 7, 0.6);
+        transform: translateY(-2px);
+    }
+
+    /* --- FORMAS CORRECTAS (Basadas en tus modelos) --- */
+
+    /* 1. MESA REDONDA (mesa-redonda) */
+    .mesa-spot.mesa-redonda .mesa-shape {
+        border-radius: 50% !important;
+        width: 50px !important;
+        height: 50px !important;
+        line-height: 46px; /* Centrado vertical */
+    }
+
+    /* 2. MESA LARGA / RECTANGULAR (mesa-larga) */
+    .mesa-spot.mesa-larga .mesa-shape {
+        border-radius: 8px !important;
+        width: 90px !important; /* Más ancha */
+        height: 45px !important;
+        line-height: 41px;
+    }
+
+    /* 3. MESA CUADRADA (mesa-cuadrada) */
+    .mesa-spot.mesa-cuadrada .mesa-shape {
+        border-radius: 6px !important;
+        width: 50px !important;
+        height: 50px !important;
+        line-height: 46px;
+    }
+
+    /* Ajuste general para que los números se vean bien */
+    .mesa-shape {
+        display: flex !important;
+        justify-content: center;
+        align-items: center;
+        font-weight: 900;
+        border: 2px solid #555;
+        background: #222; /* Fondo oscuro por defecto */
+        color: #fff;
+    }
+    /* 1. CONTENEDOR PRINCIPAL: Alinea todo al centro */
+    .mesa-spot {
+        display: flex !important;
+        flex-direction: column !important; /* Pone uno debajo del otro */
+        align-items: center !important;    /* Centra horizontalmente */
+        justify-content: center !important;
+        position: absolute !important;
+        cursor: pointer !important;
+        z-index: 10; /* Asegura que quede por encima del fondo */
+    }
+
+    /* 2. TEXTO DE CAPACIDAD (4p, 6p) */
+    .mesa-capacidad {
+        display: block !important;
+        text-align: center !important;
+        width: 100% !important;
+        margin-top: 5px !important;       /* Separación de la mesa */
+        font-size: 0.8rem !important;     /* Tamaño legible */
+        color: #ffffff !important;        /* Color blanco */
+        font-weight: bold !important;
+        text-shadow: 0px 2px 4px rgba(0,0,0,0.8); /* Sombra para que se lea bien en fondo negro */
+    }
+
+    /* 3. ESTADO SELECCIONADO (Mejora visual opcional) */
+    .mesa-spot.selected-cliente .mesa-capacidad {
+        color: #ccff00 !important; /* Se pone amarillo cuando la seleccionas */
+    }
+</style>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // 1. Lógica de Pisos (Se mantiene igual)
+    const floorButtons = document.querySelectorAll('.floor-btn');
+    const maps = document.querySelectorAll('.floor-map');
+    floorButtons.forEach(btn => {
+        btn.addEventListener('click', function() {
+            floorButtons.forEach(b => {
+                b.classList.remove('btn-warning', 'active');
+                b.classList.add('btn-outline-warning');
+            });
+            this.classList.add('btn-warning', 'active');
+            const target = this.getAttribute('data-target');
+            maps.forEach(map => {
+                map.classList.remove('active');
+                if (map.id === target) map.classList.add('active');
+            });
+        });
+    });
+
+    // 2. Lógica de Mesa (Se mantiene igual)
+    document.addEventListener('click', function(e) {
+        const spot = e.target.closest('.mesa-spot');
+        if (spot) {
+            document.querySelectorAll('.mesa-spot').forEach(m => m.classList.remove('selected-cliente'));
+            spot.classList.add('selected-cliente');
+            const mesaNum = spot.querySelector('.mesa-shape').innerText.trim();
+            const inputMesa = document.getElementById('res-mesa-num');
+            if(inputMesa) inputMesa.value = mesaNum;
+            const label = document.getElementById('mesa-label');
+            label.innerHTML = `<i class="fas fa-check-circle me-2"></i> MESA #${mesaNum} SELECCIONADA`;
+            label.classList.remove('alert-dark');
+            label.classList.add('alert-success');
+            label.style.background = "#ccff00";
+            label.style.color = "#000";
+        }
+    });
+});
+// --- VERSIÓN: ESTILO TICKET (MINIMALISTA Y ELEGANTE) ---
+function reservarWhatsapp_EstiloTexto() {
+    // 1. OBTENER DATOS
+    const nombre = document.getElementById('res-name').value;
+    const telefonoCli = document.getElementById('res-phone').value;
+    const personas = document.getElementById('res-people').value;
+    const fecha = document.getElementById('res-date').value;
+    const hora = document.getElementById('res-time').value;
+    
+    // 2. RECUPERAR MESA
+    let mesaId = document.getElementById('res-mesa-num').value;
+    if (!mesaId) {
+        const mesaVisual = document.querySelector('.mesa-spot.selected-cliente .mesa-shape');
+        if (mesaVisual) mesaId = mesaVisual.innerText.trim();
+    }
+
+    // 3. VALIDACIÓN
+    if (!nombre || !telefonoCli || !personas || !fecha || !hora || !mesaId) {
+        alert("⚠️ Por favor completa todos los datos y selecciona una mesa.");
+        return;
+    }
+
+    // 4. CONSTRUIR MENSAJE TIPO "TICKET DIGITAL"
+    // Usamos símbolos básicos (=, -, >) que nunca fallan.
+    
+    let texto = `*=== SOLICITUD DE RESERVA ===*\n` +
+                `*Máncora Marisquería*\n\n` +
+                
+                `*DATOS DEL CLIENTE*\n` +
+                `> Nombre:   ${nombre.toUpperCase()}\n` +
+                `> Teléfono: ${telefonoCli}\n\n` +
+                
+                `*DETALLE DE LA VISITA*\n` +
+                `----------------------------------\n` +
+                `*MESA:* #${mesaId}\n` +
+                `*PERSONAS:* ${personas}\n` +
+                `*FECHA:* ${fecha}\n` +
+                `*HORA:* ${hora}\n` +
+                `----------------------------------\n\n` +
+                
+                `_Quedo atento a su confirmación._\n` +
+                `*===========================*`;
+
+    // 5. ENVIAR
+    const telRestaurante = "593991414440"; 
+    
+    // encodeURIComponent protege las tildes y espacios
+    const url = `https://wa.me/${telRestaurante}?text=${encodeURIComponent(texto)}`;
+
+    window.open(url, '_blank');
+    
+    setTimeout(() => { location.reload(); }, 2000);
+}
+</script>

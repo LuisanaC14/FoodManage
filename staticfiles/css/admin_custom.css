@@ -1,0 +1,446 @@
+@import url("asistencia_custom.css");
+@import url("estilos_marca.css");
+@import url("visual_mesa.css");
+@import url("login_custom.css");
+/* 1. FONDO Y TABLA GENERAL */
+#changelist { background-color: #0f0f0f !important; padding: 20px; }
+#result_list { border-collapse: separate !important; border-spacing: 0 15px !important; width: 100%; }
+#result_list thead th { background: transparent !important; color: #888 !important; text-transform: uppercase; font-size: 0.8rem; letter-spacing: 1px; border: none !important; }
+
+/* 2. FILAS (SOLUCIÓN COMPACTA: SIN FLOTAR PARA NO TAPAR MENÚS) */
+#result_list tbody tr { 
+    background: #1a1a1a !important; 
+    box-shadow: 0 5px 15px rgba(0,0,0,0.3); 
+    transition: all 0.2s ease; 
+}
+#result_list tbody tr:hover { 
+    /* ELIMINAMOS 'transform' PARA QUE NO ROMPA EL MENÚ */
+    background: #222 !important; 
+    box-shadow: 0 0 20px rgba(204,255,0,0.15) !important; 
+    border-left: 4px solid #ccff00; 
+}
+
+#result_list td { 
+    padding: 12px !important; 
+    border-top: 1px solid #333 !important; 
+    border-bottom: 1px solid #333 !important; 
+    color: #fff; 
+    vertical-align: middle !important; 
+}
+
+#result_list td:first-child { border-left: 4px solid transparent; border-radius: 8px 0 0 8px; }
+#result_list td:last-child { border-radius: 0 8px 8px 0; }
+#result_list tr:hover td:first-child { border-left-color: #ccff00 !important; }
+/* 3. ESTILOS DE ESTADO (BADGES) */
+.badge-status { padding: 5px 12px; border-radius: 50px; font-weight: 900; text-transform: uppercase; font-size: 0.75rem; letter-spacing: 1px; }
+.status-pendiente { background: rgba(255, 174, 0, 0.15); color: #ffae00; border: 1px solid #ffae00; }
+.status-completado { background: rgba(204, 255, 0, 0.15); color: #ccff00; border: 1px solid #ccff00; }
+
+/* 4. BOTONES Y TEXTOS */
+.btn-admin-edit { background: #00bfff; color: #000; padding: 8px 20px; border-radius: 6px; font-weight: 900; text-transform: uppercase; font-size: 0.8rem; display: inline-flex; align-items: center; gap: 5px; transition: 0.3s; text-decoration: none !important; }
+.btn-admin-edit:hover { background: #fff; box-shadow: 0 0 15px #00bfff; transform: scale(1.05); }
+.text-mesa { font-weight: bold; color: #fff; font-size: 1.1rem; }
+.text-total { font-family: 'Consolas', monospace; color: #00eaff; font-size: 1.2rem; font-weight: bold; }
+
+/* 5. LOGIN CYBERPUNK */
+body.login-page { background: radial-gradient(circle at center, #1e1e1e 0%, #000000 100%) !important; min-height: 100vh; display: flex; align-items: center; justify-content: center; }
+.login-box { background: rgba(15, 15, 15, 0.95) !important; border: 2px solid #ccff00 !important; border-radius: 20px !important; box-shadow: 0 0 50px rgba(204, 255, 0, 0.2), inset 0 0 20px rgba(204, 255, 0, 0.1) !important; padding: 10px !important; width: 450px !important; margin-top: 0 !important; }
+.login-logo a { color: #ffffff !important; font-weight: 900 !important; text-transform: uppercase; letter-spacing: 4px; text-shadow: 0 0 10px rgba(204, 255, 0, 0.8), 0 0 30px rgba(0, 191, 255, 0.6) !important; font-size: 2rem !important; }
+.login-page .brand-link { background: transparent !important; border: none !important; }
+.login-card-body { background: transparent !important; padding: 30px !important; border: none !important; color: #fff !important; }
+.login-box-msg { color: #aaa !important; font-weight: bold; text-transform: uppercase; font-size: 0.9rem; }
+.login-card-body input.form-control { background-color: #0f0f0f !important; border: 1px solid #333 !important; border-right: none !important; color: #fff !important; border-radius: 10px 0 0 10px !important; padding: 15px !important; font-weight: bold; font-size: 1.1rem; height: 55px; }
+.login-card-body .input-group-text { background-color: #0f0f0f !important; border: 1px solid #333 !important; border-left: none !important; color: #ccff00 !important; border-radius: 0 10px 10px 0 !important; }
+.login-card-body input.form-control:focus, .login-card-body input.form-control:focus + .input-group-append .input-group-text { border-color: #ccff00 !important; box-shadow: 0 0 15px rgba(204, 255, 0, 0.2) !important; }
+.login-card-body button[type="submit"] { background: linear-gradient(135deg, #ccff00, #aacc00) !important; color: #000 !important; border: none !important; padding: 15px !important; border-radius: 50px !important; font-weight: 900 !important; text-transform: uppercase; letter-spacing: 2px; font-size: 1.1rem; width: 100%; box-shadow: 0 5px 20px rgba(204, 255, 0, 0.4) !important; transition: all 0.3s ease; margin-top: 20px; }
+.login-card-body button[type="submit"]:hover { transform: scale(1.05); box-shadow: 0 0 40px rgba(204, 255, 0, 0.7) !important; }
+.login-card-body .icheck-primary, .login-card-body p.mb-1, .login-card-body p.mb-0 { display: none !important; }
+.login-card-body a { color: #00bfff !important; }
+
+/* ============================================================
+   8. PANEL DE ADMINISTRACIÓN (ICONOS NEÓN)
+   ============================================================ */
+.main-header .btn-primary, .navbar .btn-primary { display: none !important; }
+
+.nav-sidebar .nav-link[href*="/producto/"] i { color: #ccff00 !important; text-shadow: 0 0 8px rgba(204, 255, 0, 0.8); }
+.nav-sidebar .nav-link[href*="/venta/"] i { color: #fc9c00 !important; text-shadow: 0 0 8px rgba(255, 200, 0, 0.8); }
+.nav-sidebar .nav-link[href*="/reserva/"] i { color: #00eaff !important; text-shadow: 0 0 8px rgba(0, 234, 255, 0.8); }
+.nav-sidebar .nav-link[href*="/asistencia/"] i { color: #07a511 !important; text-shadow: 0 0 8px rgba(0, 249, 33, 0.414); }
+.nav-sidebar .nav-link[href*="/mesa/"] i { color: #da6e01a9 !important; text-shadow: 0 0 8px rgba(255, 119, 0, 0.434) !important;}
+.nav-sidebar .nav-link[href*="cocina"] i { color: #ff3131 !important; text-shadow: 0 0 8px rgba(255, 49, 49, 0.8) !important; }
+.nav-sidebar .nav-link i.fa-list-alt { color: #f200ff !important; text-shadow: 0 0 10px rgb(182, 0, 172) !important; }
+.nav-sidebar .nav-link i.fa-money-bill-wave {color: #00fd83 !important; text-shadow: 0 0 8px rgba(0, 230, 118, 0.8) !important;}
+.nav-sidebar .nav-link i.fa-cash-register { color: #1275ff !important; text-shadow: 0 0 10px rgb(23, 84, 252) !important;}
+.nav-sidebar .nav-link[href*="/porcion/"] i { color: #ff3333 !important; text-shadow: 0 0 10px rgba(255, 51, 51, 0.6)!important; transition: transform 0.3s;}
+.nav-sidebar .nav-link[href*="/user/"] i, .nav-sidebar .nav-link[href*="/group/"] i { color: #00bfff !important; text-shadow: 0 0 8px rgba(0, 191, 255, 0.8); }
+.nav-sidebar .nav-link:hover i { transform: scale(1.2); filter: brightness(1.3); }
+
+/* 7. PANTALLA ELIMINAR Y ALERTAS */
+.callout.callout-danger, .alert-danger { background: rgba(255, 0, 0, 0.1) !important; border: 1px solid #ff4d4d !important; border-left: 5px solid #ff4d4d !important; color: #ff4d4d !important; box-shadow: 0 0 20px rgba(255, 77, 77, 0.2); border-radius: 8px; }
+.callout.callout-danger h5, .alert-danger h5 { font-weight: 900; text-transform: uppercase; letter-spacing: 1px; }
+.content .card { background: #111 !important; border: 1px solid #333 !important; box-shadow: 0 10px 30px rgba(0,0,0,0.5); }
+.content .card-header { background: #1a1a1a !important; border-bottom: 1px solid #333; color: #fff; }
+.content ul li { color: #ddd; list-style-type: none; padding: 5px 0; font-family: monospace; font-size: 1rem; }
+.content ul li:before { content: ">> "; color: #ff4d4d; font-weight: bold; }
+.btn-danger, input[type="submit"][value*="seguro"] { background: transparent !important; border: 2px solid #ff4d4d !important; color: #ff4d4d !important; font-weight: 900 !important; text-transform: uppercase; letter-spacing: 1px; padding: 12px 25px; border-radius: 5px; box-shadow: 0 0 10px rgba(255, 77, 77, 0.2); transition: all 0.3s ease; }
+.btn-danger:hover, input[type="submit"][value*="seguro"]:hover { background: #ff4d4d !important; color: #000 !important; box-shadow: 0 0 30px rgba(255, 77, 77, 0.6); transform: scale(1.05); }
+.btn-default, .btn-secondary, a.btn-default { background: transparent !important; border: 1px solid #444 !important; color: #aaa !important; text-transform: uppercase; font-weight: bold; padding: 12px 25px; border-radius: 5px; margin-top: 10px; }
+.btn-default:hover, .btn-secondary:hover { border-color: #fff !important; color: #fff !important; background: #222 !important; }
+.card-body .float-right, .card-body .col-md-3 { background: #1a1a1a; padding: 15px; border-radius: 10px; border: 1px solid #333; }
+.card-body h4 { color: #fff; text-transform: uppercase; font-size: 1rem; border-bottom: 2px solid #ff4d4d; padding-bottom: 5px; margin-bottom: 15px; display: inline-block; }
+
+/* 8. ACCIONES MASIVAS Y GLOBAL */
+.btn-neon-delete { background: rgba(255, 0, 0, 0.1); border: 2px solid #ff4d4d; color: #ff4d4d !important; padding: 10px 25px; border-radius: 8px; font-weight: 900; text-transform: uppercase; display: inline-flex; align-items: center; gap: 10px; transition: 0.3s; font-size: 0.9rem; cursor: pointer; margin-right: 15px; text-decoration: none !important; }
+.btn-neon-delete:hover { background: #ff4d4d; color: #000 !important; box-shadow: 0 0 25px rgba(255, 77, 77, 0.8); transform: scale(1.05); }
+.actions .action-counter { color: #888; font-weight: bold; font-family: monospace; font-size: 1rem; }
+.content-wrapper { background-color: #1c1c1d !important; min-height: calc(100vh - 100px) !important; }
+.main-footer { background-color: #181818 !important; border: none !important; color: #666 !important; padding: 10px 20px !important; }
+.main-header { border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important; background: rgba(20, 20, 20, 0.9) !important; backdrop-filter: blur(5px); }
+
+/* 9. SCROLLBAR Y SELECCIÓN */
+::-webkit-scrollbar { width: 10px; height: 10px; background-color: #000; }
+::-webkit-scrollbar-track { background: #050505; }
+::-webkit-scrollbar-thumb { background-color: #333; border-radius: 5px; border: 1px solid #444; }
+::-webkit-scrollbar-thumb:hover { background-color: #ccff00; border-color: #ccff00; box-shadow: 0 0 10px #ccff00; }
+::selection { background: #ff00de; color: #fff; text-shadow: 0 0 5px rgba(255, 0, 222, 0.5); }
+
+/* 10. HISTORIAL Y NOTAS */
+a.historylink, .btn-secondary { font-size: 0 !important; border: 2px solid #007bff !important; color: #007bff !important; background-color: #1a1a1a !important; width: 100% !important; height: 50px !important; border-radius: 8px !important; margin-top: 15px !important; display: flex !important; justify-content: center !important; align-items: center !important; transition: 0.3s; text-decoration: none !important; }
+a.historylink::before, .btn-secondary::before { content: "\f1da" !important; font-family: "Font Awesome 5 Free"; font-weight: 900; font-size: 1.1rem !important; margin-right: 10px !important; }
+a.historylink::after, .btn-secondary::after { content: "HISTORIAL DE CAMBIOS" !important; font-size: 0.9rem !important; font-weight: 900 !important; text-transform: uppercase !important; letter-spacing: 1px !important; }
+a.historylink:hover, .btn-secondary:hover { background: linear-gradient(135deg, #007bff, #0056b3) !important; box-shadow: 0 0 20px rgba(0, 123, 255, 0.6) !important; transform: scale(1.01); }
+a.historylink:hover::before, a.historylink:hover::after, .btn-secondary:hover::before, .btn-secondary:hover::after { color: #fff !important; }
+
+body .tabular td input[type="text"], body .tabular td textarea { background-color: #151515 !important; color: #fff !important; border: 1px solid #444 !important; }
+textarea[name*="nota"], input[name*="nota"] { background-color: #000 !important; color: #ccff00 !important; font-weight: 900 !important; font-size: 1.1rem !important; border: 2px solid #ccff00 !important; min-width: 250px !important; padding: 10px !important; border-radius: 5px !important; }
+textarea[name*="nota"]:focus, input[name*="nota"]:focus { box-shadow: 0 0 15px rgba(204, 255, 0, 0.5) !important; outline: none !important; }
+
+/* 11. SISTEMA DELETE Y AGREGAR */
+.inline-group .tabular tr.form-row td.delete { display: flex !important; justify-content: center !important; align-items: center !important; height: 55px !important; width: 60px !important; padding: 0 !important; border-bottom: 1px solid #333 !important; }
+.btn-trash-custom, a.inline-deletelink { display: flex !important; justify-content: center; align-items: center; margin: 0 !important; padding: 0 !important; float: none !important; position: static !important; width: 38px !important; height: 38px !important; border: 2px solid #ff4d4d !important; border-radius: 8px !important; color: #ff4d4d !important; font-size: 1.2rem !important; transition: 0.2s !important; text-decoration: none !important; }
+a.inline-deletelink { font-size: 0 !important; }
+a.inline-deletelink::before { content: "\f2ed"; font-family: "Font Awesome 5 Free" !important; font-weight: 900 !important; font-size: 1.2rem !important; }
+.btn-trash-custom:hover, .btn-trash-custom.active, a.inline-deletelink:hover { background-color: #ff4d4d !important; color: #fff !important; box-shadow: 0 0 10px rgba(255, 77, 77, 0.6) !important; transform: scale(1.1); }
+a.inline-deletelink:hover::before { color: #fff !important; }
+td.delete input[type="checkbox"] { display: none !important; }
+tr.row-deleted td:not(.delete) { opacity: 0.5 !important; text-decoration: line-through !important; color: #ff8888 !important; }
+
+.inline-group .tabular tr.add-row td { display: table-cell !important; width: auto !important; text-align: left !important; padding: 10px !important; }
+.inline-group .tabular tr.add-row a { display: inline-block !important; width: auto !important; }
+.field-producto .related-widget-wrapper-link, .inline-group .tabular tr.add-row { display: none !important; }
+.field-producto a.add-related, .field-producto a.change-related, .field-producto a.delete-related, .field-producto a.view-related { display: none !important; visibility: hidden !important; }
+.field-producto select { width: 100% !important; max-width: 100% !important; }
+.inline-group .tabular { border-bottom: 2px solid #333 !important; margin-bottom: 20px !important; }
+
+/* 12. CENTRADO DE TICKETS */
+.field-numero_diario, th.column-numero_diario, .field-id_decorado, th.column-id_decorado { text-align: center !important; }
+#result_list td.field-numero_diario, #result_list td.field-id_decorado { padding-left: 0 !important; padding-right: 0 !important; }
+
+/* =============================================================
+   ARREGLO FINAL: CHECKBOXS Y TICKET
+   ============================================================= */
+
+/* 1. RESET: Permitimos clics en toda la cabecera primero */
+#result_list thead th {
+    pointer-events: auto !important; 
+    cursor: default !important;
+}
+
+/* 2. DESACTIVAR ORDENAMIENTO (Solo matamos los enlaces de texto) */
+/* Esto hace que no puedas dar clic a "CLIENTE" o "FECHA" para ordenar */
+#result_list thead th a {
+    pointer-events: none !important;
+    color: #888 !important; /* Gris */
+    text-decoration: none !important;
+}
+
+/* 3. REVIVIR EL CHECKBOX "SELECCIONAR TODO" (CORREGIDO Z-INDEX) */
+/* Apuntamos directo al ID del checkbox maestro de Django */
+#result_list thead th.action-checkbox-column, 
+#action-toggle {
+    pointer-events: auto !important; /* CLIC PERMITIDO */
+    cursor: pointer !important;
+    z-index: 1 !important; /* <--- YA NO SE MONTA SOBRE EL MENÚ */
+    overflow: visible !important;
+}
+
+/* Hacemos el checkbox maestro un poco más pequeño (17px) */
+#action-toggle {
+    display: inline-block !important;
+    width: 17px !important;
+    height: 17px !important;
+    position: relative !important;
+    top: 3px;
+}
+
+/* 4. ARREGLO FINAL DEL CUADRO (MODO LIMPIO Y SEGURO) */
+td.action-checkbox {
+    overflow: hidden !important; /* Corta cualquier cosa que intente salirse */
+    width: 35px !important;
+    text-align: center !important;
+    vertical-align: middle !important;
+    z-index: 0 !important;
+}
+
+td.action-checkbox input {
+    /* Reseteamos el input a lo más básico y funcional posible */
+    appearance: auto !important; /* Usa el estilo nativo del navegador */
+    -webkit-appearance: auto !important;
+    position: static !important; /* Quieto en su sitio, sin flotar */
+    display: inline-block !important;
+    margin: 0 !important;
+    width: 18px !important;
+    height: 18px !important;
+    opacity: 1 !important; 
+    z-index: 0 !important;
+    cursor: pointer !important;
+    box-shadow: none !important; 
+    border: 1px solid #444 !important;
+    
+    /* Tu toque de estilo: Verde Neón al marcarlo */
+    accent-color: #ccff00 !important; 
+}
+
+/* ELIMINAMOS CUALQUIER CUADRO FANTASMA DEL TEMA JAZZMIN */
+td.action-checkbox input::before,
+td.action-checkbox input::after {
+    display: none !important;
+    content: "" !important;
+}
+
+/* 5. CENTRAR EL NÚMERO DE TICKET (1) */
+/* Centramos la celda */
+td.field-numero_diario, th.column-numero_diario {
+    text-align: center !important;
+    vertical-align: middle !important;
+}
+
+/* Centramos el enlace verde */
+td.field-numero_diario a {
+    display: flex !important;
+    justify-content: center !important;
+    align-items: center !important;
+    width: 100% !important;
+    height: 100% !important;
+    color: #ccff00 !important;
+    font-weight: 900 !important;
+    font-size: 1.2rem !important;
+    text-decoration: none !important;
+}
+
+/* =============================================================
+   CORRECCIÓN DEFINITIVA DE MENÚS (SIEMPRE ENCIMA DE TODO)
+   ============================================================= */
+/* Elevamos los menús desplegables al máximo nivel posible */
+.select2-container, 
+.select2-dropdown, 
+.select2-results,
+.dropdown-menu {
+    z-index: 999999 !important; /* NIVEL DIOS: NADA LO PUEDE TAPAR */
+}
+
+/* =============================================================
+   REFUERZO DE CAPAS (FILTROS SIEMPRE ARRIBA)
+   ============================================================= */
+/* Elevamos el contenedor de los filtros/acciones */
+.actions, #changelist-filter, .module-filter {
+    position: relative;
+    z-index: 999995 !important; /* Justo debajo del menú desplegable */
+}
+
+/* Forzamos al menú desplegable a ser el rey absoluto */
+.select2-container--open,
+.select2-dropdown {
+    z-index: 999999 !important; 
+}
+
+/* =============================================================
+   BLINDAJE DEL MENÚ (FONDO SÓLIDO)
+   ============================================================= */
+/* Aseguramos que la lista desplegable tenga fondo negro sólido */
+select option, 
+.select2-dropdown, 
+.select2-results {
+    background-color: #1a1a1a !important;
+    color: #fff !important;
+    opacity: 1 !important;
+    border: 1px solid #333 !important;
+}
+
+/* Arreglo específico para listas nativas*/
+select:focus > option:checked {
+    background: #ccff00 !important;
+    color: #000 !important;
+}
+
+/* ============================================================
+   11. BOTONES ESTILO NEÓN AZUL (GUARDAR/BORRAR/HISTORIAL)
+   ============================================================ */
+input[name="_save"], input[name="_addanother"], input[name="_continue"], .submit-row a.deletelink, .submit-row a.historylink, .card-footer a.deletelink, .card-footer a.historylink, .btn-danger, .btn-secondary {
+    background: #1a1a1a !important; border: 2px solid #007bff !important; color: #007bff !important;
+    width: 100% !important; height: 50px !important; border-radius: 8px !important;
+    font-weight: 900 !important; text-transform: uppercase !important; font-size: 0.9rem !important; text-decoration: none !important;
+    display: flex !important; justify-content: center !important; align-items: center !important;
+    box-shadow: 0 0 10px rgba(0, 123, 255, 0.1) !important; cursor: pointer !important; transition: all 0.3s ease !important; margin-bottom: 10px !important;
+}
+
+input[name="_save"]:hover, input[name="_addanother"]:hover, input[name="_continue"]:hover, .submit-row a.deletelink:hover, .submit-row a.historylink:hover, .card-footer a.deletelink:hover, .card-footer a.historylink:hover, .btn-danger:hover, .btn-secondary:hover {
+    background: linear-gradient(135deg, #007bff, #0056b3) !important; color: white !important;
+    box-shadow: 0 0 20px rgba(0, 123, 255, 0.6) !important; transform: scale(1.01);
+}
+
+.selector { display: flex !important; width: 100% !important; justify-content: space-between !important; margin: 20px 0 !important; align-items: center; background: transparent !important; }
+.selector-available, .selector-chosen { flex: 1 !important; min-width: 225px !important; display: flex !important; flex-direction: column !important; background: rgba(20, 20, 20, 0.8) !important; border-radius: 12px; border: 1px solid rgba(204, 255, 0, 0.2); overflow: hidden; box-shadow: 0 5px 15px rgba(0,0,0,0.5); }
+.selector h2 { background: #111 !important; color: #ccff00 !important; font-size: 0.95rem !important; font-weight: bold !important; text-transform: uppercase; text-align: center !important; margin: 0 !important; padding: 10px 5px !important; border-bottom: 1px solid #333; height: 50px !important; display: flex !important; align-items: center !important; justify-content: center !important; }
+.selector-filter { background: #222 !important; border-bottom: 1px solid #333 !important; padding: 10px !important; }
+.selector-filter label { display: none !important; }
+.selector-filter input { width: 100% !important; background: #000 !important; border: 1px solid #444 !important; color: white !important; border-radius: 6px; padding: 8px 12px; }
+.selector-filter input:focus { border-color: #ccff00 !important; outline: none; }
+.selector select { height: 350px !important; background: transparent !important; color: #eee !important; border: none !important; }
+.selector select option { padding: 10px 15px !important; border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important; }
+.selector select option:checked { background: rgba(204, 255, 0, 0.15) !important; color: #ccff00 !important; border-left: 4px solid #ccff00 !important; }
+
+/* Flechas Centrales: Fondo Transparente/Negro */
+ul.selector-chooser { width: 80px !important; display: flex !important; flex-direction: column !important; justify-content: center !important; align-items: center !important; padding: 0 !important; margin: 0 15px !important; background: transparent !important; border: none !important; box-shadow: none !important; }
+ul.selector-chooser li { list-style: none !important; margin: 10px 0 !important; }
+ul.selector-chooser li:before { display: none !important; }
+.selector-add, .selector-remove { background: linear-gradient(135deg, #1abc9c, #16a085) !important; border: 1px solid rgba(255,255,255,0.2) !important; width: 45px !important; height: 45px !important; border-radius: 50% !important; display: block !important; position: relative; text-indent: -9999px !important; overflow: hidden; box-shadow: 0 0 15px rgba(26, 188, 156, 0.5); transition: 0.3s; }
+.selector-remove { background: linear-gradient(135deg, #ff6b6b, #ee5253) !important; box-shadow: 0 0 15px rgba(255, 107, 107, 0.5); }
+.selector-add:after, .selector-remove:after { font-family: "Font Awesome 5 Free"; font-weight: 900; color: white; position: absolute; top: 50%; left: 50%; transform: translate(-50%, -50%); font-size: 1.2rem; pointer-events: none; text-indent: 0; }
+.selector-add:after { content: "\f061"; } .selector-remove:after { content: "\f060"; }
+.selector-add:hover, .selector-remove:hover { transform: scale(1.15); filter: brightness(1.2); }
+
+/* Botones Inferiores */
+a.selector-chooseall, a.selector-clearall { display: block !important; text-align: center !important; padding: 12px !important; font-weight: bold !important; text-transform: uppercase; font-size: 0.8rem !important; transition: 0.3s; background: #1a1a1a !important; }
+a.selector-chooseall { color: #1abc9c !important; border-top: 1px solid #1abc9c; }
+a.selector-chooseall:hover { background: #1abc9c !important; color: #fff !important; }
+a.selector-clearall { color: #ff6b6b !important; border-top: 1px solid #ff6b6b; }
+a.selector-clearall:hover { background: #ff6b6b !important; color: #fff !important; }
+
+
+/* ============================================================
+   3. USUARIO
+   ============================================================ */
+.user-panel {
+    margin-top: 0 !important;
+    padding-top: 10px !important;
+    padding-bottom: 15px !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.05) !important;
+    display: flex !important;
+    align-items: center !important;
+}
+.user-panel .image { padding-left: 10px !important; }
+.user-panel .info { padding-left: 10px !important; }
+.user-panel .info a { color: #fff !important; font-weight: 600; }
+
+/* ============================================================
+   4. BOTÓN "PANEL DE CONTROL" (ALINEADO A LA IZQUIERDA)
+   ============================================================ */
+.nav-sidebar > .nav-item:first-child > .nav-link {
+    /* ESTILO VISUAL (NEÓN) */
+    background: rgba(0, 0, 0, 0.3) !important;
+    border: 2px solid #ccff00 !important;
+    color: #ccff00 !important;
+    text-shadow: 0 0 5px rgba(204, 255, 0, 0.5) !important;
+    box-shadow: 0 0 10px rgba(204, 255, 0, 0.2), inset 0 0 10px rgba(204, 255, 0, 0.1) !important;
+    
+    /* TAMAÑO SEGURO */
+    width: calc(100% - 20px) !important;
+    margin: 15px auto !important;
+    height: 45px !important;
+    border-radius: 50px !important;
+    
+    /* --- AQUÍ MOVEMOS EL TEXTO --- */
+    display: flex !important;
+    align-items: center !important;
+    justify-content: flex-start !important; /* Alineación a la IZQUIERDA */
+    padding-left: 20px !important;          /* Espacio desde el borde izquierdo */
+    
+    /* AJUSTE DE TEXTO PARA QUE QUEPA BIEN */
+    font-weight: 900 !important;
+    text-transform: uppercase !important;
+    font-size: 0.85rem !important; /* Un poquitín más chico para asegurar que quepa */
+    letter-spacing: 0.5px !important;
+    
+    overflow: hidden !important; 
+    white-space: nowrap !important;
+    transition: all 0.3s ease !important;
+}
+
+/* --- ELEMENTOS INTERNOS --- */
+.nav-sidebar > .nav-item:first-child > .nav-link p {
+    margin: 0 !important;
+    padding: 0 !important;
+    border: none !important;
+    transform: none !important;
+    display: inline-block !important;
+    transition: color 0.3s ease !important;
+}
+
+.nav-sidebar > .nav-item:first-child > .nav-link i {
+    margin-right: 15px !important; /* Separación bonita entre icono y texto */
+    margin-left: 0 !important;
+    transform: none !important;
+    font-size: 1.2rem !important;
+    color: #ccff00 !important;
+    transition: color 0.3s ease !important;
+}
+
+/* CAMBIO DE COLOR EN HOVER */
+.nav-sidebar > .nav-item:first-child > .nav-link:hover p,
+.nav-sidebar > .nav-item:first-child > .nav-link:hover i {
+    color: #000000 !important;
+}
+
+/* --- ESTADO CERRADO (CÍRCULO) --- */
+/* Cuando se cierra, el botón se hace un círculo perfecto y centrado */
+.sidebar-collapse .nav-sidebar > .nav-item:first-child > .nav-link {
+    width: 42px !important; 
+    height: 42px !important;
+    margin: 15px auto !important; 
+    padding: 0 !important; /* Sin padding para centrar el icono */
+    border-radius: 50% !important;
+    justify-content: center !important; /* Centrado total */
+}
+.sidebar-collapse .nav-sidebar > .nav-item:first-child > .nav-link p { display: none !important; }
+.sidebar-collapse .nav-sidebar > .nav-item:first-child > .nav-link i { margin: 0 !important; }
+
+
+/* ============================================================
+   5. RESTO DE ITEMS (ESTOS SÍ SE MUEVEN)
+   ============================================================ */
+.nav-sidebar .nav-item > .nav-link {
+    color: #aeb9c0 !important;
+    margin: 4px 10px !important;
+    border-radius: 10px !important;
+    padding: 10px 15px !important;
+    transition: all 0.3s ease !important;
+    border: 1px solid transparent;
+}
+/* EFECTO MOVIMIENTO SOLO PARA LOS OTROS, NO EL PRIMERO */
+.nav-sidebar > .nav-item:not(:first-child) > .nav-link:hover {
+    background-color: rgba(255, 255, 255, 0.08) !important;
+    color: #fff !important;
+    transform: translateX(5px);
+    border: 1px solid rgba(255, 255, 255, 0.1);
+}
+.nav-sidebar > .nav-item:not(:first-child) > .nav-link:hover i {
+    color: #ccff00 !important;
+    transform: scale(1.1);
+}
+.nav-sidebar .nav-item > .nav-link.active {
+    background: rgba(204, 255, 0, 0.15) !important;
+    color: #ccff00 !important;
+    border-left: 3px solid #ccff00 !important;
+    box-shadow: inset 0 0 15px rgba(204, 255, 0, 0.05);
+}
+.nav-sidebar .nav-item > .nav-link.active i { color: #ccff00 !important; }
+
+.nav-header {
+    background: transparent !important;
+    color: #6c757d !important;
+    font-weight: bold;
+    padding-left: 20px !important;
+    margin-top: 15px;
+    font-size: 0.8rem;
+}/*

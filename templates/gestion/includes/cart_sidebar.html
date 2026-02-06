@@ -1,0 +1,161 @@
+<div id="cart-sidebar" class="cart-sidebar">
+    
+    <div class="cart-header d-flex justify-content-between align-items-center p-3 border-bottom border-secondary" style="background: #111;">
+        <h5 class="m-0 fw-bold text-white d-flex align-items-center gap-2">
+            <i class="fas fa-shopping-cart" style="color: #ccff00;"></i> TU PEDIDO
+        </h5>
+        <button onclick="closeCart()" class="btn btn-sm btn-icon-close text-white">
+            <i class="fas fa-times fa-lg"></i>
+        </button>
+    </div>
+
+    <div class="cart-body p-3" style="background: #000; overflow-y: auto; height: calc(100% - 140px);">
+        
+        <div id="cart-empty-msg" class="text-center mt-5 text-muted d-none">
+            <i class="fas fa-shopping-basket fa-3x mb-3" style="color: #333;"></i>
+            <p>Tu carrito está vacío.</p>
+            <button onclick="closeCart()" class="btn btn-outline-light btn-sm mt-2">Ver Menú</button>
+        </div>
+
+        <div class="cart-item d-flex align-items-center gap-3 mb-3 p-2 rounded" style="background: #111; border: 1px solid #333;">
+            <img src="https://via.placeholder.com/80" alt="Plato" class="rounded" style="width: 60px; height: 60px; object-fit: cover;">
+            
+            <div class="flex-grow-1">
+                <h6 class="m-0 text-white small fw-bold">Ceviche Mixto</h6>
+                <small class="text-neon fw-bold">$12.50</small>
+            </div>
+
+            <div class="d-flex align-items-center gap-2 bg-dark rounded px-2 py-1 border border-secondary">
+                <button class="btn btn-xs text-white p-0"><i class="fas fa-minus small"></i></button>
+                <span class="text-white small fw-bold">1</span>
+                <button class="btn btn-xs text-white p-0"><i class="fas fa-plus small"></i></button>
+            </div>
+
+            <button class="btn text-danger p-0 ms-1"><i class="fas fa-trash-alt small"></i></button>
+        </div>
+        </div>
+
+    <div class="cart-footer p-3 border-top border-secondary position-absolute bottom-0 w-100" style="background: #111;">
+        <div class="d-flex justify-content-between text-white mb-3">
+            <span class="text-muted small">Total a Pagar:</span>
+            <span class="fw-bold fs-5 text-neon">$12.50</span>
+        </div>
+        <a href="#" class="btn btn-neon-block w-100 fw-bold py-2 rounded-pill text-uppercase">
+            Confirmar Pedido <i class="fas fa-arrow-right ms-2"></i>
+        </a>
+    </div>
+
+</div>
+
+<div id="cart-overlay" onclick="closeCart()" class="cart-overlay"></div>
+
+<style>
+    /* Variables */
+    .text-neon { color: #ccff00 !important; }
+
+    /* Contenedor Principal (Sidebar) */
+    .cart-sidebar {
+        position: fixed;
+        top: 0;
+        right: -100%; /* Oculto a la derecha */
+        width: 400px; /* Ancho en PC */
+        height: 100vh;
+        background: #000;
+        z-index: 1050;
+        transition: right 0.4s cubic-bezier(0.19, 1, 0.22, 1); /* Efecto suave */
+        box-shadow: -5px 0 30px rgba(0,0,0,0.8);
+        border-left: 1px solid #333;
+    }
+
+    /* Clase activa para mostrarlo */
+    .cart-sidebar.active { right: 0; }
+
+    /* Fondo oscuro detrás */
+    .cart-overlay {
+        position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+        background: rgba(0,0,0,0.7);
+        backdrop-filter: blur(3px);
+        z-index: 1040;
+        opacity: 0; visibility: hidden;
+        transition: 0.3s;
+    }
+    .cart-overlay.active { opacity: 1; visibility: visible; }
+
+    /* Botón Cerrar */
+    .btn-icon-close:hover { transform: rotate(90deg); color: #ccff00 !important; transition: 0.3s; }
+
+    /* Botón Confirmar */
+    .btn-neon-block {
+        background: #ccff00; color: #000; transition: 0.3s;
+    }
+    .btn-neon-block:hover {
+        background: #fff; box-shadow: 0 0 15px #ccff00; transform: translateY(-2px);
+    }
+
+    /* --- RESPONSIVE MÓVIL (Aquí está la clave) --- */
+    @media (max-width: 576px) {
+        .cart-sidebar {
+            width: 85%; /* En celular ocupa casi toda la pantalla, pero deja ver un borde */
+            max-width: 350px; 
+        }
+    }
+</style>
+
+<script>
+   function openCart() {
+    renderizarResumenSidebar(); // <-- Nueva línea
+    document.getElementById('cart-sidebar').classList.add('active');
+    document.getElementById('cart-overlay').classList.add('active');
+}
+
+    function closeCart() {
+        document.getElementById('cart-sidebar').classList.remove('active');
+        document.getElementById('cart-overlay').classList.remove('active');
+    }
+    function agregarAlCarrito(id, nombre, precio) {
+    let cart = JSON.parse(localStorage.getItem('mancora_cart')) || [];
+    cart.push({ id: id, name: nombre, price: parseFloat(precio) });
+    localStorage.setItem('mancora_cart', JSON.stringify(cart));
+    
+    actualizarBadgeCarrito();
+    mostrarNotificacion(nombre);
+    
+    // Esto abre el panel lateral con el valor a pagar y el botón de pago
+    if (typeof openCart === "function") {
+        setTimeout(openCart, 500); 
+    }
+    function renderizarResumenSidebar() {
+    let cart = JSON.parse(localStorage.getItem('mancora_cart')) || [];
+    const body = document.querySelector('.cart-body'); // El contenedor de los items
+    const totalDisplay = document.querySelector('.text-neon.fw-bold.fs-5'); // El precio total
+
+    if (cart.length === 0) {
+        body.innerHTML = '<p class="text-center text-muted mt-5">Tu carrito está vacío.</p>';
+        totalDisplay.innerText = "$0.00";
+        return;
+    }
+
+    let total = 0;
+    body.innerHTML = cart.map((item, index) => {
+        total += item.price;
+        return `
+            <div class="cart-item d-flex align-items-center gap-3 mb-3 p-2 rounded" style="background: #111; border: 1px solid #333;">
+                <div class="flex-grow-1">
+                    <h6 class="m-0 text-white small fw-bold">${item.name}</h6>
+                    <small class="text-neon fw-bold">$${item.price.toFixed(2)}</small>
+                </div>
+                <button onclick="eliminarItemSidebar(${index})" class="btn text-danger p-0"><i class="fas fa-trash-alt small"></i></button>
+            </div>`;
+    }).join('');
+    
+    totalDisplay.innerText = `$${total.toFixed(2)}`;
+}
+function eliminarItemSidebar(index) {
+    let cart = JSON.parse(localStorage.getItem('mancora_cart')) || [];
+    cart.splice(index, 1);
+    localStorage.setItem('mancora_cart', JSON.stringify(cart));
+    renderizarResumenSidebar();
+    actualizarBadgeCarrito();
+}
+}
+</script>

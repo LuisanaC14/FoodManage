@@ -1,0 +1,341 @@
+{% load static %}
+<div id="toast-container"></div>
+<nav class="navbar navbar-expand-lg sticky-top py-3" style="background: #000; border-bottom: 3px solid #ccff00; box-shadow: 0 5px 20px rgba(0,0,0,0.8);">
+    <div class="container">
+        
+        <a class="navbar-brand d-flex align-items-center gap-2 me-auto" href="{% url 'inicio' %}">
+            <img src="{% static 'logo_mancora.PNG' %}" alt="Máncora" class="logo-img">
+            <div class="d-flex flex-column justify-content-center logo-text-container">
+                <h5 class="m-0 fw-bold text-uppercase logo-title">MÁNCORA MARISQUERÍA</h5>
+                <small class="logo-subtitle"><i class="fas fa-map-marker-alt me-1 text-neon"></i>LAGO AGRIO</small>
+            </div>
+        </a>
+
+        <div class="d-lg-none d-flex align-items-center gap-3">
+            
+            <a href="{% url 'ver_carrito' %}" class="position-relative text-decoration-none">
+                <i class="fas fa-shopping-cart text-white fa-lg"></i>
+                <span id="cart-count-mobile" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-dark" style="font-size: 0.6rem;">
+                    0
+                </span>
+            </a>
+
+            <button class="navbar-toggler p-1" type="button" data-bs-toggle="collapse" data-bs-target="#navbarContent" style="border: 2px solid #ccff00; border-radius: 5px;">
+                <i class="fas fa-bars" style="color: #ccff00; font-size: 1.5rem;"></i>
+            </button>
+        </div>
+
+        <div class="collapse navbar-collapse justify-content-center" id="navbarContent">
+            
+            <ul class="navbar-nav mx-auto align-items-center gap-2 gap-lg-4 mt-3 mt-lg-0">
+                <li class="nav-item">
+                    <a class="nav-link nav-custom {% if request.resolver_match.url_name == 'inicio' %}active{% endif %}" href="{% url 'inicio' %}">INICIO</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-custom" href="{% url 'inicio' %}#menu-start">NUESTRO MENÚ</a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-custom {% if request.resolver_match.url_name == 'nosotros' %}active{% endif %}" 
+                    href="{% url 'nosotros' %}" 
+                    style="white-space: nowrap;">
+                    NOSOTROS
+                    </a>
+                </li>
+                <li class="nav-item">
+                    <a class="nav-link nav-custom text-warning fw-bold" 
+                    href="https://wa.me/593993103744?text=Hola%20Máncora,%20me%20gustaría%20hacer%20una%20consulta%20o%20reserva" 
+                    target="_blank"
+                    style="letter-spacing: 1px;">
+                    <i class="fab fa-whatsapp me-1"></i> CONTACTANOS
+                    </a>
+                </li>
+
+                <li class="nav-item d-lg-none w-100 mt-2 px-3">
+                    <a class="btn btn-outline-warning w-100 fw-bold py-2" href="{% url 'reserva_web' %}" style="border-color: #ccff00; color: #ccff00;">
+                        <i class="fas fa-calendar-check me-2"></i> RESERVAR MESA
+                    </a>
+                </li>
+
+                {% if user.is_authenticated %}
+                    <li class="nav-item d-lg-none w-100 px-3 mt-3 mb-3">
+                        <div class="user-card-mobile p-3 rounded-3" style="background: #111; border: 1px solid #333;">
+                            
+                            <div class="d-flex align-items-center gap-3 mb-3 pb-3 border-bottom border-secondary">
+                                <div class="bg-dark rounded-circle d-flex align-items-center justify-content-center" style="width: 40px; height: 40px; border: 1px solid #ccff00;">
+                                    <i class="fas fa-user" style="color: #ccff00;"></i>
+                                </div>
+                                
+                                <div>
+                                    <small class="d-block fw-bold" style="font-size: 0.7rem; color: #ccc; letter-spacing: 1px;">
+                                        HOLA,
+                                    </small>
+                                    <span class="text-white fw-bold fs-5">
+                                        {{ user.username|upper }}
+                                    </span>
+                                </div>
+                            </div>
+                            
+                            <a class="btn btn-dark w-100 text-start mb-2 d-flex align-items-center text-white border-secondary" href="{% url 'mis_pedidos' %}">
+                                <i class="fas fa-receipt me-3" style="color: #ccff00;"></i> Mis Pedidos
+                            </a>
+                            
+                            <a class="btn btn-danger w-100 text-start d-flex align-items-center mt-2 fw-bold" href="{% url 'logout' %}">
+                                <i class="fas fa-sign-out-alt me-3"></i> Cerrar Sesión
+                            </a>
+                        </div>
+                    </li>
+                {% else %}
+                    <li class="nav-item d-lg-none w-100 px-3 mt-3 mb-3">
+                         <a class="btn btn-light w-100 fw-bold py-2" href="{% url 'login' %}">
+                            <i class="fas fa-user-circle me-2"></i> ACCEDER / REGISTRARSE
+                         </a>
+                    </li>
+                {% endif %}
+            </ul>
+        </div>
+
+        <div class="d-none d-lg-flex align-items-center gap-4">
+            
+            <a href="{% url 'ver_carrito' %}" class="position-relative cursor-pointer hover-scale text-decoration-none">
+                <i class="fas fa-shopping-cart text-white fa-lg hover-neon"></i>
+                <span id="cart-count" class="position-absolute top-0 start-100 translate-middle badge rounded-pill bg-danger border border-dark" style="font-size: 0.6rem;">0</span>
+            </a>
+
+            <a href="{% url 'reserva_web' %}" class="btn fw-bold px-4 py-2 shadow-neon-btn" style="background: #ccff00; color: #000; border-radius: 50px;">
+                <i class="fas fa-calendar-check me-2"></i> Reservar Mesa
+            </a>
+
+            <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
+
+                {% if user.is_authenticated %}
+                    <li class="nav-item dropdown">
+                        <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#" role="button" data-bs-toggle="dropdown">
+                            <div style="width: 35px; height: 35px; background: #222; border: 2px solid #ccff00; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #ccff00; font-weight: bold;">
+                                {{ user.username|make_list|first|upper }}
+                            </div>
+                            <span class="text-white d-none d-lg-block">{{ user.username }}</span>
+                        </a>
+                        
+                        <ul class="dropdown-menu dropdown-menu-end bg-dark border-secondary shadow-lg">
+                            <li class="px-3 py-2 border-bottom border-secondary">
+                                <small class="text-muted d-block" style="font-size: 0.7rem;">HOLA,</small>
+                                <span class="text-white fw-bold" style="color: #ccff00 !important;">{{ user.username|upper }}</span>
+                            </li>
+                            
+                            <li><a class="dropdown-item text-white py-2" href="{% url 'mis_pedidos' %}"><i class="fas fa-receipt me-2 text-warning"></i> Mis Pedidos</a></li>
+                            <li><a class="dropdown-item text-white py-2" href="{% url 'mi_cuenta' %}"><i class="fas fa-cog me-2 text-warning"></i> Mi Cuenta</a></li>
+                            
+                            <li><hr class="dropdown-divider bg-secondary"></li>
+                            
+                            <li>
+                                <form action="{% url 'logout' %}" method="post" id="logout-form">
+                                    {% csrf_token %}
+                                    <button type="submit" class="dropdown-item text-danger fw-bold py-2">
+                                        <i class="fas fa-sign-out-alt me-2"></i> Cerrar Sesión
+                                    </button>
+                                </form>
+                            </li>
+                        </ul>
+                    </li>
+
+                {% else %}
+                    <li class="nav-item ms-lg-3">
+                        <a href="{% url 'admin_login' %}" class="btn btn-outline-warning rounded-pill px-4 fw-bold" style="border: 2px solid #ccff00; color: #ccff00;">
+                            <i class="fas fa-user me-2"></i> INGRESAR
+                        </a>
+                    </li>
+                {% endif %}
+
+            </ul>
+        </div>
+    </div>
+</nav>
+
+<style>
+
+    .dropdown-item:hover {
+        background-color: rgba(204, 255, 0, 0.2) !important; /* Fondo verde neón suave */
+        color: #ccff00 !important; /* Texto verde neón */
+    }
+    .dropdown-item:hover i {
+        color: #ccff00 !important; /* Icono verde neón */
+    }
+
+    /* 1. CONTENEDOR DE NOTIFICACIONES (TOAST) */
+    #toast-container {
+        position: fixed;
+        top: 85px; /* Justo debajo de tu navbar */
+        right: 20px;
+        z-index: 9999;
+        display: flex;
+        flex-direction: column;
+        gap: 10px;
+        pointer-events: none; /* Para poder hacer clic a través si no hay nada */
+    }
+
+    /* 2. DISEÑO DE LA NOTIFICACIÓN NEÓN */
+    .toast-neon {
+        background: rgba(10, 10, 10, 0.95);
+        border: 1px solid #333;
+        border-left: 4px solid #ccff00; /* Tu color verde neón */
+        color: #fff;
+        padding: 15px 20px;
+        border-radius: 6px;
+        box-shadow: 0 5px 20px rgba(0, 0, 0, 0.5);
+        display: flex;
+        align-items: center;
+        gap: 15px;
+        min-width: 320px;
+        max-width: 400px;
+        transform: translateX(120%); /* Empieza escondido a la derecha */
+        transition: transform 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275); /* Efecto rebote */
+        font-family: sans-serif;
+        pointer-events: auto;
+    }
+
+    .toast-neon.mostrar {
+        transform: translateX(0); /* Entra en pantalla */
+    }
+
+    .toast-icon-box {
+        width: 30px; height: 30px;
+        background: rgba(204, 255, 0, 0.1);
+        border-radius: 50%;
+        display: flex; align-items: center; justify-content: center;
+        color: #ccff00;
+    }
+
+    /* 3. RESPONSIVO PARA MÓVIL */
+    @media (max-width: 600px) {
+        #toast-container {
+            top: 10px; right: 10px; left: 10px;
+            align-items: center;
+        }
+        .toast-neon {
+            min-width: 100%;
+            border-left: 1px solid #333;
+            border-bottom: 3px solid #ccff00;
+        }
+    }
+
+    /* VARIABLES Y UTILIDADES */
+    .text-neon { color: #ccff00 !important; }
+
+    /* ESTILOS DE ESCRITORIO (INTACTOS) */
+    .nav-custom { 
+        color: #fff !important; 
+        font-weight: 600; 
+        text-transform: uppercase; 
+        font-size: 0.9rem; 
+    }
+    .nav-custom:hover, .nav-custom.active { 
+        color: #ccff00 !important; /* El verde neón de Máncora */
+    }
+    
+    /* ESTILOS ESPECÍFICOS PARA MÓVIL (Max-width: 991px) */
+    @media (max-width: 991px) {
+        /* Hacemos que los enlaces del menú sean bloques grandes para fácil clic */
+        .mobile-item { width: 100%; text-align: center; border-bottom: 1px solid rgba(255,255,255,0.05); }
+        .mobile-item .nav-link { padding: 15px 0; font-size: 1rem; }
+        
+        /* Ajuste del logo en móvil para que no se rompa */
+        .logo-img { height: 35px !important; }
+        .logo-title { font-size: 0.9rem !important; }
+        .logo-subtitle { font-size: 0.65rem !important; }
+        
+        /* El menú desplegable baja con suavidad */
+        .navbar-collapse {
+            background: #050505; /* Fondo un poco más claro que el header */
+            position: absolute;
+            top: 100%; left: 0; width: 100%;
+            padding-bottom: 20px;
+            border-bottom: 1px solid #333;
+            box-shadow: 0 10px 20px rgba(0,0,0,0.8);
+            z-index: 1000;
+        }
+    }
+
+    /* ESTILOS COMPARTIDOS */
+    .logo-img { height: 50px; width: auto; object-fit: contain; }
+    .logo-title { color: #ccff00; font-family: 'Arial Black', sans-serif; letter-spacing: 0.5px; font-size: 1.05rem; line-height: 1; }
+    .logo-subtitle { color: white; margin-top: 4px; font-weight: bold; font-size: 0.75rem; letter-spacing: 3px; display: flex; align-items: center; }
+    
+    .hover-neon:hover { color: #ccff00 !important; }
+    .item-neon:hover { background: #ccff00; color: #000 !important; }
+    .item-danger:hover { background: #dc3545; color: #fff !important; }
+</style>
+
+<script>
+    // SE EJECUTA SIEMPRE QUE CARGA EL MENÚ
+    document.addEventListener('DOMContentLoaded', () => {
+        actualizarBadgeCarrito();
+    });
+
+    function agregarAlCarrito(id, nombre, precio) {
+    // 1. Guardar en el almacenamiento local
+    let cart = JSON.parse(localStorage.getItem('mancora_cart')) || [];
+    cart.push({ id: id, name: nombre, price: parseFloat(precio) });
+    localStorage.setItem('mancora_cart', JSON.stringify(cart));
+    
+    // 2. Actualizar las bolitas rojas (Badge)
+    actualizarBadgeCarrito();
+    
+    // 3. MOSTRAR EL MENSAJE NEÓN
+    mostrarNotificacion(nombre);
+    
+    // 4. ABRIR EL RESUMEN LATERAL AUTOMÁTICAMENTE
+    setTimeout(openCart, 600); 
+}
+
+    // --- 2. ACTUALIZAR LAS BOLITAS ROJAS (MÓVIL Y PC) ---
+    function actualizarBadgeCarrito() {
+        let cart = JSON.parse(localStorage.getItem('mancora_cart')) || [];
+        const cantidad = cart.length;
+        
+        // Buscamos los DOS contadores que tienes en tu HTML (PC y Móvil)
+        const badgePC = document.getElementById('cart-count');
+        const badgeMovil = document.getElementById('cart-count-mobile');
+        
+        // Función auxiliar para animar
+        const actualizarElemento = (elem) => {
+            if(elem) {
+                elem.innerText = cantidad;
+                
+                // Animación "Pop"
+                elem.style.transform = "translate(-50%, -50%) scale(1.5)";
+                setTimeout(() => elem.style.transform = "translate(-50%, -50%) scale(1)", 200);
+
+                // Ocultar si es 0, mostrar si hay algo
+                elem.style.display = (cantidad === 0) ? 'none' : 'flex';
+            }
+        };
+
+        actualizarElemento(badgePC);
+        actualizarElemento(badgeMovil);
+    }
+
+    function mostrarNotificacion(nombrePlato) {
+    const container = document.getElementById('toast-container');
+    if (!container) return;
+
+    const toast = document.createElement('div');
+    toast.className = 'toast-neon'; // Quitamos 'mostrar' para que la animación CSS funcione
+    toast.innerHTML = `
+        <div class="toast-icon-box"><i class="fas fa-check"></i></div>
+        <div>
+            <div style="color: #888; font-size: 0.75rem; font-weight: bold; text-transform: uppercase;">Máncora Marisquería</div>
+            <div style="color: #fff; font-weight: bold;">${nombrePlato} agregado</div>
+        </div>
+    `;
+    container.appendChild(toast);
+
+    // Pequeño delay para que CSS detecte el cambio y haga la animación de entrada
+    setTimeout(() => toast.classList.add('mostrar'), 10);
+
+    // Se elimina solo tras 3 segundos
+    setTimeout(() => {
+        toast.classList.remove('mostrar');
+        setTimeout(() => toast.remove(), 400);
+    }, 3000);
+}
+</script>

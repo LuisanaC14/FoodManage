@@ -1,0 +1,74 @@
+{% extends "admin/change_list.html" %}
+{% load static %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <style>
+        /* --- PANEL DE ASISTENCIA (CENTRADO Y GIGANTE) --- */
+        .asistencia-dashboard {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin-top: 25px;
+            margin-bottom: 30px;
+            max-width: 90%; /* Ancho controlado */
+            margin-left: auto; 
+            margin-right: auto;
+        }
+        .info-card {
+            background: #0a0a0a;
+            border: 1px solid #333;
+            border-radius: 15px;
+            padding: 25px 30px;
+            display: flex; align-items: center; justify-content: center;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            position: relative; overflow: hidden; height: 110px;
+        }
+        .info-card h4 { margin: 0; color: #888; font-size: 0.85rem; text-transform: uppercase; font-weight: bold; letter-spacing: 1px;}
+        .info-card .value { font-size: 3.5rem; font-weight: 900; color: #fff; line-height: 1; margin-top: 8px; }
+        .info-card i { font-size: 5.5rem; opacity: 0.15; position: absolute; right: 10px; bottom: -15px; }
+        
+        /* Colores Específicos */
+        .ic-blue { border-left: 6px solid #00eaff; }
+        .ic-blue .value { color: #00eaff; }
+
+        .ic-green { border-left: 6px solid #28a745; }
+        .ic-green .value { color: #28a745; }
+        
+        .ic-red { border-left: 6px solid #ff4d4d; }
+        .ic-red .value { color: #ff4d4d; }
+    </style>
+{% endblock %}
+
+{% block content %}
+    {% if dashboard_asistencia %}
+    <div class="asistencia-dashboard">
+        <div class="info-card ic-blue">
+            <div>
+                <h4>Personal Presente</h4>
+                <div class="value">{{ dashboard_asistencia.presentes }}</div>
+            </div>
+            <i class="fas fa-users"></i>
+        </div>
+
+        <div class="info-card ic-green">
+            <div>
+                <h4>Llegaron Puntual</h4>
+                <div class="value">{{ dashboard_asistencia.puntuales }}</div>
+            </div>
+            <i class="fas fa-check-circle"></i>
+        </div>
+
+        <div class="info-card ic-red">
+            <div>
+                <h4>Atrasos Hoy</h4>
+                <div class="value">{{ dashboard_asistencia.atrasos }}</div>
+            </div>
+            <i class="fas fa-running"></i>
+        </div>
+    </div>
+    {% endif %}
+
+    {{ block.super }}
+{% endblock %}

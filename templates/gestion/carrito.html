@@ -1,0 +1,416 @@
+{% extends 'gestion/index.html' %}
+{% load static %}
+
+{% block hero %}{% endblock %}
+
+{% block content %}
+<div class="container mt-5 pt-5 animate__animated animate__fadeIn" style="min-height: 80vh;">
+    
+    <div class="text-center mb-5">
+        <h2 class="fw-bold text-white display-5">FINALIZAR <span style="color: #ccff00;">PEDIDO</span></h2>
+        <p class="text-secondary">Ingresa tus datos para la factura y envío</p>
+    </div>
+
+    <div class="row justify-content-center">
+        <div class="col-lg-5 mb-4">
+            <div class="card bg-dark border-secondary h-100 shadow-lg">
+                <div class="card-header bg-black border-secondary">
+                    <h5 class="text-white m-0"><i class="fas fa-shopping-cart me-2 text-warning"></i> Tu Carrito</h5>
+                </div>
+                <div class="card-body p-0">
+                    <div id="lista-carrito-pagina" style="max-height: 400px; overflow-y: auto;" class="p-3">
+                        <p class="text-center text-muted">Cargando...</p>
+                    </div>
+                </div>
+                <div class="card-footer bg-black border-secondary p-3">
+                    <div class="d-flex justify-content-between align-items-center">
+                        <span class="text-secondary">TOTAL A PAGAR</span>
+                        <span id="total-pagar-pagina" class="h3 fw-bold m-0" style="color: #ccff00;">$0.00</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="col-lg-7">
+            <form id="form-pedido">
+                
+                <div class="card bg-black border border-secondary shadow-lg mb-4">
+                    <div class="card-header border-secondary">
+                        <h6 class="text-white fw-bold m-0"><i class="fas fa-user-circle me-2 text-info"></i> DATOS DE FACTURACIÓN</h6>
+                    </div>
+                    <div class="card-body p-4">
+                        <div class="row g-3">
+                            <div class="col-md-6">
+                                <label class="text-secondary small">Nombre Completo *</label>
+                                <input type="text" id="cli-nombre" class="form-control bg-dark text-white border-secondary" placeholder="Ej: Juan Pérez">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="text-secondary small">Cédula / RUC *</label>
+                                <input type="text" id="cli-cedula" class="form-control bg-dark text-white border-secondary" placeholder="Ej: 1712345678">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="text-secondary small">Teléfono / WhatsApp *</label>
+                                <input type="text" id="cli-telefono" class="form-control bg-dark text-white border-secondary" placeholder="Ej: 0991234567">
+                            </div>
+                            <div class="col-md-6">
+                                <label class="text-secondary small">Correo Electrónico (Para Factura) *</label>
+                                <input type="email" id="cli-email" class="form-control bg-dark text-white border-secondary" placeholder="juan@email.com">
+                            </div>
+                            <div class="col-12">
+                                <label class="text-secondary small">Dirección Domiciliaria</label>
+                                <input type="text" id="cli-direccion" class="form-control bg-dark text-white border-secondary" placeholder="Ej: Av. Principal y Calle 5 (Frente al parque)">
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="card bg-black border border-secondary shadow-lg">
+                    <div class="card-body p-4">
+                        <h6 class="text-white fw-bold mb-3"><i class="fas fa-wallet me-2 text-success"></i> FORMA DE PAGO</h6>
+                        
+                        <div class="row g-3 mb-4">
+                            <div class="col-6">
+                                <input type="radio" class="btn-check" name="metodo_pago" id="pago_efectivo" value="Efectivo" onchange="toggleTransferencia(false)">
+                                <label class="btn btn-outline-light w-100 py-3 border-secondary" for="pago_efectivo">
+                                    <i class="fas fa-money-bill-wave fa-lg mb-2 d-block text-success"></i>
+                                    EFECTIVO
+                                </label>
+                            </div>
+                            <div class="col-6">
+                                <input type="radio" class="btn-check" name="metodo_pago" id="pago_transferencia" value="Transferencia" onchange="toggleTransferencia(true)">
+                                <label class="btn btn-outline-light w-100 py-3 border-secondary" for="pago_transferencia">
+                                    <i class="fas fa-university fa-lg mb-2 d-block text-info"></i>
+                                    TRANSFERENCIA
+                                </label>
+                            </div>
+                        </div>
+
+                        <div id="seccion-transferencia" class="mb-4 d-none animate__animated animate__fadeIn">
+                            <div class="p-3 mb-3 rounded bg-dark border border-secondary text-center">
+                                <p class="mb-2 fw-bold text-warning small">ESCANEA PARA TRANSFERIR:</p>
+                                
+                                <div class="mb-3">
+                                    <img src="{% static 'img/qr_transferencia.PNG' %}" alt="QR Pago" class="img-fluid rounded shadow-sm" style="max-width: 180px; border: 2px solid #ccff00;">
+                                </div>
+
+                                <div class="text-start bg-black p-2 rounded border border-secondary">
+                                    <p class="mb-1 fw-bold text-white small">DATOS BANCARIOS:</p>
+                                    <p class="mb-0 small text-white-50">Banco Pichincha | Cta: 2212890220</p>
+                                    <p class="mb-0 small text-white-50">Lisbeth Lisseth Calixto</p>
+                                </div>
+                            </div>
+
+                            <div class="alert alert-info bg-dark border-info text-info small py-2 mb-3">
+                                <i class="fas fa-info-circle me-2"></i>
+                                Sube el comprobante aquí y envíalo también por WhatsApp al finalizar.<br>
+                                Porfavor revisa tu correo y prenseta tu ticket en el local.
+                            </div>
+
+                            <label class="form-label text-white small fw-bold">SUBIR FOTO DEL COMPROBANTE *</label>
+                            <input type="file" id="input-foto" class="form-control bg-black text-white border-secondary" accept="image/*">
+                        </div>
+
+                        <div class="mb-4">
+                            <label class="form-label text-white small">NOTA ADICIONAL (Opcional)</label>
+                            <textarea id="input-nota" class="form-control bg-dark text-white border-secondary" rows="2" placeholder="Ej: Sin cebolla, extra limón..."></textarea>
+                        </div>
+
+                        <div class="mb-4 p-2 rounded" style="background: rgba(204, 255, 0, 0.05); border: 1px dashed #ccff00;">
+                            <p class="text-white small m-0 text-center">
+                                <i class="fas fa-file-invoice-dollar text-warning me-2"></i>
+                                Podrás solicitar tu factura física al retirar tu pedido.
+                            </p>
+                        </div>
+
+                        <button type="button" onclick="procesarPedido()" id="btn-confirmar" class="btn w-100 fw-bold py-3 rounded-pill shadow-neon-btn" 
+                                style="background: #ccff00; color: #000; font-size: 1.1rem;">
+                            <span id="btn-text">CONFIRMAR Y ENVIAR <i class="fab fa-whatsapp ms-2"></i></span>
+                            <span id="btn-loading" class="d-none"><i class="fas fa-spinner fa-spin"></i> Procesando...</span>
+                        </button>
+                    </div>
+                </div>
+            </form>
+            
+            <div class="mt-4 mb-4">
+                <a href="{% url 'inicio' %}#menu-start" class="btn-neon-back">
+                    <i class="fas fa-arrow-left"></i> SEGUIR COMPRANDO
+                </a>
+            </div>
+        </div>
+    </div>
+</div>
+
+<script>
+    document.addEventListener('DOMContentLoaded', function() {
+        renderizarResumen();
+        actualizarContadorCarrito(); // Arregla el "0" del menú
+    });
+
+    // Función para arreglar el contador "0" del header
+    function actualizarContadorCarrito() {
+        let cart = JSON.parse(localStorage.getItem('mancora_cart')) || [];
+        const badge = document.querySelector('.badge.bg-danger'); // Busca la bolita roja
+        if(badge) {
+            badge.innerText = cart.length;
+        }
+    }
+
+    function toggleTransferencia(mostrar) {
+        const div = document.getElementById('seccion-transferencia');
+        if(mostrar) div.classList.remove('d-none');
+        else div.classList.add('d-none');
+    }
+
+    function renderizarResumen() {
+        let cart = JSON.parse(localStorage.getItem('mancora_cart')) || [];
+        const contenedor = document.getElementById('lista-carrito-pagina');
+        const totalElem = document.getElementById('total-pagar-pagina');
+        
+        if (cart.length === 0) {
+            contenedor.innerHTML = '<div class="text-center py-5"><i class="fas fa-shopping-basket fa-3x text-secondary mb-3"></i><p class="text-muted">Tu carrito está vacío</p></div>';
+            totalElem.innerText = "$0.00";
+            document.getElementById('btn-confirmar').disabled = true;
+            return;
+        }
+
+        // --- LÓGICA DE AGRUPACIÓN ---
+        const carritoAgrupado = cart.reduce((acc, item) => {
+            const existe = acc.find(i => i.id === item.id);
+            if (existe) {
+                existe.cantidad += 1;
+            } else {
+                acc.push({ ...item, cantidad: 1 });
+            }
+            return acc;
+        }, []);
+
+        let html = '';
+        let totalGlobal = 0;
+
+        carritoAgrupado.forEach((item) => {
+            const subtotal = item.price * item.cantidad;
+            totalGlobal += subtotal;
+            
+            // --- ESTRUCTURA MEJORADA (SOLUCIÓN AL ENCIMADO) ---
+            html += `
+                <div class="d-flex justify-content-between align-items-center border-bottom border-secondary py-3">
+                    <div style="flex: 1;" class="pe-3">
+                        <span class="text-white fw-bold d-block text-uppercase" style="font-size: 0.9rem; letter-spacing: 0.5px;">${item.name}</span>
+                        <span class="text-neon small">$${item.price.toFixed(2)} c/u</span>
+                        
+                        <div class="mt-2 d-flex align-items-center">
+                            <div class="d-flex align-items-center bg-dark rounded border border-secondary px-1">
+                                <button onclick="ajustarCantidad('${item.id}', -1)" class="btn btn-sm text-white p-1"><i class="fas fa-minus fa-xs"></i></button>
+                                <span class="px-3 fw-bold" style="color: #ccff00; min-width: 30px; text-align: center;">${item.cantidad}</span>
+                                <button onclick="ajustarCantidad('${item.id}', 1)" class="btn btn-sm text-white p-1"><i class="fas fa-plus fa-xs"></i></button>
+                            </div>
+                        </div>
+                    </div>
+
+                    <div class="text-end d-flex flex-column justify-content-between align-items-end" style="min-height: 85px; min-width: 90px;">
+                        <span class="text-white fw-bold fs-5">$${subtotal.toFixed(2)}</span>
+                        <button onclick="eliminarGrupo('${item.id}')" class="btn btn-link text-danger p-0 mt-auto hover-scale" style="text-decoration: none;">
+                            <i class="fas fa-trash-alt"></i>
+                        </button>
+                    </div>
+                </div>`;
+        }); // <-- ESTA ES LA LLAVE QUE FALTABA CERRAR
+
+        contenedor.innerHTML = html;
+        totalElem.innerText = `$${totalGlobal.toFixed(2)}`;
+        document.getElementById('btn-confirmar').disabled = false;
+    }
+
+    function ajustarCantidad(id, cambio) {
+        let cart = JSON.parse(localStorage.getItem('mancora_cart')) || [];
+        
+        if (cambio === 1) {
+            // Buscar un ejemplo del item para clonar sus datos
+            const itemBase = cart.find(i => i.id === id);
+            if (itemBase) cart.push({ ...itemBase });
+        } else {
+            // Buscar el índice del último elemento con ese ID y quitarlo
+            const index = cart.findLastIndex(i => i.id === id);
+            if (index !== -1) cart.splice(index, 1);
+        }
+
+        localStorage.setItem('mancora_cart', JSON.stringify(cart));
+        renderizarResumen();
+        if (typeof actualizarBadgeCarrito === "function") actualizarBadgeCarrito();
+    }
+
+    function eliminarGrupo(id) {
+        let cart = JSON.parse(localStorage.getItem('mancora_cart')) || [];
+        // Filtramos para quitar todos los que tengan ese ID
+        const nuevoCarrito = cart.filter(item => item.id !== id);
+        localStorage.setItem('mancora_cart', JSON.stringify(nuevoCarrito));
+        renderizarResumen();
+        if (typeof actualizarBadgeCarrito === "function") actualizarBadgeCarrito();
+    }
+
+    function eliminarProductoPagina(index) {
+    let cart = JSON.parse(localStorage.getItem('mancora_cart')) || [];
+    
+    // Elimina el producto según su posición
+    cart.splice(index, 1);
+    
+    // Guarda el nuevo carrito y refresca la vista
+    localStorage.setItem('mancora_cart', JSON.stringify(cart));
+    renderizarResumen();
+    
+    // Actualiza también el número rojo del menú superior
+    if (typeof actualizarBadgeCarrito === "function") {
+        actualizarBadgeCarrito();
+    } else {
+        actualizarContadorCarrito(); // Respaldo para la función local
+    }
+}
+
+    // Reemplaza tus funciones actuales por estas dos:
+
+    async function procesarPedido() {
+        let cart = JSON.parse(localStorage.getItem('mancora_cart')) || [];
+        if(cart.length === 0) return alert("El carrito está vacío");
+
+        const nombre = document.getElementById('cli-nombre').value.trim();
+        const cedula = document.getElementById('cli-cedula').value.trim();
+        const telefono = document.getElementById('cli-telefono').value.trim();
+        const email = document.getElementById('cli-email').value.trim();
+        const direccion = document.getElementById('cli-direccion').value.trim();
+        const nota = document.getElementById('input-nota').value;
+
+        if(!nombre || !cedula || !telefono || !email) {
+            alert("⚠️ Completa tus datos personales para la factura.");
+            return;
+        }
+
+        const metodoElem = document.querySelector('input[name="metodo_pago"]:checked');
+        if (!metodoElem) return alert("⚠️ Selecciona un MÉTODO DE PAGO.");
+        const metodo = metodoElem.value;
+        const fotoInput = document.getElementById('input-foto');
+
+        // FLUJO EFECTIVO
+        if (metodo === 'Efectivo') {
+            enviarWhatsApp("WEB-EFECTIVO", metodo, cart, nombre, direccion);
+            localStorage.removeItem('mancora_cart');
+            window.location.href = "{% url 'inicio' %}";
+            return;
+        }
+
+        // FLUJO TRANSFERENCIA
+        if(fotoInput.files.length === 0) return alert("⚠️ Sube la foto del comprobante.");
+
+        const btn = document.getElementById('btn-confirmar');
+        btn.disabled = true;
+        document.getElementById('btn-text').classList.add('d-none');
+        document.getElementById('btn-loading').classList.remove('d-none');
+
+        try {
+            const formData = new FormData();
+            formData.append('carrito_data', JSON.stringify(cart));
+            formData.append('metodo_pago', metodo);
+            formData.append('nota', nota);
+            formData.append('cliente_nombre', nombre);
+            formData.append('cliente_cedula', cedula);
+            formData.append('cliente_telefono', telefono);
+            formData.append('cliente_email', email);
+            formData.append('cliente_direccion', direccion);
+            formData.append('comprobante', fotoInput.files[0]);
+
+            const response = await fetch("{% url 'registrar_pedido_web' %}", { method: 'POST', body: formData });
+            const data = await response.json();
+
+            if(data.status === 'success') {
+                enviarWhatsApp(data.ticket, metodo, cart, nombre, direccion);
+                localStorage.removeItem('mancora_cart');
+                window.location.href = "{% url 'inicio' %}"; 
+            } else {
+                alert("Error: " + data.message);
+                btn.disabled = false;
+            }
+        } catch (error) {
+            alert("Error de conexión");
+            btn.disabled = false;
+        }
+    }
+    function enviarWhatsApp(ticket, metodo, cart, nombre, direccion) {
+        const numeroLocal = "593993103744"; 
+        let total = 0;
+        
+        let texto = ` *HOLA*, soy *${nombre}*. Nuevo pedido Web\n`;
+        texto += `Pago: *${metodo.toUpperCase()}*\n`;
+        if(ticket !== "WEB-EFECTIVO") texto += ` Ticket: #${ticket}\n`;
+        if(direccion) texto += ` Retiro en local (Lago Agrio)\n`;
+        texto += `---------------------\n`;
+        
+        cart.forEach(item => {
+            texto += `▪️ ${item.name} (x${item.cantidad}) - $${(item.price * item.cantidad).toFixed(2)}\n`;
+            total += (item.price * item.cantidad);
+        });
+        
+        texto += `---------------------\n`;
+        texto += ` *TOTAL: $${total.toFixed(2)}*\n\n`;
+        texto += ` *Solicito mi factura física al retirar mi pedido.*`;
+
+        window.open(`https://wa.me/${numeroLocal}?text=${encodeURIComponent(texto)}`, '_blank');
+    }
+</script>
+
+<style>
+    .btn-check:checked + .btn-outline-light {
+        background-color: #ccff00; color: #000; border-color: #ccff00;
+        box-shadow: 0 0 15px rgba(204, 255, 0, 0.4);
+    }
+    .shadow-neon-btn:hover { box-shadow: 0 0 20px #ccff00; transform: scale(1.02); transition: 0.3s; }
+
+    /* Fuerza la separación vertical para que no se encimen */
+.flex-column.justify-content-between {
+    min-height: 85px !important;
+}
+
+/* Espacio reservado para que el nombre del plato no empuje el precio */
+.pe-3 {
+    padding-right: 1rem !important;
+}
+
+/* Efecto visual elegante para la papelera */
+.hover-scale {
+    transition: transform 0.2s ease, opacity 0.2s ease;
+    opacity: 0.6;
+    display: inline-block;
+}
+
+.hover-scale:hover {
+    transform: scale(1.2);
+    opacity: 1;
+    color: #ff4d4d !important;
+}
+
+.text-neon { color: #ccff00; }
+
+    .btn-neon-back {
+        display: inline-flex;
+        align-items: center;
+        gap: 10px;
+        padding: 12px 30px;
+        background: rgba(204, 255, 0, 0.05); /* Fondo sutil */
+        border: 2px solid #ccff00; /* Borde Neón */
+        color: #ccff00;
+        text-decoration: none;
+        border-radius: 50px;
+        font-weight: 900;
+        font-size: 1rem;
+        transition: all 0.3s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        text-transform: uppercase;
+        letter-spacing: 1px;
+    }
+
+    .btn-neon-back:hover {
+        background: #ccff00;
+        color: #000; /* Letras negras al pasar el mouse */
+        box-shadow: 0 0 25px rgba(204, 255, 0, 0.6); /* Resplandor */
+        transform: translateX(-5px); /* Pequeño movimiento a la izquierda */
+    }
+</style>
+{% include 'gestion/includes/footer.html' %}
+{% endblock %}

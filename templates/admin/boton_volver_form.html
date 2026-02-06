@@ -1,0 +1,26 @@
+{% extends "admin/change_form.html" %}
+{% load i18n admin_urls %}
+{% block object-tools %}
+    {{ block.super }}
+    
+    <div class="submit-row-custom">
+        <a href="{% url opts|admin_urlname:'changelist' %}" class="btn-admin-cancel-block">
+            <i class="fas fa-times-circle"></i> VOLVER 
+        </a>
+    </div>
+
+    <style>
+        .submit-row-custom { margin-top: 10px; width: 100%; }
+        .btn-admin-cancel-block {
+            display: flex; justify-content: center; align-items: center; width: 100%;
+            padding: 12px 0; box-sizing: border-box; background: #4dcaff; color: #fff !important;
+            border: 2px solid #4db5ff; border-radius: 4px; font-weight: bold;
+            text-transform: uppercase; text-decoration: none !important; font-size: 0.85rem;
+            transition: all 0.3s ease; gap: 8px;
+        }
+        .btn-admin-cancel-block:hover {
+            background: transparent; color: #4dd3ff !important;
+            border-color: #4dbeff; box-shadow: 0 5px 15px rgba(77, 92, 255, 0.2);
+        }
+    </style>
+{% endblock %}

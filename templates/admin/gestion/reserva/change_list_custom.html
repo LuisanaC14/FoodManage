@@ -1,0 +1,131 @@
+{% extends "admin/change_list.html" %}
+{% load static %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <style>
+        /* ESTILO BOTÓN "ACTIVAR" */
+        .btn-admin-go {
+            background-color: #1a1a1a;
+            color: #00ffaa !important;
+            border: 1px solid #00ffaa;
+            padding: 5px 10px;
+            border-radius: 4px;
+            font-weight: 900;
+            font-size: 0.75rem;
+            text-transform: uppercase;
+            text-decoration: none;
+            transition: all 0.3s ease;
+            display: inline-flex; align-items: center; gap: 5px;
+        }
+        .btn-admin-go:hover {
+            background-color: #00ffaa;
+            color: #000 !important;
+            box-shadow: 0 0 10px #00ffaa;
+            transform: scale(1.1);
+        }
+
+        /* --- PANEL DE MÉTRICAS (VERSIÓN XL) --- */
+        .reserva-dashboard {
+            display: grid;
+            grid-template-columns: repeat(3, 1fr);
+            gap: 25px;
+            margin-top: 25px;
+            margin-bottom: 30px;
+
+            /* --- ESTAS 3 LÍNEAS HACEN LA MAGIA DEL CENTRADO --- */
+            max-width: 85%;    /* Ocupa el 85% de la pantalla (no todo el ancho) */
+            margin-left: auto; /* Empuja desde la izquierda */
+            margin-right: auto;/* Empuja desde la derecha */
+        }
+        
+        .reserva-card {
+            background: #0a0a0a;
+            border: 1px solid #333;
+            border-radius: 15px;
+            padding: 25px 30px; /* <--- AQUÍ ESTÁ EL CAMBIO: MUCHO MÁS RELLENO */
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.6);
+            position: relative;
+            overflow: hidden;
+            height: 110px; /* <--- ALTURA FIJA PARA QUE SE VEAN GRANDES */
+        }
+        .reserva-card h4 { 
+            margin: 0; 
+            color: #888; 
+            font-size: 0.9rem; /* Texto un poco más grande */
+            text-transform: uppercase; 
+            letter-spacing: 1px; 
+            font-weight: bold;
+        }
+        .reserva-card .value { 
+            font-size: 3.5rem; /* <--- NÚMERO GIGANTE (Antes era 2rem) */
+            font-weight: 900; 
+            color: #fff; 
+            line-height: 1; 
+            margin-top: 8px; 
+        }
+        .reserva-card i { 
+            font-size: 5.5rem; /* <--- ÍCONO GIGANTE DE FONDO */
+            opacity: 0.15; 
+            position: absolute; 
+            right: 10px; 
+            bottom: -15px; /* Lo bajamos un poco para un efecto artístico */
+        }
+        
+        /* Colores específicos */
+        .rc-blue { border-left: 6px solid #00eaff; } /* Borde más grueso */
+        .rc-blue .value { color: #00eaff; }
+        
+        .rc-purple { border-left: 6px solid #be00ff; }
+        .rc-purple .value { color: #be00ff; }
+        
+        .rc-yellow { border-left: 6px solid #ccff00; }
+        .rc-yellow .value { color: #ccff00; }
+    </style>
+{% endblock %}
+
+{% block content %}
+    
+    {% if dashboard_reservas %}
+    <div class="reserva-dashboard">
+        <div class="reserva-card rc-blue">
+            <div>
+                <h4>Reservas para Hoy</h4>
+                <div class="value">{{ dashboard_reservas.total }}</div>
+            </div>
+            <i class="fas fa-calendar-check" style="color: #00eaff;"></i>
+        </div>
+
+        <div class="reserva-card rc-purple">
+            <div>
+                <h4>Total Personas (PAX)</h4>
+                <div class="value">{{ dashboard_reservas.personas }}</div>
+            </div>
+            <i class="fas fa-users" style="color: #be00ff;"></i>
+        </div>
+
+        <div class="reserva-card rc-yellow">
+            <div>
+                <h4>Pendientes Confirmar</h4>
+                <div class="value">{{ dashboard_reservas.pendientes }}</div>
+            </div>
+            <i class="fas fa-clock" style="color: #ccff00;"></i>
+        </div>
+    </div>
+    {% endif %}
+
+    {{ block.super }}
+{% endblock %}
+
+{# Tu botón de calendario se queda igual #}
+{% block object-tools-items %}
+    <li>
+        <a href="calendario/" class="btn btn-primary" style="background: #be00ff; border:none; font-weight:bold;">
+            <i class="fas fa-calendar-alt"></i> VER CALENDARIO
+        </a>
+    </li>
+    {{ block.super }}
+{% endblock %}

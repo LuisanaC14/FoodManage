@@ -1,0 +1,166 @@
+/* =========================================
+   ESTILOS POS (TOMAR PEDIDO) - DARK NEON + ROJO (FINAL)
+   ========================================= */
+
+/* 1. LIMPIEZA TOTAL */
+.content-wrapper a[href*="register"],
+.content-wrapper a[href*="password"],
+.content-wrapper a[href*="login"],
+.login-box-msg,
+p.mb-1, p.mb-0 {
+    display: none !important;
+}
+
+/* 2. TARJETAS OSCURAS (MENÚ) */
+.card-dark {
+    background-color: #1e1e24 !important;
+    border: 1px solid #333;
+    box-shadow: 0 0 15px rgba(0,0,0,0.5);
+}
+
+.card-dark .card-header {
+    background-color: #252a30 !important;
+    border-bottom: 1px solid #444;
+}
+
+.card-dark .card-title {
+    color: #fff !important;
+}
+
+/* Input del buscador */
+#buscador {
+    background-color: #2b3035 !important;
+    border: 1px solid #444;
+    color: white !important;
+    border-radius: 20px 0 0 20px;
+}
+.input-group-append .btn {
+    border-radius: 0 20px 20px 0;
+    border-color: #444;
+    background: #333;
+    color: white;
+}
+
+/* 3. TARJETAS DE PRODUCTOS */
+.product-card {
+    background-color: #2b3035 !important;
+    border: 1px solid #3a3f44 !important;
+    border-radius: 12px !important;
+    transition: transform 0.2s;
+    overflow: hidden;
+}
+
+.product-card:hover {
+    transform: translateY(-5px);
+    border-color: #ccff00 !important;
+    box-shadow: 0 5px 15px rgba(204, 255, 0, 0.15) !important;
+}
+
+.product-icon-container {
+    background: #252a30;
+    padding: 20px;
+    text-align: center;
+    color: #6c757d;
+}
+
+.product-title {
+    font-size: 1rem;
+    font-weight: 700;
+    color: #fff;
+    margin-top: 10px;
+    height: 40px;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+}
+
+.price-badge {
+    background-color: rgba(204, 255, 0, 0.1);
+    color: #ccff00;
+    padding: 5px 12px;
+    border-radius: 20px;
+    font-weight: bold;
+    border: 1px solid rgba(204, 255, 0, 0.3);
+}
+
+.btn-agregar {
+    background: linear-gradient(135deg, #007bff, #0056b3) !important;
+    border: none;
+    border-radius: 8px;
+    font-weight: 600;
+    color: #fff !important;
+}
+
+/* 4. TICKET DE ORDEN */
+.card-ticket {
+    background-color: #1e1e24 !important;
+    border: none;
+    box-shadow: 0 0 20px rgba(0,0,0,0.6);
+    border-radius: 12px;
+}
+
+.bg-neon {
+    background: linear-gradient(135deg, #ccff00 0%, #aacc00 100%) !important;
+}
+
+.text-neon { color: #ccff00 !important; }
+.bg-dark-secondary { background-color: #2b3035 !important; }
+
+/* 5. SELECT DE MESA (CORREGIDO PARA FONDO NEGRO) */
+.custom-select-dark {
+    background-color: #1e1e24 !important;
+    border: 2px solid #444 !important;
+    color: #fff !important;
+    height: 50px !important;
+    font-size: 1.1rem;
+    border-radius: 8px;
+}
+
+/* ¡¡ESTA ES LA PARTE QUE FALTABA!! */
+/* Hace que la lista desplegable sea negra por dentro */
+select option {
+    background-color: #1e1e24 !important;
+    color: #fff !important;
+}
+
+/* 6. TABLA DE PEDIDO */
+.table-dark { background-color: #1e1e24; }
+.table-dark th {
+    background-color: #252a30;
+    color: #aaa;
+    border-bottom: 1px solid #444;
+}
+.table-dark td {
+    border-color: #333;
+    color: #fff;
+    vertical-align: middle;
+}
+
+/* 7. BOTÓN ROJO (PAPELERA) - REFORZADO */
+.btn-borrar {
+    background-color: #ff0000 !important; /* Rojo puro más fuerte */
+    color: white !important;
+    border: none !important;
+    border-radius: 6px !important;
+    box-shadow: 0 0 10px rgba(255, 0, 0, 0.5); /* Resplandor rojo */
+    transition: transform 0.2s;
+}
+
+.btn-borrar:hover {
+    background-color: #cc0000 !important;
+    transform: scale(1.1);
+}
+
+/* 8. BOTÓN CONFIRMAR */
+.btn-neon {
+    background: #ccff00 !important;
+    color: #000 !important;
+    font-weight: 900 !important;
+    font-size: 1.2rem;
+    border-radius: 50px;
+    border: none;
+}
+.btn-neon:hover {
+    background: #b3e600 !important;
+    transform: scale(1.03);
+}

@@ -1,0 +1,111 @@
+/* =========================================
+   1. ESTILO DE LA TABLA (LISTA DE ASISTENCIAS)
+   ========================================= */
+.field-empleado_nombre { color: #00eaff !important; font-weight: 900; text-transform: uppercase; }
+.field-fecha_bonita { color: #fff !important; opacity: 0.8; }
+
+/* Resaltar el día de la semana */
+.field-dia_semana {
+    color: #ffffff !important;
+    font-weight: bold;
+    text-transform: uppercase;
+    font-size: 0.85rem;
+}
+
+/* Hora exacta con estilo digital */
+.field-hora_exacta {
+    color: #ccff00 !important;
+    font-family: 'Consolas', monospace;
+    font-size: 1.1rem;
+    text-shadow: 0 0 5px rgba(204, 255, 0, 0.3);
+}
+
+.field-estado_visual span { 
+    text-shadow: 0 0 10px rgba(204, 255, 0, 0.5); 
+}
+
+/* =========================================
+   3. MEJORAS DE LA BARRA DE HERRAMIENTAS
+   ========================================= */
+
+/* Dropdowns de filtro (Fecha / Empleado) en modo oscuro */
+#changelist-search select, 
+.actions select, 
+select[name="fecha"], 
+select[name="empleado"] {
+    background-color: #0f0f0f !important;
+    color: #fff !important;
+    border: 1px solid #333 !important;
+    border-radius: 5px;
+    padding: 8px !important;
+    font-weight: bold;
+}
+
+/* Caja de búsqueda (Input) estilizada */
+#toolbar form #searchbar {
+    background-color: #0f0f0f !important;
+    color: #ccff00 !important; /* Texto verde al escribir */
+    border: 1px solid #333 !important;
+    border-radius: 5px;
+    padding: 8px 12px;
+    width: 250px;
+    font-weight: bold;
+}
+
+/* Efecto Focus (Cuando haces clic) */
+#toolbar form #searchbar:focus,
+select:focus {
+    border-color: #00eaff !important;
+    box-shadow: 0 0 10px rgba(0, 234, 255, 0.3) !important;
+    outline: none;
+}
+
+/* Contenedor principal del formulario de asistencia */
+.module.aligned {
+    background: #111 !important;
+    border: 1px solid #333 !important;
+    border-radius: 15px !important;
+    padding: 30px !important;
+}
+
+/* Estilo para el selector de empleado */
+.field-empleado select {
+    background: #000 !important;
+    color: #ccff00 !important;
+    border: 2px solid #ccff00 !important;
+    border-radius: 8px !important;
+    padding: 12px !important;
+    font-weight: bold;
+    width: 100% !important;
+}
+
+/* Estilo para el campo de nota/motivo */
+.field-nota input {
+    background: #1a1a1a !important;
+    border: 1px dashed #555 !important;
+    color: #fff !important;
+    padding: 10px !important;
+    border-radius: 5px !important;
+    width: 100% !important;
+}
+
+/* Ocultar iconos sobrantes mediante CSS por seguridad */
+.related-widget-wrapper-link {
+    display: none !important;
+}
+
+/* Botones de guardado laterales */
+.submit-row {
+    background: transparent !important;
+    border: none !important;
+    display: flex;
+    flex-direction: column;
+    gap: 10px;
+}
+
+.submit-row input[type="submit"] {
+    border-radius: 10px !important;
+    height: 50px !important;
+    text-transform: uppercase;
+    font-weight: 900 !important;
+}

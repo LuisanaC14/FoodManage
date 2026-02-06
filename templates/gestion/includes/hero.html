@@ -1,0 +1,60 @@
+{% load static %}
+
+<header class="hero hero-responsive" style="background: linear-gradient(rgba(0,0,0,0.7), rgba(0,0,0,0.85)), url('{% static 'fondo_mancora.png' %}'); background-size: cover; background-position: center; background-attachment: fixed; text-align: center; border-bottom: 2px solid #ccff00;">
+    <div class="container animate__animated animate__fadeIn">
+        
+        <p class="animate__animated animate__letterSpacing responsive-welcome" style="color: #ccff00; font-weight: 500; margin-bottom: 10px;">
+            BIENVENIDOS A
+        </p>
+        
+        <h1 class="responsive-title" style="font-weight: 900; color: #fff; text-shadow: 0 0 20px rgba(0,0,0,0.9); margin: 0; line-height: 1.1;">
+            MÁNCORA <br class="d-md-none"> MARISQUERÍA
+        </h1>
+        
+        <p class="responsive-subtitle" style="color: #ccff00; font-weight: 300; margin-top: 15px; text-transform: uppercase;">
+            EL SABOR DEL MAR EN TU MESA
+        </p>
+        
+        <div class="mt-4 mt-lg-5">
+            <a href="#menu-start" class="btn btn-warning btn-lg px-4 px-lg-5 py-3 fw-bold shadow-neon rounded-pill" 
+               style="background: #ffc107; border: none; color: #000; display: inline-flex; align-items: center; text-decoration: none; font-size: 1.1rem;">
+                <i class="fas fa-utensils me-2 me-lg-3"></i> VER EL MENÚ
+            </a>
+        </div>
+    </div>
+</header>
+
+<style>
+    /* 1. Control del Título Gigante */
+    .responsive-title {
+        /* MAGIA: Mínimo 2.5rem (celular), Máximo 5rem (PC). Se ajusta solo en el medio. */
+        font-size: clamp(2.8rem, 9vw, 5rem); 
+    }
+
+    /* 2. Control del Relleno (Padding) */
+    .hero-responsive {
+        padding: 80px 0; /* En celular damos menos espacio arriba/abajo */
+    }
+    @media (min-width: 992px) {
+        .hero-responsive {
+            padding: 140px 0; /* En PC volvemos a tu tamaño original grande */
+        }
+    }
+
+    /* 3. Textos Pequeños Adaptables */
+    .responsive-welcome {
+        font-size: clamp(0.9rem, 3vw, 1.2rem);
+        letter-spacing: clamp(2px, 1vw, 6px); /* El espaciado también se adapta */
+    }
+    .responsive-subtitle {
+        font-size: clamp(1rem, 4vw, 1.3rem);
+        letter-spacing: clamp(1px, 1vw, 4px);
+    }
+    
+    /* 4. Corrección para iPhone/Android (el fixed a veces falla en móvil) */
+    @media (max-width: 768px) {
+        .hero-responsive {
+            background-attachment: scroll !important;
+        }
+    }
+</style>

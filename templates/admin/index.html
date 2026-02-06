@@ -1,0 +1,505 @@
+{% extends "admin/base_site.html" %}
+{% load i18n static jazzmin stock_alerts dashboard_stats %} {% block content %}
+    {% get_jazzmin_ui_tweaks as jazzmin_ui %}
+    {% get_low_stock_products as productos_bajos %}
+    {% get_kpi_stats as stats %} <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    {% get_proximas_reservas as reservas %}
+
+    <div class="container-fluid">
+
+        {% check_caja_abierta as caja_abierta %}
+        
+        {% if not caja_abierta %}
+        <div class="row">
+            <div class="col-12">
+                <div class="alert" style="background: rgba(255, 174, 0, 0.15); border: 1px solid #ffae00; color: #ffae00; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 0 15px rgba(255, 174, 0, 0.2);">
+                    
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div style="background: #ffae00; color: #000; width: 40px; height: 40px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.2rem; animation: pulse-warning 2s infinite;">
+                            <i class="fas fa-cash-register"></i>
+                        </div>
+                        <div>
+                            <h5 style="margin: 0; font-weight: 900; text-transform: uppercase; font-size: 1rem;">¡LA CAJA ESTÁ CERRADA!</h5>
+                            <span style="font-size: 0.85rem; opacity: 0.9;">No podrás registrar cobros hasta abrir un nuevo turno.</span>
+                        </div>
+                    </div>
+
+                    <a href="{% url 'admin:gestion_venta_changelist' %}" class="btn btn-warning" style="color: #000; font-weight: bold; text-decoration: none; box-shadow: 0 0 10px rgba(255, 174, 0, 0.4);">
+                        <i class="fas fa-key margin-r-5"></i> ABRIR TURNO AHORA
+                    </a>
+
+                </div>
+            </div>
+        </div>
+        
+        {% endif %}
+
+        {% check_hora_cierre as es_hora_de_cerrar %}
+        
+        {% if es_hora_de_cerrar %}
+        <div class="row">
+            <div class="col-12">
+                <div class="alert" style="background: linear-gradient(90deg, #2c003e 0%, #000 100%); border: 1px solid #d63384; color: #fff; display: flex; align-items: center; justify-content: space-between; box-shadow: 0 0 20px rgba(214, 51, 132, 0.4); animation: neon-pulse 2s infinite;">
+                    
+                    <div style="display: flex; align-items: center; gap: 15px;">
+                        <div style="background: #d63384; color: #fff; width: 45px; height: 45px; border-radius: 50%; display: flex; align-items: center; justify-content: center; font-size: 1.4rem;">
+                            <i class="fas fa-moon fa-spin" style="--fa-animation-duration: 10s;"></i>
+                        </div>
+                        <div>
+                            <h5 style="margin: 0; font-weight: 900; color: #ff6bdb; text-transform: uppercase; font-size: 1.1rem;">
+                                <i class="fas fa-clock"></i> SON LAS 6:00 PM - ¡HORA DEL CIERRE!
+                            </h5>
+                            <span style="font-size: 0.9rem; color: #ddd;">Recuerda cerrar tu turno para evitar descuadres mañana.</span>
+                        </div>
+                    </div>
+
+                    <a href="{% url 'admin:gestion_venta_changelist' %}" class="btn" style="background: #d63384; color: #fff; font-weight: bold; text-decoration: none; border-radius: 30px; padding: 10px 20px; box-shadow: 0 0 15px #d63384;">
+                        <i class="fas fa-lock margin-r-5"></i> CERRAR CAJA AHORA
+                    </a>
+
+                </div>
+            </div>
+        </div>
+
+        <style>
+            @keyframes neon-pulse {
+                0% { box-shadow: 0 0 5px rgba(214, 51, 132, 0.2); border-color: #aa2066; }
+                50% { box-shadow: 0 0 25px rgba(214, 51, 132, 0.6); border-color: #ff6bdb; }
+                100% { box-shadow: 0 0 5px rgba(214, 51, 132, 0.2); border-color: #aa2066; }
+            }
+        </style>
+        {% endif %}
+        
+        {% if productos_bajos %}
+        <div class="row">
+            <div class="col-12">
+                <div class="card card-danger card-outline" style="background: rgba(20, 20, 20, 0.9); border: 1px solid #ff4d4d; box-shadow: 0 0 20px rgba(255, 0, 0, 0.2);">
+                    <div class="card-header">
+                        <h3 class="card-title text-danger" style="font-weight: 900;">
+                            <i class="fas fa-exclamation-triangle fa-shake"></i> ATENCIÓN: STOCK CRÍTICO
+                        </h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse"><i class="fas fa-minus"></i></button>
+                        </div>
+                    </div>
+                    <div class="card-body p-0">
+                        <table class="table table-sm" style="color: #fff;">
+                            <thead>
+                                <tr style="color: #ffaaaa;">
+                                    <th style="padding-left: 20px;">Producto</th>
+                                    <th>Categoría</th>
+                                    <th>Quedan</th>
+                                    <th class="text-right" style="padding-right: 20px;">Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for prod in productos_bajos %}
+                            <tr>
+                                <td style="padding-left: 20px; font-weight: bold;">{{ prod.nombre }}</td>
+                                <td>{{ prod.categoria }}</td>
+                                <td><span class="badge bg-danger">{{ prod.stock }} u.</span></td>
+                                <td class="text-right" style="padding-right: 20px;">
+                                    <a href="/admin/gestion/{% if 'Bebida' in prod.categoria %}bebida{% else %}extra{% endif %}/{{ prod.id }}/change/" class="btn btn-xs btn-outline-danger">Reponer</a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+
+        {% get_pedidos_web_pendientes as pedidos_web %}
+        
+        {% if pedidos_web %}
+        <div class="row">
+            <div class="col-12">
+                <div class="card" style="background: #100010; border: 1px solid #d500f9; box-shadow: 0 0 15px rgba(213, 0, 249, 0.3); animation: web-pulse 2s infinite;">
+                    <div class="card-header border-0 d-flex justify-content-between align-items-center" style="background: rgba(213, 0, 249, 0.1);">
+                        <h3 class="card-title" style="color: #d500f9; font-weight: 900; text-transform: uppercase;">
+                            <i class="fas fa-globe fa-spin" style="margin-right: 10px; --fa-animation-duration: 3s;"></i> 
+                            NUEVOS PEDIDOS WEB ({{ pedidos_web.count }})
+                        </h3>
+                        <div class="card-tools">
+                            <button type="button" class="btn btn-tool" data-card-widget="collapse">
+                                <i class="fas fa-minus" style="color: #d500f9;"></i>
+                            </button>
+                        </div>
+                    </div>
+                    <div class="card-body p-0 table-responsive">
+                        <table class="table table-sm m-0" style="color: #fff;">
+                            <thead>
+                                <tr style="background: #2a002a; color: #ff80ab;">
+                                    <th class="pl-3">Ticket</th>
+                                    <th>Cliente</th>
+                                    <th>Hora</th>
+                                    <th>Pago</th>
+                                    <th>Estado</th>
+                                    <th class="text-right pr-3">Acción</th>
+                                </tr>
+                            </thead>
+                            <tbody>
+                            {% for web in pedidos_web %}
+                            <tr>
+                                <td class="pl-3 font-weight-bold" style="color: #d500f9;">#{{ web.numero_diario }}</td>
+                                <td>
+                                    <i class="fas fa-user-circle mr-1" style="color: #888;"></i> {{ web.cliente_nombre }}
+                                </td>
+                                <td>{{ web.fecha_pedido|date:"H:i" }}</td>
+                                <td>
+                                    {% if web.metodo_pago == 'Transferencia' %}
+                                        <span class="badge" style="background: #00eaff; color: #000;">Transferencia</span>
+                                        {% if web.comprobante_pago %}
+                                            <a href="{{ web.comprobante_pago.url }}" target="_blank" title="Ver Comprobante">
+                                                <i class="fas fa-image text-white ml-1"></i>
+                                            </a>
+                                        {% endif %}
+                                    {% else %}
+                                        <span class="badge" style="background: #ccff00; color: #000;">Efectivo</span>
+                                    {% endif %}
+                                </td>
+                                <td>
+                                    {% if web.estado == 'Pendiente' %}
+                                        <span class="badge badge-warning">PENDIENTE</span>
+                                    {% else %}
+                                        <span class="badge badge-info">COCINANDO</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-right pr-3">
+                                    <a href="/admin/gestion/pedido/{{ web.id }}/change/" class="btn btn-xs" style="background: #d500f9; color: #fff; font-weight: bold;">
+                                        GESTIONAR <i class="fas fa-arrow-right ml-1"></i>
+                                    </a>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+        <br>
+        {% endif %}
+
+        <div class="row" style="margin-right: -5px; margin-left: -5px;">
+            
+            <div class="col-6 col-md-4 mb-3" style="padding: 0 5px;">
+                <div class="small-box bg-dark" style="border: 1px solid #ccff00; min-height: 120px; display: flex; flex-direction: column; justify-content: center;">
+                    <div class="inner text-center">
+                        <h3 style="color: #ccff00; font-size: 1.4rem; margin-bottom: 0;">${{ stats.ventas_hoy }}</h3>
+                        <p style="color: #fff; font-size: 0.75rem; margin: 0;">Ventas de Hoy</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-6 col-md-4 mb-3" style="padding: 0 5px;">
+                <div class="small-box bg-dark" style="border: 1px solid #00bfff; min-height: 120px; display: flex; flex-direction: column; justify-content: center;">
+                    <div class="inner text-center">
+                        <h3 style="color: #00bfff; font-size: 1.4rem; margin-bottom: 0;">{{ stats.pedidos_hoy }}</h3>
+                        <p style="color: #fff; font-size: 0.75rem; margin: 0;">Pedidos Hoy</p>
+                    </div>
+                </div>
+            </div>
+            
+            <div class="col-12 col-md-4 mb-3" style="padding: 0 5px;">
+                <div class="small-box bg-dark" style="border: 1px solid #ff00de; min-height: 120px; display: flex; flex-direction: column; justify-content: center;">
+                    <div class="inner text-center">
+                        <h3 style="font-size: 1.1rem; color: #ff00de; font-weight: 900; text-transform: uppercase; line-height: 1.2; margin-bottom: 5px;">
+                            {{ stats.top_plato }}
+                        </h3>
+                        <p style="color: #fff; font-size: 0.8rem; margin: 0;">Más Vendido: <b>{{ stats.top_cantidad }} uds</b></p>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <div class="row mb-4">
+            <div class="col-md-8">
+                <div class="card card-dark" style="border: 1px solid #444; height: 100%; background: #1a1a1a;">
+                    <div class="card-header border-0">
+                        <h3 class="card-title" style="color: #fff; font-weight: bold;">
+                            <i class="fas fa-chart-line mr-1" style="color: #ccff00;"></i> Ventas Últimos 7 Días
+                        </h3>
+                    </div>
+                    <div class="card-body">
+                        <canvas id="salesChart" style="min-height: 300px; height: 300px; max-height: 300px; max-width: 100%;"></canvas>
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-md-4">
+                <div class="card" style="background: #1a1a1a; border: 1px solid #333; height: 100%; box-shadow: 0 5px 15px rgba(0,0,0,0.5);">
+                    <div class="card-header border-0 d-flex justify-content-between align-items-center" style="background: #222; border-left: 5px solid #00eaff;">
+                        <h3 class="card-title text-white font-weight-bold" style="font-size: 0.9rem;">
+                            <i class="fas fa-bell mr-2" style="color: #00eaff;"></i> ALERTAS DE RESERVAS
+                        </h3>
+                        <a href="{% url 'admin:gestion_reserva_changelist' %}" class="btn btn-xs btn-outline-info" title="Gestionar Reservas">
+                            <i class="fas fa-external-link-alt"></i> GESTIONAR TODAS
+                        </a>
+                    </div>
+                    
+                    <div class="card-body p-2" style="overflow-y: auto; max-height: 320px;">
+                        {% for r in reservas %}
+                            {% if r.estado != 'Finalizada' and r.estado != 'Cancelada' %}
+                            
+                            <div class="info-box mb-2 {% if r.fecha == stats.fecha_actual %}reserva-glow-hoy{% else %}reserva-glow-futura{% endif %}" 
+                                style="background: #121212; border: 1px solid #333; min-height: 70px; border-radius: 8px;">
+                                <span class="info-box-icon" style="background: rgba(0, 234, 255, 0.05); color: {% if r.fecha == stats.fecha_actual %}#ccff00{% else %}#00eaff{% endif %}; font-size: 1.2rem;">
+                                    <i class="fas fa-user-clock"></i>
+                                </span>
+                                <div class="info-box-content" style="padding: 5px 10px;">
+                                    <span class="info-box-text font-weight-bold text-white" style="font-size: 0.85rem;">{{ r.cliente|upper|truncatechars:15 }}</span>
+                                    <div class="d-flex justify-content-between align-items-center">
+                                        <span style="font-size: 0.75rem; font-weight: bold;">
+                                            {% if r.fecha == stats.fecha_actual %}
+                                                <span style="color: #ccff00; animation: flashing 1s infinite;">¡HOY!</span>
+                                            {% else %}
+                                                <span style="color: #00eaff;">{{ r.fecha|date:"d M" }}</span>
+                                            {% endif %}
+                                        </span>
+                                        <span class="badge" style="background: #333; border: 1px solid #be00ff; color: #fff; font-size: 0.7rem;">{{ r.hora|time:"H:i" }}</span>
+                                    </div>
+                                    <div style="font-size: 0.7rem; color: #888; margin-top: 2px;">
+                                        Mesa {{ r.mesa.numero }} <span style="color:#ffcc00; margin-left: 5px;">● {{ r.estado|upper }}</span>
+                                    </div>
+                                </div>
+                            </div>
+
+                            {% endif %}
+                            
+                        {% empty %}
+                        <div class="text-center text-muted mt-4">Sin reservas próximas</div>
+                        {% endfor %}
+                    </div>
+                </div>
+            </div>
+    </div>
+
+<style>
+
+     @keyframes pulse-warning {
+        0% { box-shadow: 0 0 0 0 rgba(255, 174, 0, 0.7); }
+        70% { box-shadow: 0 0 0 10px rgba(255, 174, 0, 0); }
+        100% { box-shadow: 0 0 0 0 rgba(255, 174, 0, 0); }
+    }
+    @keyframes web-pulse {
+        0% { box-shadow: 0 0 10px rgba(213, 0, 249, 0.2); border-color: #aa00ff; }
+        50% { box-shadow: 0 0 25px rgba(213, 0, 249, 0.6); border-color: #d500f9; }
+        100% { box-shadow: 0 0 10px rgba(213, 0, 249, 0.2); border-color: #aa00ff; }
+    }
+
+    /* Efecto de alumbrar Neón para HOY (Verde Neón) */
+    @keyframes alumbrar-verde {
+        0% { box-shadow: 0 0 5px rgba(255, 0, 0, 0.2); border-color: #333; }
+        50% { box-shadow: 0 0 20px rgba(255, 0, 0, 0.6); border-color: #ff0000; }
+        100% { box-shadow: 0 0 5px rgba(255, 0, 0, 0.2); border-color: #333; }
+    }
+    /* Efecto de alumbrar Neón para FUTURO (Cian) */
+    @keyframes alumbrar-cian {
+        0% { box-shadow: 0 0 5px rgba(0, 234, 255, 0.1); border-color: #333; }
+        50% { box-shadow: 0 0 12px rgba(0, 234, 255, 0.4); border-color: #00eaff; }
+        100% { box-shadow: 0 0 5px rgba(0, 234, 255, 0.1); border-color: #333; }
+    }
+    @keyframes flashing {
+        0% { opacity: 1; }
+        50% { opacity: 0.5; }
+        100% { opacity: 1; }
+    }
+    .reserva-glow-hoy {
+        animation: alumbrar-verde 2s infinite ease-in-out !important;
+        border-left: 4px solid #ff0000 !important;
+    }
+    .reserva-glow-futura {
+        animation: alumbrar-cian 3s infinite ease-in-out !important;
+        border-left: 4px solid #00eaff !important;
+    }
+
+</style>
+
+{% load dashboard_tags %}
+{% get_historial_acciones as historial %}
+{% get_pedidos_pendientes as pendientes %}
+
+<div class="row mt-4">
+    
+    <div class="col-lg-6 col-12">
+        <div class="card" style="background: #1a1a1a; border: 1px solid #333; box-shadow: 0 5px 15px rgba(0,0,0,0.5);">
+            <div class="card-header border-0 d-flex justify-content-between align-items-center" style="background: #222; border-bottom: 2px solid #ffcc00;">
+                <h3 class="card-title text-white font-weight-bold">
+                    <i class="fas fa-clock text-warning mr-2"></i> PEDIDOS ACTIVOS
+                </h3>
+                <a href="{% url 'admin:gestion_pedido_changelist' %}" class="btn btn-xs btn-outline-warning" style="font-weight: bold;" title="Ir a Pedidos">
+                    <i class="fas fa-external-link-alt"></i> GESTIONAR
+                </a>
+            </div>
+            <div class="card-body p-0 table-responsive">
+                <table class="table table-dark table-striped table-valign-middle m-0">
+                    <thead>
+                    <tr>
+                        <th>Ticket</th>
+                        <th>Mesa</th>
+                        <th>Estado</th>
+                        <th class="text-right">Total</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for p in pendientes %}
+                    <tr>
+                        <td class="text-center font-weight-bold" style="color:#00bfff;">#{{ p.numero_diario }}</td>
+                        <td>Mesa {{ p.mesa.numero }}</td>
+                        <td>
+                            {% if p.estado == 'Listo' %}
+                                <span class="badge badge-success" style="font-size:0.8rem;">LISTO</span>
+                            {% else %}
+                                <span class="badge badge-warning" style="font-size:0.8rem;">{{ p.estado|upper }}</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-right text-success font-weight-bold">${{ p.total }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center text-muted p-4">No hay pedidos pendientes</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+    
+    <div class="col-lg-6 col-12">
+        <div class="card" style="background: #1a1a1a; border: 1px solid #333; box-shadow: 0 5px 15px rgba(0,0,0,0.5);">
+            <div class="card-header border-0" style="background: #222; border-bottom: 2px solid #00bfff;">
+                <h3 class="card-title text-white font-weight-bold">
+                    <i class="fas fa-history text-primary mr-2"></i> ÚLTIMAS ACCIONES
+                </h3>
+            </div>
+            <div class="card-body p-0 table-responsive">
+                <table class="table table-dark table-valign-middle m-0">
+                    <thead>
+                    <tr>
+                        <th>Usuario</th>
+                        <th>Acción</th>
+                        <th>Detalle</th>
+                        <th class="text-right">Fecha-Hora</th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    {% for accion in historial %}
+                    <tr>
+                        <td class="font-weight-bold" style="color: #ccff00;">
+                            <i class="fas fa-user-circle"></i> {{ accion.user.username|title }}
+                        </td>
+                        <td>
+                            {% if accion.action_flag == 1 %}
+                                <span class="text-success"><i class="fas fa-plus"></i> Creó</span>
+                            {% elif accion.action_flag == 2 %}
+                                <span class="text-info"><i class="fas fa-edit"></i> Editó</span>
+                            {% else %}
+                                <span class="text-danger"><i class="fas fa-trash"></i> Borró</span>
+                            {% endif %}
+                        </td>
+                        <td class="text-muted small">
+                            {{ accion.object_repr|truncatechars:25 }}
+                        </td>
+                        <td class="text-right text-muted small">{{ accion.action_time|date:"d/m H:i" }}</td>
+                    </tr>
+                    {% empty %}
+                    <tr>
+                        <td colspan="4" class="text-center text-muted p-4">Sin actividad reciente</td>
+                    </tr>
+                    {% endfor %}
+                    </tbody>
+                </table>
+            </div>
+        </div>
+    </div>
+</div>
+        <div class="row">
+            {% for app in app_list %}
+            <div class="col-lg-4 col-md-6 col-sm-12"> 
+                <div class="card card-primary card-outline" style="height: 100%; box-shadow: 0 5px 15px rgba(0,0,0,0.3); background-color: #1a1a1a;">
+                    <div class="card-header">
+                        <h5 class="m-0" style="font-weight: bold; color: #ccff00;">{{ app.name }}</h5>
+                    </div>
+                    <div class="card-body p-0">
+                        <table class="table table-sm table-hover">
+                            <tbody>
+                            {% for model in app.models %}
+                            <tr>
+                                <td style="padding: 12px 15px;">
+                                    {% if model.admin_url %}
+                                        <a href="{{ model.admin_url }}" style="color: #fff; font-weight: 500;">{{ model.name }}</a>
+                                    {% else %}
+                                        <span style="color: #aaa;">{{ model.name }}</span>
+                                    {% endif %}
+                                </td>
+                                <td class="text-right" style="padding: 12px 15px;">
+                                    <div class="btn-group">
+                                        {% if model.add_url %}
+                                            <a href="{{ model.add_url }}" class="btn btn-xs btn-success"><i class="fas fa-plus"></i></a>
+                                        {% endif %}
+                                        {% if model.admin_url %}
+                                            <a href="{{ model.admin_url }}" class="btn btn-xs btn-info"><i class="fas fa-eye"></i></a>
+                                        {% endif %}
+                                    </div>
+                                </td>
+                            </tr>
+                            {% endfor %}
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+                <br>
+            </div>
+            {% endfor %}
+        </div>
+    </div>
+
+    <script>
+        document.addEventListener('DOMContentLoaded', function() {
+            var ctx = document.getElementById('salesChart').getContext('2d');
+            
+            // Datos que vienen de Django
+            var labels = {{ stats.chart_labels|safe }};
+            var data = {{ stats.chart_data|safe }};
+
+            var salesChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: 'Ventas ($)',
+                        backgroundColor: 'rgba(204, 255, 0, 0.1)', // Verde neón transparente
+                        borderColor: '#ccff00', // Verde neón sólido
+                        pointBackgroundColor: '#fff',
+                        pointBorderColor: '#ccff00',
+                        data: data,
+                        fill: true,
+                        tension: 0.4 // Curvas suaves
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        x: {
+                            ticks: { color: '#ffffff' },
+                            grid: { color: '#333333' }
+                        },
+                        y: {
+                            ticks: { color: '#ffffff', callback: function(value) { return '$' + value; } },
+                            grid: { color: '#333333' }
+                        }
+                    },
+                    plugins: {
+                        legend: { labels: { color: '#ffffff' } }
+                    }
+                }
+            });
+        });
+    </script>
+
+{% endblock %}

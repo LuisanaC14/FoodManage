@@ -1,0 +1,161 @@
+/* ============================================================
+   1. ESTRUCTURA Y FONDO
+   ============================================================ */
+:root {
+    --sidebar-width: 250px;
+}
+
+.main-sidebar, .main-sidebar::before {
+    background-color: #151719 !important;
+    box-shadow: 5px 0 15px rgba(0,0,0,0.5);
+    border-right: none !important;
+}
+
+.main-sidebar .sidebar {
+    padding-top: 0 !important; 
+    margin-top: 0 !important;
+    overflow: visible !important; /* CRUCIAL: Deja que el brillo salga */
+}
+
+/* ============================================================
+   2. LOGO
+   ============================================================ */
+.brand-link {
+    width: 100% !important; 
+    height: auto !important; 
+    min-height: 50px !important;
+    padding: 10px 15px 8px 15px !important; 
+    display: flex !important;
+    align-items: center !important; 
+    position: sticky !important; 
+    top: 0;
+    z-index: 1000;
+    background-color: #151719 !important;
+    border-bottom: 1px solid rgba(255, 255, 255, 0.1) !important;
+}
+
+.brand-link .brand-image {
+    max-height: 40px !important; 
+    min-width: 40px !important;
+    width: auto !important;
+    margin-right: 10px !important;
+    opacity: 1 !important;
+}
+
+.brand-link .brand-text {
+    color: #fff !important;
+    font-size: 0.9rem !important; 
+    font-weight: 800 !important;   
+    line-height: 1.1 !important;   
+    white-space: normal !important; 
+    text-transform: uppercase;
+    display: block !important;
+    visibility: visible !important;
+    opacity: 1 !important;
+}
+
+/* ESTADO CERRADO */
+.sidebar-collapse .brand-link {
+    padding: 10px 0 !important;
+    justify-content: center !important;
+    min-height: 50px !important;
+}
+.sidebar-collapse .brand-link .brand-text { display: none !important; opacity: 0 !important; }
+.sidebar-collapse .brand-link .brand-image { margin-right: 0 !important; }
+
+
+/* ============================================================
+   6. INPUTS Y FORMULARIOS (TU CÓDIGO INTACTO)
+   ============================================================ */
+.form-control, 
+.card-body form input[type="password"] {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    color: white !important;
+    border-radius: 8px !important;
+    height: 48px !important;
+    transition: all 0.3s ease;
+    display: block !important;
+    visibility: visible !important;
+    width: 100% !important;
+}
+
+.form-control:focus {
+    background: rgba(255, 255, 255, 0.2) !important;
+    border-color: #ccff00 !important;
+}
+
+.input-group-text {
+    background: rgba(255, 255, 255, 0.1) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    color: white !important;
+    border-left: none !important;
+}
+
+.input-group {
+    display: flex !important;
+    flex-wrap: nowrap !important;
+    width: 100% !important;
+}
+.input-group .form-control {
+    width: 1% !important;
+    flex: 1 1 auto !important;
+}
+
+.card-body form p {
+    display: block !important;
+    visibility: visible !important;
+    margin-bottom: 15px !important;
+    color: white !important;
+}
+
+/* ============================================================
+   7. BOTÓN DEL LOGIN
+   ============================================================ */
+.login-box button[type="submit"], 
+.login-box input[type="submit"] {
+    background: linear-gradient(135deg, #007bff, #0056b3) !important;
+    border: none !important;
+    border-radius: 8px !important;
+    font-weight: bold !important;
+    letter-spacing: 1px;
+    height: 48px !important;
+    box-shadow: 0 5px 15px rgba(0, 123, 255, 0.3);
+    text-transform: uppercase;
+    color: white !important;
+    width: 100% !important;
+}
+
+/* ============================================================
+   9. MENSAJES DE ERROR
+   ============================================================ */
+.errorlist {
+    display: block !important;
+    color: #ff6b6b !important;
+    background-color: rgba(50, 0, 0, 0.5) !important;
+    border: 1px solid #ff4d4d !important;
+    padding: 10px !important;
+    margin-bottom: 15px !important;
+    list-style: none !important;
+    text-align: center !important;
+}
+
+.error-text {
+    color: #ff4d4d !important;
+    font-size: 0.85rem !important;
+    font-weight: bold !important;
+    margin-top: 5px !important;
+    display: block !important;
+    text-align: left !important;
+    background: rgba(0,0,0,0.6);
+    padding: 2px 5px;
+    border-radius: 4px;
+}
+
+.input-error {
+    border: 2px solid #ff4d4d !important;
+    box-shadow: 0 0 8px rgba(255, 77, 77, 0.6) !important;
+}
+
+@keyframes shake { 0% { transform: translateX(0); } 25% { transform: translateX(-5px); } 75% { transform: translateX(5px); } 100% { transform: translateX(0); } }
+.shake { animation: shake 0.3s; }

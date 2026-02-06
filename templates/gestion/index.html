@@ -1,0 +1,195 @@
+{% load static %}
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Máncora Marisquería | Menú Digital & Reservas</title>
+    
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/animate.css/4.1.1/animate.min.css"/>
+    
+    <link rel="stylesheet" href="{% static 'css/cliente_style.css' %}">
+    
+    <style>
+        /* ESTILOS ESPECÍFICOS DEL INDEX */
+        .dashboard-menu .btn {
+            border-radius: 15px; font-weight: 500; transition: all 0.3s ease; color: #ddd;
+        }
+        .dashboard-menu .btn:hover {
+            background: rgba(204, 255, 0, 0.15) !important; color: #fff; transform: translateX(10px);
+        }
+        .width-icon { width: 25px; text-align: center; }
+        html { scroll-behavior: smooth; }
+        .active-dash { background: rgba(204, 255, 0, 0.2) !important; color: #ccff00 !important; }
+
+        /* Estilos Banner Reserva Neón */
+        .reservation-banner {
+            background: linear-gradient(135deg, #0f0f0f 0%, #000000 100%);
+            border: 1px solid #222;
+            box-shadow: 0 20px 40px rgba(0,0,0, 0.8), 0 0 30px rgba(204, 255, 0, 0.15);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+        }
+        .reservation-banner:hover {
+            border-color: #ccff00; transform: translateY(-5px) scale(1.01);
+            box-shadow: 0 30px 60px rgba(0,0,0, 0.9), 0 0 50px rgba(204, 255, 0, 0.4);
+        }
+        .banner-pattern {
+            position: absolute; top: 0; left: 0; width: 100%; height: 100%;
+            background-image: radial-gradient(#333 1px, transparent 1px);
+            background-size: 20px 20px; opacity: 0.1; pointer-events: none;
+        }
+        .banner-glow {
+            position: absolute; top: -50%; right: -10%; width: 60%; height: 200%;
+            background: radial-gradient(circle, rgba(204,255,0,0.06) 0%, rgba(0,0,0,0) 60%);
+            pointer-events: none; transition: 0.5s;
+        }
+        .reservation-banner:hover .banner-glow { opacity: 1; }
+        
+        .icon-pulse {
+            width: 65px; height: 65px; background: #111; border: 1px solid #333; border-radius: 50%;
+            display: flex; align-items: center; justify-content: center; color: #ccff00;
+            animation: pulse-green 2s infinite;
+        }
+        @keyframes pulse-green {
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(204, 255, 0, 0.4); }
+            70% { transform: scale(1); box-shadow: 0 0 0 15px rgba(204, 255, 0, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(204, 255, 0, 0); }
+        }
+        .btn-neon-fill {
+            background: transparent; color: #ccff00; border: 2px solid #ccff00;
+            text-transform: uppercase; letter-spacing: 1px; position: relative; overflow: hidden; transition: 0.3s;
+        }
+        .btn-neon-fill:hover { background: #ccff00; color: #000; box-shadow: 0 0 30px rgba(204, 255, 0, 0.5); }
+        .btn-neon-fill:hover .animate-arrow { transform: translateX(5px); transition: 0.2s; }
+    </style>
+</head>
+<body class="bg-black text-white">
+
+    <div class="offcanvas offcanvas-start bg-black text-white" tabindex="-1" id="dashboardSidebar" style="border-right: 1px solid #333; width: 280px;">
+        <div class="offcanvas-header justify-content-center py-4" style="background: #222; border-bottom: 2px solid #ccff00; border-bottom-left-radius: 40px; border-bottom-right-radius: 40px;">
+            <h5 class="offcanvas-title fw-bold text-warning" style="letter-spacing: 2px;">
+                <i class="fas fa-fish me-2"></i> MÁNCORA
+            </h5>
+            <button type="button" class="btn-close btn-close-white position-absolute end-0 top-0 m-3" data-bs-dismiss="offcanvas"></button>
+        </div>
+
+        <div class="offcanvas-body p-4">
+            <div class="d-grid gap-3 dashboard-menu">
+                <a href="{% url 'inicio' %}" class="btn btn-dark text-start py-3 border-0">
+                    <i class="fas fa-home me-3 text-warning width-icon"></i> Inicio
+                </a>
+                <a href="{% url 'inicio' %}#menu-start" class="btn btn-dark text-start py-3 border-0" onclick="cerrarSidebar()">
+                    <i class="fas fa-utensils me-3 text-warning width-icon"></i> Menú Digital
+                </a>
+                <a href="{% url 'reserva_web' %}" class="btn btn-dark text-start py-3 border-0">
+                    <i class="fas fa-chair me-3 text-warning width-icon"></i> Reservar Mesa
+                </a>
+                
+                <button class="btn btn-dark text-start py-3 border-0" onclick="cerrarSidebar(); openCart()">
+                    <i class="fas fa-shopping-cart me-3 text-warning width-icon"></i> Mi Pedido 
+                    <span class="badge bg-warning text-dark ms-2" id="cart-count-sidebar">0</span>
+                </button>
+            </div>
+        </div>
+        <div class="p-4 text-center border-top border-secondary">
+            <small class="text-muted">© 2026 Máncora Marisquería</small>
+        </div>
+    </div>
+
+    {% include 'gestion/includes/navbar.html' %}
+
+    {% block hero %}
+        {% include "gestion/includes/hero.html" %}
+    {% endblock %}
+
+    <main id="main-content">
+        {% block content %}
+            
+            <section class="container mt-5" id="menu-start">
+                <div class="row">
+                    
+                    <div class="col-lg-3 mb-5">
+                        {% include 'gestion/includes/filtros.html' %}
+                    </div>
+
+                    <div class="col-lg-9">
+                        <div class="d-flex justify-content-between align-items-center mb-4 pb-2 border-bottom border-secondary">
+                            <h2 class="fw-bold text-white"><span class="text-warning">MENÚ</span> MÁNCORA</h2>
+                            <span class="text-muted small">Mostrando resultados</span>
+                        </div>
+
+                        {% include 'gestion/includes/grid_productos.html' %}
+                    </div>
+                </div>
+
+                <div class="row justify-content-center mt-5 mb-5">
+                    <div class="col-lg-11 col-12">
+                        <div class="reservation-banner d-lg-flex justify-content-between align-items-center p-4 p-lg-5 rounded-5 position-relative overflow-hidden">
+                            <div class="banner-pattern"></div>
+                            <div class="banner-glow"></div>
+                            <div class="d-flex align-items-center gap-4 position-relative z-1 mb-4 mb-lg-0 justify-content-center justify-content-lg-start text-center text-lg-start">
+                                <div class="icon-pulse d-none d-md-flex"><i class="fas fa-calendar-check fa-lg"></i></div>
+                                <div>
+                                    <h3 class="fw-bold text-white mb-1 text-uppercase" style="letter-spacing: 1px; font-family: 'Arial Black', sans-serif;">
+                                        ¿DESEAS <span style="color: #ccff00; text-shadow: 0 0 15px rgba(204,255,0,0.4);">VISITARNOS?</span>
+                                    </h3>
+                                    <p class="text-white-50 m-0" style="font-size: 1rem;">
+                                        Reserva tu mesa ideal en <span class="text-white fw-bold">Terraza</span> o <span class="text-white fw-bold">Salón VIP</span>.
+                                    </p>
+                                </div>
+                            </div>
+                            <div class="position-relative z-1 text-center">
+                                <a href="{% url 'reserva_web' %}" class="btn btn-neon-fill fw-bold px-5 py-3 rounded-pill">
+                                    RESERVAR MESA <i class="fas fa-arrow-right ms-2 animate-arrow"></i>
+                                </a>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+            </section>
+
+            {% include 'gestion/includes/seccion_ubicacion.html' %}
+        {% endblock %}
+    </main>
+
+    {% include 'gestion/includes/modal_reserva.html' %}
+    {% include 'gestion/includes/cart_sidebar.html' %}
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    
+    <script>
+        function cerrarSidebar() {
+        const sidebar = document.getElementById('dashboardSidebar');
+        if(sidebar) {
+            const bsOffcanvas = bootstrap.Offcanvas.getInstance(sidebar);
+            if (bsOffcanvas) bsOffcanvas.hide();
+        }
+    }
+
+    // Sincronización limpia de contadores
+    setInterval(() => {
+        // Usamos la función del navbar que ya maneja PC y Móvil
+        if (typeof actualizarBadgeCarrito === "function") {
+            actualizarBadgeCarrito();
+            
+            // Sincronización para el badge del sidebar de navegación (ID: cart-count-sidebar)
+            let cart = JSON.parse(localStorage.getItem('mancora_cart')) || [];
+            const countSide = document.getElementById('cart-count-sidebar');
+            if(countSide) countSide.innerText = cart.length;
+        }
+    }, 1000);
+
+    document.addEventListener('DOMContentLoaded', () => {
+        if (typeof actualizarBadgeCarrito === "function") {
+            actualizarBadgeCarrito();
+        }
+    });
+    </script>
+
+    {% include 'gestion/includes/footer.html' %}
+
+</body>
+</html>

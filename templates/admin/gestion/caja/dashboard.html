@@ -1,0 +1,374 @@
+{% extends "admin/base_site.html" %}
+{% load static %}
+
+{% block content %}
+<style>
+    /* ESTILOS ESPECÍFICOS PARA LA CAJA */
+    .caja-container {
+        display: grid;
+        grid-template-columns: 2fr 1fr; /* Lista Pedidos vs Panel Cobro */
+        gap: 20px;
+        min-height: 80vh;
+    }
+
+    /* TARJETAS DE PEDIDOS */
+    .pedido-card {
+        background: #1a1a1a;
+        border: 1px solid #333;
+        border-radius: 10px;
+        padding: 15px;
+        margin-bottom: 15px;
+        display: flex;
+        justify-content: space-between;
+        align-items: center;
+        transition: 0.3s;
+        cursor: pointer;
+    }
+    .pedido-card:hover, .pedido-card.selected {
+        border-color: #ccff00;
+        box-shadow: 0 0 15px rgba(204, 255, 0, 0.1);
+        transform: translateX(5px);
+    }
+    
+    .pc-info h3 { margin: 0; color: #fff; font-size: 1.2rem; }
+    .pc-info p { margin: 0; color: #888; font-size: 0.9rem; }
+    .pc-total { font-size: 1.5rem; font-weight: 900; color: #ccff00; }
+    
+    /* PANEL DERECHO (CALCULADORA) */
+    .cobro-panel {
+        background: #111;
+        border: 2px solid #333;
+        border-radius: 15px;
+        padding: 20px;
+        position: sticky;
+        top: 20px;
+        height: fit-content;
+    }
+    .cp-header { text-align: center; border-bottom: 1px solid #333; padding-bottom: 15px; margin-bottom: 20px; }
+    .cp-total-display {
+        background: #000;
+        color: #ccff00;
+        font-family: 'Consolas', monospace;
+        font-size: 3rem;
+        text-align: right;
+        padding: 10px;
+        border-radius: 10px;
+        margin-bottom: 20px;
+        border: 1px solid #333;
+    }
+    
+    /* INPUTS GIGANTES PARA CAJERO */
+    .form-group label { color: #888; }
+    .big-input {
+        width: 100%;
+        background: #222;
+        border: 1px solid #444;
+        color: #fff;
+        font-size: 1.5rem;
+        padding: 10px;
+        border-radius: 8px;
+        margin-bottom: 15px;
+    }
+    .btn-cobrar {
+        width: 100%;
+        background: linear-gradient(45deg, #ccff00, #aacc00);
+        color: #000;
+        font-weight: 900;
+        font-size: 1.5rem;
+        padding: 15px;
+        border: none;
+        border-radius: 50px;
+        cursor: pointer;
+        transition: 0.3s;
+    }
+    .btn-cobrar:hover { transform: scale(1.05); box-shadow: 0 0 20px rgba(204,255,0,0.4); }
+
+    .cambio-display { color: #00bfff; font-size: 1.2rem; text-align: right; margin-bottom: 20px; font-weight: bold;}
+
+    /* =========================================
+       RESPONSIVIDAD MÓVIL (MODO APP)
+       ========================================= */
+    @media (max-width: 992px) {
+        
+        /* 1. ROMPER LA GRILLA (UNA SOLA COLUMNA) */
+        .caja-container {
+            display: flex !important;
+            flex-direction: column !important; /* Uno debajo del otro */
+            gap: 0 !important;
+        }
+
+        /* 2. LISTA DE PEDIDOS (ARRIBA) */
+        .lista-pedidos {
+            width: 100% !important;
+            padding-bottom: 20px;
+        }
+        
+        /* Tarjetas más compactas en móvil */
+        .pedido-card {
+            padding: 12px !important;
+        }
+        .pc-total {
+            font-size: 1.2rem !important;
+        }
+
+        /* 3. PANEL DE COBRO (ABAJO) */
+        .cobro-panel {
+            position: static !important; /* Ya no flota, cae al piso */
+            width: 100% !important;
+            border-radius: 20px 20px 0 0 !important; /* Redondo arriba */
+            border: none !important;
+            border-top: 4px solid #ccff00 !important;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.5) !important;
+            margin-top: 10px;
+            background: #0f0f0f !important;
+            padding: 25px 15px !important;
+        }
+
+        /* 4. BOTONES DE BILLETES (AJUSTE) */
+        /* Para que los botones de $5, $10 no se salgan de la pantalla */
+        .d-flex.gap-2 {
+            flex-wrap: wrap !important; /* Si no caben, bajan */
+        }
+        .d-flex.gap-2 button {
+            flex: 1 1 30% !important; /* Ocupan 30% cada uno aprox */
+            height: 45px !important;
+            font-size: 1.1rem !important;
+        }
+
+        /* 5. INPUTS GIGANTES PARA DEDOS */
+        .big-input {
+            height: 55px !important;
+            font-size: 1.3rem !important;
+        }
+        
+        /* Ocultar el título de "Cobrando ticket" para ahorrar espacio en móvil */
+        .cp-header {
+            padding-bottom: 10px !important;
+            margin-bottom: 10px !important;
+        }
+        .cp-header h3 { font-size: 1.1rem !important; }
+    }
+</style>
+
+<div class="caja-container">
+    
+    <div class="lista-pedidos">
+        <h2 style="color:#fff; margin-bottom:20px;">🛎️ PEDIDOS POR COBRAR</h2>
+        {% for pedido in pedidos %}
+        <div class="pedido-card" 
+            onclick="seleccionarPedido('{{ pedido.id }}', '{{ pedido.numero_diario }}', '{{ pedido.total }}', '{{ pedido.mesa }}', this)"
+            data-detalles="{% for item in pedido.detalles.all %}{{ item.cantidad }}x {{ item.producto.nombre }} - ${{ item.precio_unitario }}|{% endfor %}"
+            data-url-imprimir="{% url 'imprimir_ticket' pedido.id %}"> <div class="pc-info">
+                <h3>Ticket #{{ pedido.numero_diario }} - {{ pedido.mesa }}</h3>
+                <p>{{ pedido.fecha_pedido|date:"H:i" }} | {{ pedido.estado }}</p>
+                <small style="color:#aaa;">
+                    {% for item in pedido.detalles.all|slice:":3" %}
+                        {{ item.cantidad }}x {{ item.producto.nombre }}, 
+                    {% endfor %}...
+                </small>
+            </div>
+            <div class="pc-total">${{ pedido.total }}</div>
+        </div>
+        {% empty %}
+            <div style="text-align:center; color:#666; padding:50px;">
+                <i class="fas fa-check-circle" style="font-size:3rem; margin-bottom:10px;"></i>
+                <p>No hay pedidos pendientes de cobro.</p>
+            </div>
+        {% endfor %}
+    </div>
+
+    <div class="cobro-panel" id="panel-cobro" style="opacity:0.3; pointer-events:none;">
+        <div class="cp-header">
+            <h3 style="color:#fff;">COBRANDO TICKET <span id="lbl-ticket">#00</span></h3>
+            <p id="lbl-mesa" style="color:#888;">Seleccione un pedido</p>
+        </div>
+
+        <div class="cp-total-display">$<span id="display-total">0.00</span></div>
+
+            <form id="form-cobro" method="POST" action="">
+                {% csrf_token %}
+                
+                <div class="form-group">
+                    <label><i class="fas fa-money-bill-wave"></i> Efectivo</label>
+                    <input type="number" step="0.01" id="monto-efectivo" class="big-input" placeholder="0.00" onkeyup="calcularCobroMixto()">
+                    <div class="d-flex gap-2 mt-2 mb-3">
+                    <button type="button" class="btn btn-outline-secondary btn-sm flex-fill" onclick="sumarBillete(5)">$5</button>
+                    <button type="button" class="btn btn-outline-secondary btn-sm flex-fill" onclick="sumarBillete(10)">$10</button>
+                    <button type="button" class="btn btn-outline-warning btn-sm flex-fill fw-bold" onclick="sumarBillete(20)">$20</button>
+                    <button type="button" class="btn btn-outline-success btn-sm flex-fill fw-bold" onclick="sumarBillete(50)">$50</button>
+                    <button type="button" class="btn btn-outline-light btn-sm" onclick="pagarExacto()">Exacto</button>
+                </div>
+
+                <div class="form-group">
+                    <label><i class="fas fa-mobile-alt"></i> Transferencia</label>
+                    <input type="number" step="0.01" id="monto-transferencia" class="big-input" placeholder="0.00" onkeyup="calcularCobroMixto()">
+                </div>
+
+                <input type="hidden" name="metodo_pago" id="hidden-metodo">
+                <input type="hidden" name="monto_recibido" id="hidden-recibido">
+
+                <div class="cambio-display">
+                    RESTANTE / CAMBIO: $<span id="lbl-cambio">0.00</span>
+                </div>
+
+                <div class="form-group" style="border-top: 1px solid #444; padding-top: 15px; margin-top: 15px;">
+                    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; background: #222; padding: 10px; border-radius: 8px;">
+                        <label style="color: #ccff00; margin: 0; font-weight: bold;"><i class="fas fa-file-invoice"></i> ¿SOLICITA FACTURA?</label>
+                        <input type="checkbox" id="switch-factura" onchange="toggleFactura()" style="width: 22px; height: 22px; cursor: pointer;">
+                    </div>
+
+                    <div id="campos-factura" style="display: none; animation: fadeIn 0.3s;">
+                        <input type="text" name="factura-nombre" id="factura-nombre" class="big-input" placeholder="Nombre / Razón Social" style="font-size: 0.9rem; margin-bottom: 8px;">
+                        <input type="text" name="factura-id" id="factura-id" class="big-input" placeholder="RUC / Cédula" style="font-size: 0.9rem; margin-bottom: 8px;">
+                        <input type="text" name="factura-telefono" id="factura-telefono" class="big-input" placeholder="Teléfono" style="font-size: 0.9rem; margin-bottom: 8px;">
+                        <input type="email" name="factura-email" id="factura-email" class="big-input" placeholder="Correo Electrónico" style="font-size: 0.9rem; margin-bottom: 8px;">
+                        <input type="text" name="factura-direccion" id="factura-direccion" class="big-input" placeholder="Dirección del Cliente" style="font-size: 0.9rem;">
+                    </div>
+                </div>
+
+                <div class="form-group" style="border-top: 1px solid #444; padding-top: 15px; margin-top: 15px;">
+                    <label style="color: #ffcc00;"><i class="fas fa-tag"></i> DESCUENTO / CORTESÍA ($)</label>
+                    <input type="number" step="0.01" id="monto-descuento" class="big-input" placeholder="0.00" onkeyup="calcularCobroMixto()" style="border-color: #ffcc00; color: #ffcc00;">
+                </div>
+
+                <button type="button" id="btn-factura-neon" class="btn-print" onclick="imprimirFactura()" 
+                        style="display:none; margin-bottom:20px; background:#222; color:#ccff00; width:100%; padding:15px; border-radius:50px; font-weight:bold; border:1px solid #ccff00; cursor:pointer;">
+                    <i class="fas fa-file-invoice-dollar"></i> GENERAR FACTURA
+                </button>
+
+                <button type="button" class="btn-cobrar" onclick="validarYConfirmar()">
+                    CONFIRMAR PAGO <i class="fas fa-check"></i>
+                </button>
+            </form>
+        </div>
+
+<script>
+    let urlImpresionActual = "";
+    let detallesActuales = ""; 
+    let totalActual = 0;
+
+    function toggleFactura() {
+    const checkbox = document.getElementById('switch-factura');
+    const campos = document.getElementById('campos-factura');
+    const btnFactura = document.getElementById('btn-factura-neon'); // Usamos el ID nuevo
+    
+    if (checkbox.checked) {
+        campos.style.display = 'block';
+        btnFactura.style.display = 'block';
+    } else {
+        campos.style.display = 'none';
+        btnFactura.style.display = 'none';
+        // Limpiamos los campos para que en admin.py se guarde como Consumidor Final
+        document.getElementById('factura-nombre').value = "";
+        document.getElementById('factura-id').value = "";
+    }
+    }
+
+    function seleccionarPedido(id, numero, total, mesa, elemento) {
+        document.getElementById('panel-cobro').style.opacity = '1';
+        document.getElementById('panel-cobro').style.pointerEvents = 'all';
+        document.getElementById('lbl-ticket').innerText = "#" + numero;
+        document.getElementById('lbl-mesa').innerText = mesa;
+        document.getElementById('display-total').innerText = total; 
+        
+        urlImpresionActual = elemento.getAttribute('data-url-imprimir');
+
+        totalActual = parseFloat(total.replace(',', '.')); 
+        detallesActuales = elemento.getAttribute('data-detalles');
+        document.getElementById('form-cobro').action = "cobrar/" + id + "/";
+
+        document.getElementById('monto-efectivo').value = "";
+        document.getElementById('monto-transferencia').value = "";
+        document.getElementById('lbl-cambio').innerText = "0.00";
+
+        document.querySelectorAll('.pedido-card').forEach(c => c.classList.remove('selected'));
+        elemento.classList.add('selected');
+    }
+
+    function calcularCobroMixto() {
+        let descuento = parseFloat(document.getElementById('monto-descuento').value) || 0;
+        let efectivo = parseFloat(document.getElementById('monto-efectivo').value) || 0;
+        let transferencia = parseFloat(document.getElementById('monto-transferencia').value) || 0;
+        
+        // El nuevo total a pagar considerando el descuento
+        let nuevoTotalPagar = totalActual - descuento;
+        document.getElementById('display-total').innerText = nuevoTotalPagar.toFixed(2);
+
+        let totalRecibido = efectivo + transferencia;
+        let cambio = totalRecibido - nuevoTotalPagar;
+        
+        let label = document.getElementById('lbl-cambio');
+        label.innerText = cambio.toFixed(2);
+        label.style.color = (cambio < 0) ? "#ff4d4d" : "#00bfff";
+        
+        document.getElementById('hidden-recibido').value = totalRecibido.toFixed(2);
+    }
+
+    function validarYConfirmar() {
+        let efectivo = parseFloat(document.getElementById('monto-efectivo').value) || 0;
+        let transferencia = parseFloat(document.getElementById('monto-transferencia').value) || 0;
+        let totalRecibido = efectivo + transferencia;
+        
+        // --- CÓDIGO NUEVO: DECIDIR EL MÉTODO ---
+        let inputMetodo = document.getElementById('hidden-metodo');
+        
+        if (transferencia > 0 && efectivo === 0) {
+            inputMetodo.value = 'Transferencia'; // Si solo puso dinero en transferencia
+        } else if (transferencia > 0 && efectivo > 0) {
+            inputMetodo.value = 'Banco'; // O 'Mixto', si usó los dos
+        } else {
+            inputMetodo.value = 'Efectivo'; // Por defecto
+        }
+        // ---------------------------------------
+
+        if (totalRecibido < (totalActual - 0.01)) {
+            alert("¡Error! El dinero ingresado es insuficiente para cubrir los $" + totalActual.toFixed(2));
+            return;
+        }
+
+        if (document.getElementById('switch-factura').checked) {
+            imprimirFactura();
+        }
+
+        setTimeout(() => {
+            document.getElementById('form-cobro').submit();
+        }, 1000);
+    }
+
+    function imprimirFactura() {
+        if (urlImpresionActual) {
+            // AQUI ESTA EL CAMBIO DE TAMAÑO: width=1000, height=800
+            const ventana = window.open(
+                urlImpresionActual, 
+                'ImprimirTicket', 
+                'width=1000,height=800,scrollbars=yes,resizable=yes'
+            );
+            
+            if (ventana) ventana.focus();
+        } else {
+            alert("Por favor seleccione un pedido primero.");
+        }
+    }
+
+    // --- FUNCIONES DE COBRO RÁPIDO ---
+    function sumarBillete(valor) {
+        let input = document.getElementById('monto-efectivo');
+        let actual = parseFloat(input.value) || 0;
+        
+        // Si el valor actual es menor al total a pagar, sumamos. 
+        // Si ya cubre el total, reiniciamos con el nuevo billete (lógica de caja rápida)
+        if (actual < totalActual) {
+            input.value = (actual + valor).toFixed(2);
+        } else {
+            input.value = valor.toFixed(2);
+        }
+        calcularCobroMixto(); // Recalcula el cambio automáticamente
+    }
+
+    function pagarExacto() {
+        let input = document.getElementById('monto-efectivo');
+        input.value = totalActual.toFixed(2);
+        calcularCobroMixto();
+    }
+</script>
+{% endblock %}

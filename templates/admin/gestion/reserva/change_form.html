@@ -1,0 +1,554 @@
+{% extends "admin/boton_volver_form.html" %}
+{% load i18n admin_urls static admin_modify %}
+
+{# 1. ESTILOS #}
+{% block extrastyle %}
+    {{ block.super }}
+    <link rel="stylesheet" href="{% static 'css/visual_mesa.css' %}">
+{% endblock %}
+
+{# 2. CSS Y SCRIPTS #}
+{% block extrahead %}
+    {{ block.super }}
+    <style>
+        /* --- ESTILOS RESPONSIVOS Y VISUALES --- */
+        
+        /* Contenedor principal del contenido */
+        #content-main {
+            max-width: 100%;
+            margin: 0 auto;
+            box-sizing: border-box;
+        }
+
+        /* ==============================================
+           ARREGLO DEL CALENDARIO Y RELOJ (DARK NEON) 
+           ============================================== */
+        
+        /* Contenedor General (La cajita flotante) */
+        .calendarbox, .clockbox {
+            background: #1a1a1a !important; /* Fondo Oscuro */
+            border: 2px solid #333 !important;
+            border-radius: 8px !important;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.8) !important;
+            color: #fff !important;
+            z-index: 99999 !important; /* Que flote sobre todo */
+            position: absolute !important;
+        }
+
+        /* CALENDARIO - Cabecera (Mes y Año) */
+        .calendar caption, .clockbox h2 {
+            background: #000 !important;
+            color: #ccff00 !important; /* Amarillo Neón */
+            font-weight: 900 !important;
+            text-transform: uppercase;
+            padding: 10px !important;
+            border-bottom: 2px solid #ccff00 !important;
+        }
+
+        /* CALENDARIO - Días de la semana (L M M J V S D) */
+        .calendar th {
+            background: #222 !important;
+            color: #aaa !important;
+            border-bottom: 1px solid #444 !important;
+            padding: 5px !important;
+        }
+
+        /* CALENDARIO - Números de los días */
+        .calendar td {
+            background: #1a1a1a !important;
+            padding: 0 !important;
+        }
+        .calendar td a {
+            background: transparent !important;
+            color: #fff !important; /* Texto blanco */
+            padding: 5px !important;
+            display: block;
+            text-decoration: none !important;
+            font-weight: bold;
+        }
+        
+        /* Día seleccionado (Hoy o el que elijas) */
+        .calendar td.selected a, .calendar td.today a {
+            background: #ccff00 !important;
+            color: #000 !important; /* Texto negro para contraste */
+            border-radius: 4px;
+        }
+
+        /* Hover al pasar el mouse */
+        .calendar td a:hover {
+            background: #333 !important;
+            color: #00eaff !important; /* Azul Cyan al pasar mouse */
+        }
+
+        /* Botones de abajo (Ayer | Hoy | Mañana) */
+        .calendar-shortcuts, .clockbox-shortcuts {
+            background: #111 !important;
+            border-top: 1px solid #333 !important;
+            padding: 8px !important;
+            font-size: 0.8rem;
+        }
+        .calendar-shortcuts a, .clockbox-shortcuts a {
+            color: #00eaff !important; /* Enlaces en Azul Cyan */
+            text-decoration: none;
+            font-weight: bold;
+            margin: 0 5px;
+        }
+        .calendar-shortcuts a:hover { text-decoration: underline; }
+
+        /* Botón Cancelar */
+        .calendar-cancel, .clockbox-cancel {
+            display: none !important; /* Lo ocultamos porque estorba visualmente */
+        }
+
+        /* RELOJ - Lista de horas */
+        .clockbox ul.timelist li a {
+            color: #fff !important;
+            padding: 5px !important;
+            display: block;
+        }
+        .clockbox ul.timelist li a:hover {
+            background: #333 !important;
+            color: #ccff00 !important;
+        }
+
+
+        /* ==============================================
+           FIN DE ARREGLO DE CALENDARIO
+           ============================================== */
+
+        /* INLINES (TABLA DE PLATOS) */
+        .inline-group {
+            background: #1e1e24 !important;
+            border: 1px solid #333 !important;
+            border-radius: 12px !important;
+            overflow: hidden;
+            margin-bottom: 20px !important;
+        }
+        .inline-group h2 {
+            background: #252a30 !important;
+            color: #ccff00 !important;
+            padding: 15px !important;
+            border-bottom: 1px solid #444;
+            text-transform: uppercase;
+            font-weight: 900;
+            margin: 0;
+            font-size: 1rem;
+        }
+        
+        /* Hace que la tabla tenga scroll horizontal en celular */
+        .inline-group .tabular {
+            overflow-x: auto;
+            width: 100%;
+            display: block;
+        }
+
+        /* GRID DE PRODUCTOS (MENÚ VISUAL) */
+        #pos-menu-main {
+            background: #151719; border: 2px solid #333; border-top: 2px solid #ccff00;
+            border-radius: 0 0 12px 12px; padding: 20px; margin-bottom: 25px;
+            display: none; /* Se activa con JS */
+        }
+        .products-grid-container {
+            display: grid; 
+            /* Se adapta automágicamente: mínimo 110px por tarjeta */
+            grid-template-columns: repeat(auto-fill, minmax(110px, 1fr));
+            gap: 10px; max-height: 350px; overflow-y: auto;
+        }
+        .product-card-admin {
+            background: #222; border: 1px solid #333; border-radius: 8px;
+            cursor: pointer; transition: 0.2s; overflow: hidden; position: relative;
+        }
+        .product-card-admin:hover {
+            border-color: #ccff00; transform: translateY(-3px);
+            box-shadow: 0 5px 15px rgba(204,255,0,0.2);
+        }
+        .product-card-admin:active { transform: scale(0.95); }
+
+        .pc-img { height: 70px; width: 100%; object-fit: cover; }
+        .pc-body { padding: 8px; }
+        .pc-title { font-size: 0.75rem; color: #fff; font-weight: bold; line-height: 1.2; }
+        .pc-price { color: #ccff00; font-weight: 900; font-size: 0.85rem; margin-top: 4px; }
+        
+        /* PESTAÑAS DEL MENÚ */
+        .pos-tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 15px; scrollbar-width: none; }
+        .pos-tabs::-webkit-scrollbar { display: none; }
+        .tab-btn {
+            background: #111; color: #888; border: 1px solid #444;
+            padding: 8px 15px; border-radius: 20px; cursor: pointer;
+            font-weight: bold; text-transform: uppercase; font-size: 0.75rem;
+            white-space: nowrap; flex-shrink: 0;
+        }
+        .tab-btn.active { background: #ccff00; color: #000; border-color: #ccff00; }
+        
+        /* BUSCADOR */
+        .search-wrapper { width: 100%; max-width: 300px; }
+        .search-wrapper input {
+            background: #000; border: 1px solid #444; color: #fff;
+            padding: 10px 15px; border-radius: 20px; width: 100%;
+        }
+
+        /* --- BOTONES DE ACCIÓN --- */
+        .btn-neon-return, .btn-convertir-pedido {
+            display: flex; justify-content: center; align-items: center; width: 100%;
+            padding: 12px 0; border-radius: 8px; font-weight: 900; 
+            text-transform: uppercase; font-size: 0.85rem; text-decoration: none !important;
+            transition: all 0.3s ease; gap: 8px; margin-bottom: 10px;
+        }
+
+        /* Botón Volver (Amarillo) */
+        .btn-neon-return {
+            background: #121212; color: #ccff00 !important; border: 1px solid #ccff00;
+            box-shadow: 0 0 10px rgba(204, 255, 0, 0.1);
+        }
+        .btn-neon-return:hover { background: #ccff00; color: #000 !important; box-shadow: 0 0 20px #ccff00; }
+
+        /* Botón Convertir (Azul) */
+        .btn-convertir-pedido {
+            background: #121212; color: #00eaff !important; border: 1px solid #00eaff;
+            box-shadow: 0 0 10px rgba(0, 234, 255, 0.1); margin-top: 0;
+        }
+        .btn-convertir-pedido:hover { background: #00eaff; color: #000 !important; box-shadow: 0 0 20px #00eaff; }
+
+        /* Toggle Comida (Rosa) */
+        .btn-toggle-comida {
+            background: rgba(255, 0, 222, 0.05); border: 2px dashed #ff00de; color: #ff00de;
+            width: 100%; padding: 15px; font-weight: 900; text-transform: uppercase;
+            border-radius: 8px; cursor: pointer; transition: all 0.3s ease;
+            display: flex; justify-content: center; align-items: center; gap: 10px;
+            margin-bottom: 25px;
+        }
+        .btn-toggle-comida.activo { background: #ff00de; color: #000; border-style: solid; }
+        #contenedor-comida { display: none; animation: slideDown 0.3s ease-out; }
+        @keyframes slideDown { from { opacity: 0; transform: translateY(-10px); } to { opacity: 1; transform: translateY(0); } }
+
+        /* --- LAYOUT RESPONSIVO (FLEXBOX) --- */
+        .reserva-layout {
+            display: flex; 
+            gap: 25px; 
+            align-items: flex-start;
+            margin-top: 20px; 
+            width: 100%;
+        }
+        .col-main { flex: 1; min-width: 0; } /* Ocupa el espacio restante */
+        .col-sidebar { width: 300px; flex-shrink: 0; } /* Ancho fijo en escritorio */
+
+        /* PANELES */
+        .panel-admin {
+            background: #1a1a1a; border: 1px solid #333; border-radius: 8px;
+            padding: 20px; margin-bottom: 25px; position: relative;
+        }
+
+        /* --- MAPA --- */
+        .mapa-section {
+            margin-top: 30px; width: 100%; background: #1a1a1a;
+            border: 1px solid #ccff00; border-radius: 8px; padding: 15px;
+        }
+        .mapa-container {
+            text-align: center; overflow-x: auto; width: 100%;
+            background: #0f0f0f; border-radius: 4px; padding: 10px;
+        }
+        .instruccion-mapa {
+            color: #ccff00; font-size: 0.9rem; font-weight: 900; text-align: center;
+            margin-bottom: 15px; display: block; background: rgba(204, 255, 0, 0.1);
+            padding: 8px; border-radius: 4px;
+        }
+
+        /* --- MEDIA QUERY: MÓVILES (Menos de 990px) --- */
+        @media (max-width: 990px) {
+            .reserva-layout {
+                flex-direction: column; /* Apilar verticalmente */
+            }
+            .col-main { width: 100%; }
+            .col-sidebar { 
+                width: 100%; 
+                margin-top: 20px;
+                display: flex;
+                flex-direction: column-reverse; /* Pone botones de guardado abajo */
+            }
+            .btn-convertir-pedido, .btn-neon-return { width: 100%; }
+            
+            /* Ajustes del menú visual */
+            .products-grid-container { grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); }
+            .pc-img { height: 60px; }
+            .pc-title { font-size: 0.7rem; }
+            
+            /* Ajustes de botones */
+            .submit-row { width: 100%; display: flex; flex-direction: column; }
+            .submit-row input { width: 100% !important; margin-bottom: 10px !important; }
+        }
+    </style>
+{% endblock %}
+
+{% block content %}
+
+<div id="pos-menu-main">
+    <div style="display: flex; justify-content: space-between; align-items: center; margin-bottom: 15px; flex-wrap: wrap; gap: 10px;">
+        <h3 style="color: #fff; margin: 0; font-size: 1rem;"><i class="fas fa-utensils" style="color: #ccff00;"></i> PRE-ORDENAR</h3>
+        <div class="search-wrapper">
+            <input type="text" id="pos-search" placeholder="Buscar plato..." onkeyup="searchProduct()">
+        </div>
+    </div>
+
+    <div class="pos-tabs">
+        <button type="button" class="tab-btn active" data-cat="all" onclick="filterCategory('all', this)">TODO</button>
+        {% regroup productos_visuales by categoria as categorias_list %}
+        {% for categoria in categorias_list %}
+        <button type="button" class="tab-btn" data-cat="cat-{{ forloop.counter }}" onclick="filterCategory('cat-{{ forloop.counter }}', this)">
+            {{ categoria.grouper }}
+        </button>
+        {% endfor %}
+    </div>
+
+    <div class="products-grid-container" id="products-grid">
+        {% for categoria in categorias_list %}
+        <div class="cat-group cat-{{ forloop.counter }}" style="display: contents;">
+            {% for producto in categoria.list %}
+            <div class="product-card-admin animate__animated animate__fadeIn"
+                 onclick="agregarAlPedido('{{ producto.id }}')"
+                 data-name="{{ producto.nombre|lower }}">
+                
+                {% if producto.imagen %}
+                    <img src="{{ producto.imagen.url }}" class="pc-img" loading="lazy">
+                {% else %}
+                    <div class="pc-img" style="background:#333; display:flex; align-items:center; justify-content:center;">
+                        <i class="fas fa-camera text-muted"></i>
+                    </div>
+                {% endif %}
+
+                <div class="pc-body">
+                    <div class="pc-title">{{ producto.nombre }}</div>
+                    <div class="pc-price">${{ producto.precio }}</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<div id="content-main">
+    <form {% if has_file_field %}enctype="multipart/form-data" {% endif %}action="{{ form_url }}" method="post" id="{{ opts.model_name }}_form" novalidate>
+        {% csrf_token %}
+        {% block form_top %}{% endblock %}
+
+        <div class="reserva-layout">
+            <div class="col-main">
+                {% if errors %}
+                    <div class="alert alert-danger" style="background: rgba(220, 53, 69, 0.2); border: 1px solid #dc3545; color: #ff6b6b; padding: 10px; border-radius: 5px; margin-bottom: 20px;">
+                        <i class="fas fa-exclamation-circle"></i> Por favor revise los errores en el formulario.
+                    </div>
+                    {{ adminform.form.non_field_errors }}
+                {% endif %}
+
+                <div class="panel-admin" style="border-top: 3px solid #00bfff;">
+                    <h3 style="color: #00bfff; border-bottom: 1px solid #333; padding-bottom: 10px; margin-top: 0; font-size: 1rem; text-transform: uppercase;">
+                        <i class="fas fa-file-alt"></i> Datos de la Reserva
+                    </h3>
+                    {% block field_sets %}
+                        {% for fieldset in adminform %}
+                            {% include "admin/includes/fieldset.html" %}
+                        {% endfor %}
+                    {% endblock %}
+                    {% block after_field_sets %}{% endblock %}
+                </div>
+
+                <button type="button" id="btn-activar-comida" class="btn-toggle-comida" onclick="toggleComida()">
+                    <i class="fas fa-utensils"></i> 
+                    <span id="texto-btn-comida">AGREGAR PRE-ORDEN (OPCIONAL)</span>
+                    <i class="fas fa-chevron-down" id="icono-btn-comida"></i>
+                </button>
+
+                <div id="contenedor-comida">
+                    <div class="panel-admin" style="border-top: 3px solid #ff00de;">
+                        <div style="color: #ff00de; margin-bottom: 15px; display: flex; justify-content: space-between; align-items: center;">
+                            <h3 style="margin:0; font-size: 1rem;"><i class="fas fa-utensils"></i> Detalle del Pedido</h3>
+                            <button type="button" onclick="toggleComida()" style="background: none; border: none; color: #ff00de; cursor: pointer; font-size: 1.2rem;">
+                                <i class="fas fa-times-circle"></i>
+                            </button>
+                        </div>
+                        
+                        {% block inline_field_sets %}
+                            {% for inline_admin_formset in inline_admin_formsets %}
+                                {% include inline_admin_formset.opts.template %}
+                            {% endfor %}
+                        {% endblock %}
+                    </div>
+                </div>
+            </div>
+
+            <div class="col-sidebar">
+                {% if original %}
+                <a href="convertir-pedido/" class="btn-convertir-pedido">
+                    <i class="fas fa-cash-register"></i> CONVERTIR A PEDIDO
+                </a>
+                {% endif %}
+                
+                {% block submit_buttons_bottom %}{% submit_row %}{% endblock %}
+                
+                <a href="{% url 'admin:gestion_reserva_changelist' %}" class="btn-neon-return">
+                    <i class="fas fa-arrow-left"></i> VOLVER
+                </a>
+            </div>
+        </div>
+
+        <div class="mapa-section" id="seccion-mapa">
+            <div class="instruccion-mapa">
+                <i class="fas fa-hand-pointer"></i> Clic en la mesa para seleccionarla
+            </div>
+            <div class="mapa-container">
+                {% include "admin/gestion/reserva/includes/mapa_visual.html" %}
+            </div>
+        </div>
+
+        {% block admin_change_form_document_ready %}
+            <script id="django-admin-form-add-constants" src="{% static 'admin/js/change_form.js' %}"
+                {% if adminform and add %} data-model-name="{{ opts.model_name }}" {% endif %} async>
+            </script>
+        {% endblock %}
+    </form>
+</div>
+
+<script>
+    // 1. INICIALIZACIÓN: MOVER MENÚ VISUAL ADENTRO
+    document.addEventListener("DOMContentLoaded", function() {
+        // Mover menú visual dentro del inline-group (tabla de platos)
+        const inlineGroup = document.querySelector('.inline-group');
+        const menuVisual = document.getElementById('pos-menu-main');
+        
+        if (inlineGroup && menuVisual) {
+            menuVisual.style.display = "block"; // Mostrarlo ahora que se movió
+            // Insertar antes del contenido de la tabla
+            inlineGroup.insertBefore(menuVisual, inlineGroup.firstChild);
+        }
+
+        // Si ya hay platos agregados, mostrar la sección automáticamente
+        if (window.location.href.includes('/change/')) {
+            const primerSelect = document.querySelector('select[name*="-producto"]');
+            if (primerSelect && primerSelect.value) { toggleComida(); }
+        }
+        
+        // Lógica de Selección de Mesa (Mapa)
+        const mesas = document.querySelectorAll('.mesa-spot');
+        const selectMesa = document.getElementById('id_mesa');
+
+        if (selectMesa && mesas.length > 0) {
+            mesas.forEach(mesa => {
+                mesa.addEventListener('click', function() {
+                    const idMesa = this.getAttribute('data-mesa-id');
+                    if (idMesa) {
+                        // 1. Asignar el valor al select de Django
+                        selectMesa.value = idMesa;
+                        
+                        // 2. Notificar a Django/Select2 del cambio
+                        selectMesa.dispatchEvent(new Event('change', { bubbles: true }));
+                        if (window.jQuery) { 
+                            window.jQuery(selectMesa).trigger('change'); 
+                        }
+                        
+                        // 3. Efecto visual de iluminación
+                        document.querySelectorAll('.mesa-shape').forEach(s => {
+                            s.style.boxShadow = 'none'; 
+                            s.style.borderColor = ''; 
+                            s.style.transform = 'scale(1)';
+                        });
+
+                        const shape = this.querySelector('.mesa-shape');
+                        if (shape) {
+                            shape.style.boxShadow = '0 0 25px #ccff00'; 
+                            shape.style.borderColor = '#ccff00'; 
+                            shape.style.transform = 'scale(1.15)'; 
+                        }
+
+                        // 4. SUBIR AUTOMÁTICAMENTE (Scroll)
+                        setTimeout(() => {
+                            window.scrollTo({
+                                top: 0, 
+                                behavior: 'smooth'
+                            });
+                        }, 300);
+                    }
+                });
+            });
+        }
+    }); 
+
+    // 2. FUNCIONES DE INTERACCIÓN
+    function toggleComida() {
+        const contenedor = document.getElementById('contenedor-comida');
+        const boton = document.getElementById('btn-activar-comida');
+        const texto = document.getElementById('texto-btn-comida');
+        const icono = document.getElementById('icono-btn-comida');
+        
+        if (contenedor.style.display === 'none' || contenedor.style.display === '') {
+            contenedor.style.display = 'block';
+            boton.classList.add('activo');
+            texto.innerText = 'OCULTAR PRE-ORDEN';
+            icono.className = 'fas fa-chevron-up';
+        } else {
+            contenedor.style.display = 'none';
+            boton.classList.remove('activo');
+            texto.innerText = 'AGREGAR PRE-ORDEN (OPCIONAL)';
+            icono.className = 'fas fa-chevron-down';
+        }
+    }
+
+    function filterCategory(catClass, btn) {
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        if(btn) btn.classList.add('active');
+        const groups = document.querySelectorAll('.cat-group');
+        if (catClass === 'all') groups.forEach(g => g.style.display = 'contents');
+        else groups.forEach(g => g.style.display = g.classList.contains(catClass) ? 'contents' : 'none');
+    }
+
+    function searchProduct() {
+        const filter = document.getElementById('pos-search').value.toLowerCase();
+        const cards = document.getElementsByClassName('product-card-admin');
+        for (let i = 0; i < cards.length; i++) {
+            const name = cards[i].getAttribute('data-name');
+            cards[i].style.display = name.includes(filter) ? "flex" : "none";
+        }
+    }
+
+    function agregarAlPedido(idProducto) {
+        // Busca el botón "Añadir otro plato" en el inline
+        var addLink = document.querySelector('.add-row a') || document.querySelector('tr.add-row a');
+        if(!addLink) return;
+
+        addLink.click();
+
+        setTimeout(function() {
+            // Buscamos la fila correcta (platos preordenados)
+            var rows = document.querySelectorAll('.dynamic-platos_preordenados'); 
+            var lastRow = rows[rows.length - 1];
+            
+            if(lastRow) {
+                var select = lastRow.querySelector('select[name$="-producto"]');
+                if(select) {
+                    select.value = idProducto;
+                    select.dispatchEvent(new Event('change', { bubbles: true }));
+                    if (window.jQuery) { window.jQuery(select).trigger('change'); }
+                    
+                    lastRow.style.transition = "background 0.5s";
+                    lastRow.style.backgroundColor = "rgba(204, 255, 0, 0.3)";
+                    setTimeout(() => lastRow.style.backgroundColor = "", 600);
+                    
+                    var notaInput = lastRow.querySelector('input[name$="-nota_plato"]');
+                    if(notaInput) notaInput.focus();
+                }
+            }
+        }, 100);
+    }
+
+    document.addEventListener("DOMContentLoaded", function() {
+    // Si la URL termina en #seccion-mapa, baja suavemente
+        if (window.location.hash === "#seccion-mapa") {
+            setTimeout(() => {
+                const mapa = document.getElementById('seccion-mapa');
+                if (mapa) {
+                    mapa.scrollIntoView({ behavior: 'smooth' });
+                }
+            }, 500); // Espera un momento a que carguen las mesas
+        }
+    });
+</script>
+{% endblock %}

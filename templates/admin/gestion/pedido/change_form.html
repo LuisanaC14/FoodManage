@@ -1,0 +1,344 @@
+{% extends "admin/boton_volver_form.html" %}
+
+{% load static %}
+
+{% block object-tools %}
+    {{ block.super }}
+
+    <style>
+        /* 1. Posicionamiento del contenedor */
+        .submit-row-custom-pedido {
+            margin-bottom: 15px;
+            width: 100%; /* Ocupa todo el ancho disponible */
+            clear: both;
+        }
+
+        /* 2. ESTILO DEL BOTÓN GIGANTE (Igual a los azules de Jazzmin) */
+        .btn-cancelar-full {
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            width: 100%;                /* <--- LA CLAVE: ANCHO TOTAL */
+            padding: 12px 0;            /* Altura robusta */
+            
+            /* Colores Rojos */
+            background: #ff4d4d;
+            color: #fff !important;
+            border: 2px solid #ff4d4d;
+            
+            /* Tipografía */
+            border-radius: 4px;
+            font-weight: 900;
+            text-transform: uppercase;
+            text-decoration: none !important;
+            font-size: 0.85rem;
+            transition: 0.3s;
+            gap: 10px;                  /* Separación entre icono y texto */
+            box-shadow: 0 4px 6px rgba(0,0,0,0.1);
+        }
+
+        /* Efecto Hover */
+        .btn-cancelar-full:hover {
+            background: transparent;
+            color: #ff4d4d !important;
+            border-color: #ff4d4d;
+            box-shadow: 0 0 15px rgba(255, 77, 77, 0.4);
+            transform: translateY(-2px);
+        }
+    </style>
+{% endblock %}
+
+{% block extrahead %}
+    {{ block.super }}
+    <style>
+        /* =========================================================
+           ESTILOS: SCROLL HÍBRIDO + TEXTOS EN MAYÚSCULAS
+           ========================================================= */
+
+        /* 1. Limpieza de fondo */
+        .content-wrapper { background: #0f0f0f !important; }
+
+        /* 2. Ocultar botón nativo */
+        .inline-group .add-row { display: none !important; }
+
+        /* 3. CONTENEDOR PRINCIPAL DE DETALLES */
+        .inline-group {
+            background: #1e1e24 !important;
+            border: 1px solid #333 !important;
+            border-radius: 12px 12px 0 0 !important;
+            margin-bottom: 0 !important;
+            box-shadow: 0 -5px 15px rgba(0,0,0,0.3);
+            overflow: hidden; 
+        }
+
+        .inline-group h2 {
+            background: #252a30 !important;
+            color: #ccff00 !important;
+            padding: 15px !important;
+            border-bottom: 1px solid #444;
+            font-weight: 900;
+            text-transform: uppercase;
+            margin: 0;
+        }
+
+        /* --- 4. CONFIGURACIÓN DEL SCROLL DOBLE (TABULAR) --- */
+        .inline-group .tabular {
+            max-height: 300px;  /* Límite de altura (Scroll Vertical) */
+            overflow: auto;     /* Activa scroll Vertical Y Horizontal automáticos */
+            display: block;
+            width: 100%;
+            background: #1e1e24;
+        }
+
+        .inline-group table {
+            width: 100%;
+            border-collapse: collapse;
+            min-width: 700px; /* Fuerza el scroll horizontal en pantallas chicas */
+        }
+
+        /* ENCABEZADOS PEGADOS ARRIBA (Sticky Header) */
+        .inline-group thead th {
+            position: sticky !important;
+            top: 0 !important;
+            z-index: 20 !important;
+            background: #151515 !important;
+            color: #888 !important;
+            text-transform: uppercase;
+            font-size: 0.75rem;
+            padding: 12px 15px !important;
+            border: none !important;
+            border-bottom: 2px solid #333 !important;
+            white-space: nowrap;
+        }
+
+        .inline-group td {
+            padding: 8px 10px !important;
+            border-bottom: 1px solid #2a2a2a !important;
+            background: #1e1e24 !important;
+            vertical-align: middle !important;
+            white-space: nowrap;
+        }
+
+        /* Inputs */
+        .inline-group input, .inline-group select, .inline-group textarea {
+            background: #0a0a0a !important; 
+            border: 1px solid #444 !important;
+            color: #fff !important;
+            border-radius: 6px;
+            padding: 8px;
+            min-width: 100px;
+        }
+        .inline-group input:focus { border-color: #ccff00 !important; }
+
+        /* Scrollbars */
+        .inline-group .tabular::-webkit-scrollbar { width: 10px; height: 10px; }
+        .inline-group .tabular::-webkit-scrollbar-track { background: #111; }
+        .inline-group .tabular::-webkit-scrollbar-thumb { background: #333; border-radius: 5px; border: 2px solid #111; }
+        .inline-group .tabular::-webkit-scrollbar-thumb:hover { background: #ccff00; }
+        .inline-group .tabular::-webkit-scrollbar-corner { background: #111; }
+
+        /* 5. MENÚ VISUAL (Parte Inferior) */
+        #pos-menu-main {
+            background: #151719;
+            border: 2px solid #333;
+            border-top: 2px solid #ccff00; 
+            border-radius: 0 0 12px 12px;
+            padding: 20px;
+            display: block;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.5);
+            margin-bottom: 50px; 
+        }
+
+        /* Header del Menú + BUSCADOR */
+        .panel-header {
+            display: flex; justify-content: space-between; align-items: center;
+            margin-bottom: 15px; padding-bottom: 10px; border-bottom: 1px solid #333;
+        }
+        .ph-title { color: #fff; font-weight: bold; font-size: 1.1rem; }
+        .ph-title i { color: #ccff00; margin-right: 8px; }
+
+        .search-wrapper { position: relative; width: 250px; }
+        .search-wrapper input {
+            width: 100%; background: #0a0a0a; border: 1px solid #444; color: #fff;
+            padding: 8px 15px 8px 40px; border-radius: 20px; outline: none; font-weight: bold;
+        }
+        .search-wrapper input:focus { border-color: #ccff00; }
+        .search-icon { position: absolute; left: 15px; top: 50%; transform: translateY(-50%); color: #666; }
+
+        /* Grid de Fotos */
+        .products-grid-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(130px, 1fr));
+            gap: 12px;
+            max-height: 400px;
+            overflow-y: auto;
+            padding-right: 5px;
+        }
+        .products-grid-container::-webkit-scrollbar { width: 8px; }
+        .products-grid-container::-webkit-scrollbar-thumb { background: #444; border-radius: 4px; }
+
+        /* Tarjetas */
+        .product-card-admin {
+            background: #222; border: 1px solid #333; border-radius: 8px;
+            overflow: hidden; cursor: pointer; transition: 0.2s;
+        }
+        .product-card-admin:hover {
+            transform: translateY(-3px); border-color: #ccff00;
+            box-shadow: 0 5px 15px rgba(204,255,0,0.2);
+        }
+        .pc-img { height: 80px; width: 100%; object-fit: cover; }
+        .pc-body { padding: 10px; }
+        .pc-title { font-size: 0.85rem; color: #fff; font-weight: bold; margin-bottom: 4px; }
+        .pc-price { font-size: 1rem; color: #ccff00; font-weight: 900; }
+
+        /* --- AQUÍ ESTÁ EL CAMBIO PARA LAS MAYÚSCULAS --- */
+        .pos-tabs { display: flex; gap: 8px; overflow-x: auto; padding-bottom: 10px; margin-bottom: 15px; }
+        
+        .tab-btn {
+            background: #111; 
+            color: #888; 
+            border: 1px solid #444;
+            padding: 6px 18px; 
+            border-radius: 20px; 
+            cursor: pointer;
+            font-size: 0.85rem; 
+            font-weight: bold; 
+            white-space: nowrap;
+            
+            /* ESTA ES LA LÍNEA MÁGICA: */
+            text-transform: uppercase; 
+        }
+        
+        .tab-btn.active { background: #ccff00; color: #000; border-color: #ccff00; }
+
+        /* Botones Guardar */
+        .submit-row {
+            position: sticky; bottom: 0; z-index: 9999;
+            background: #151719; border-top: 2px solid #333;
+            box-shadow: 0 -10px 30px rgba(0,0,0,0.9);
+            padding: 15px;
+            margin: 0 -15px 0 -15px !important;
+        }
+        
+        #content-main { padding-bottom: 200px !important; }
+
+    </style>
+{% endblock %}
+
+{% block after_related_objects %}
+
+<div id="pos-menu-main">
+    
+    <div class="panel-header">
+        <div class="ph-title"><i class="fas fa-plus-circle"></i> AGREGAR PRODUCTO</div>
+        <div class="search-wrapper">
+            <i class="fas fa-search search-icon"></i>
+            <input type="text" id="pos-search" placeholder="Buscar plato..." onkeyup="searchProduct()" autocomplete="off">
+        </div>
+    </div>
+
+    <div class="pos-tabs">
+        <button type="button" class="tab-btn active" data-cat="all" onclick="filterCategory('all', this)">TODO</button>
+        {% regroup productos_visuales by categoria as categorias_list %}
+        {% for categoria in categorias_list %}
+        <button type="button" class="tab-btn" data-cat="cat-{{ forloop.counter }}" onclick="filterCategory('cat-{{ forloop.counter }}', this)">
+            {{ categoria.grouper }}
+        </button>
+        {% endfor %}
+    </div>
+
+    <div class="products-grid-container" id="products-grid">
+        {% for categoria in categorias_list %}
+        <div class="cat-group cat-{{ forloop.counter }}" style="display: contents;">
+            {% for producto in categoria.list %}
+            <div class="product-card-admin animate__animated animate__fadeIn"
+                 onclick="agregarAlPedido('{{ producto.id }}')"
+                 data-name="{{ producto.nombre|lower }}">
+                
+                {% if producto.imagen %}
+                    <img src="{{ producto.imagen.url }}" class="pc-img" loading="lazy">
+                {% else %}
+                    <div class="pc-img" style="background:#333; display:flex; align-items:center; justify-content:center;">
+                        <i class="fas fa-camera text-muted"></i>
+                    </div>
+                {% endif %}
+
+                <div class="pc-body">
+                    <div class="pc-title">{{ producto.nombre }}</div>
+                    <div class="pc-price">${{ producto.precio }}</div>
+                </div>
+            </div>
+            {% endfor %}
+        </div>
+        {% endfor %}
+    </div>
+</div>
+
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const inlineGroup = document.querySelector('.inline-group');
+        const menuVisual = document.getElementById('pos-menu-main');
+        if (inlineGroup && menuVisual) {
+            inlineGroup.appendChild(menuVisual);
+        }
+
+        const savedCategory = localStorage.getItem('admin_pos_category') || 'all';
+        const activeBtn = document.querySelector(`.tab-btn[data-cat="${savedCategory}"]`);
+        if (activeBtn) filterCategory(savedCategory, activeBtn);
+    });
+
+    function filterCategory(catClass, btn) {
+        localStorage.setItem('admin_pos_category', catClass);
+        document.querySelectorAll('.tab-btn').forEach(b => b.classList.remove('active'));
+        if(btn) btn.classList.add('active');
+
+        const groups = document.querySelectorAll('.cat-group');
+        if (catClass === 'all') {
+            groups.forEach(g => g.style.display = 'contents');
+        } else {
+            groups.forEach(g => {
+                g.style.display = g.classList.contains(catClass) ? 'contents' : 'none';
+            });
+        }
+    }
+
+    function searchProduct() {
+        const filter = document.getElementById('pos-search').value.toLowerCase();
+        const cards = document.getElementsByClassName('product-card-admin');
+        for (let i = 0; i < cards.length; i++) {
+            const name = cards[i].getAttribute('data-name');
+            cards[i].style.display = name.includes(filter) ? "flex" : "none";
+        }
+    }
+
+    function agregarAlPedido(idProducto) {
+        var addLink = document.querySelector('.add-row a') || document.querySelector('tr.add-row a');
+        if(!addLink) return;
+
+        addLink.click();
+
+        setTimeout(function() {
+            var rows = document.querySelectorAll('.dynamic-detalles'); 
+            var lastRow = rows[rows.length - 1];
+            
+            if(lastRow) {
+                var select = lastRow.querySelector('select[name$="-producto"]');
+                if(select) {
+                    select.value = idProducto;
+                    select.dispatchEvent(new Event('change', { bubbles: true }));
+                    
+                    const container = document.querySelector('.inline-group .tabular');
+                    if(container) {
+                        container.scrollTop = container.scrollHeight;
+                    }
+
+                    lastRow.style.transition = "background 0.5s";
+                    lastRow.style.backgroundColor = "rgba(204, 255, 0, 0.3)";
+                    setTimeout(() => lastRow.style.backgroundColor = "", 600);
+                }
+            }
+        }, 100);
+    }
+</script>
+
+{% endblock %}
