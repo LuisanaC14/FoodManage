@@ -3,52 +3,80 @@
 
 {% block content %}
 <div class="container-fluid d-flex justify-content-center align-items-center" 
-     style="min-height: 80vh; background: #000; padding-top: 50px;">
+     style="min-height: 85vh; background: #000;">
 
     <div class="card bg-black text-white fade-in-up" 
-         style="width: 100%; max-width: 400px; border: 2px solid #ccff00; box-shadow: 0 0 30px rgba(204, 255, 0, 0.15); border-radius: 20px;">
+         style="width: 100%; max-width: 350px; border: 2px solid #ccff00; box-shadow: 0 0 20px rgba(204, 255, 0, 0.2); border-radius: 15px;">
         
-        <div class="card-header text-center pt-5 border-0 bg-transparent">
-            <h2 class="fw-bold" style="color: #ccff00; letter-spacing: 2px;">BIENVENIDO</h2>
-            <p class="text-secondary small">Ingresa a tu cuenta Máncora</p>
+        <div class="card-header text-center pt-4 border-0 bg-transparent">
+            <h3 style="color: #ccff00; font-family: sans-serif; font-weight: 900; letter-spacing: 1px; text-transform: uppercase;">
+                BIENVENIDO
+            </h3>
+            <p class="text-secondary small mb-0">Ingresa a tu cuenta Máncora</p>
         </div>
 
         <div class="card-body p-4">
-            <form method="post">
-                {% csrf_token %}
+            
+            {% if form.errors %}
+                <div class="alert alert-danger text-center p-2 mb-3 small fw-bold" style="background: rgba(220, 53, 69, 0.2); border: 1px solid #dc3545; color: #ffadad;">
+                    <i class="fas fa-exclamation-circle me-1"></i> Usuario o contraseña incorrectos.
+                </div>
                 
-                <div class="mb-4">
-                    <label class="fw-bold small text-muted">USUARIO</label>
+                <script>
+                    let intentos = localStorage.getItem('login_attempts') || 0;
+                    intentos++;
+                    localStorage.setItem('login_attempts', intentos);
+                    
+                    if (intentos >= 3) {
+                        document.write(`
+                            <div class="alert alert-warning text-center p-2 mb-3 small" style="background: rgba(255, 193, 7, 0.1); border: 1px solid #ffc107; color: #ffc107;">
+                                <i class="fas fa-lock me-1"></i> ¿Problemas para entrar?<br>
+                                <a href="{% url 'password_reset' %}" class="fw-bold text-decoration-underline text-white">Recuperar mi contraseña</a>
+                            </div>
+                        `);
+                    }
+                </script>
+            {% endif %}
+
+            <form method="post" onsubmit="localStorage.removeItem('login_attempts');"> {% csrf_token %}
+                
+                <div class="mb-3">
                     <div class="input-group">
                         <span class="input-group-text bg-dark border-secondary text-warning"><i class="fas fa-user"></i></span>
-                        <input type="text" name="username" class="form-control bg-dark text-white border-secondary" placeholder="Ej: luisana" required>
+                        <input type="text" name="username" class="form-control bg-dark text-white border-secondary" placeholder="Usuario" required style="font-size: 0.9rem;">
                     </div>
                 </div>
 
                 <div class="mb-4">
-                    <label class="fw-bold small text-muted">CONTRASEÑA</label>
                     <div class="input-group">
                         <span class="input-group-text bg-dark border-secondary text-warning"><i class="fas fa-lock"></i></span>
-                        <input type="password" name="password" class="form-control bg-dark text-white border-secondary" placeholder="••••••••" required>
+                        <input type="password" name="password" class="form-control bg-dark text-white border-secondary" placeholder="Contraseña" required style="font-size: 0.9rem;">
                     </div>
                 </div>
 
-                <button type="submit" class="btn w-100 fw-bold py-3 rounded-pill mt-3" 
-                        style="background-color: #ccff00; color: #000; box-shadow: 0 0 15px rgba(204, 255, 0, 0.4);">
+                <button type="submit" class="btn w-100 fw-bold py-2 text-uppercase" 
+                        style="background-color: #ccff00; color: #000; border-radius: 50px; font-size: 0.9rem; box-shadow: 0 4px 10px rgba(204, 255, 0, 0.3); transition: transform 0.2s;">
                     INGRESAR <i class="fas fa-arrow-right ms-2"></i>
                 </button>
             </form>
         </div>
 
-        <div class="card-footer text-center pb-4 border-0 bg-transparent">
-            <p class="small text-muted mb-2">¿No tienes cuenta?</p>
-            <a href="{% url 'registro' %}" class="fw-bold text-decoration-none" style="color: #fff; border-bottom: 2px solid #ccff00;">REGÍSTRATE AQUÍ</a>
+        <div class="card-footer text-center pb-3 pt-0 border-0 bg-transparent">
+            <p class="small text-muted mb-1" style="font-size: 0.8rem;">¿Aún no tienes cuenta?</p>
+            <a href="{% url 'registro' %}" class="fw-bold text-decoration-none small" style="color: #fff; border-bottom: 1px solid #ccff00;">
+                REGÍSTRATE AQUÍ
+            </a>
+            <div class="mt-2">
+                 <a href="{% url 'password_reset' %}" class="text-secondary small text-decoration-none" style="font-size: 0.75rem;">¿Olvidaste tu contraseña?</a>
+            </div>
         </div>
     </div>
 </div>
 
 <style>
-    .fade-in-up { animation: fadeInUp 0.8s ease-out; }
-    @keyframes fadeInUp { from { opacity: 0; transform: translateY(20px); } to { opacity: 1; transform: translateY(0); } }
+    .fade-in-up { animation: fadeInUp 0.6s ease-out; }
+    @keyframes fadeInUp { from { opacity: 0; transform: translateY(15px); } to { opacity: 1; transform: translateY(0); } }
+    button[type="submit"]:hover { transform: scale(1.02); background-color: #d4ff33; }
+    .form-control:focus { box-shadow: none; border-color: #ccff00; }
 </style>
 {% endblock %}
