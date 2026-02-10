@@ -307,3 +307,9 @@ DEFAULT_FROM_EMAIL = 'Soporte Máncora <mancoramarisqueria2026@gmail.com>'
 # Redirección después del login y logout
 LOGIN_REDIRECT_URL = 'inicio'
 LOGOUT_REDIRECT_URL = 'inicio'
+
+# SEGURIDAD: Confiar en el dominio de Koyeb para formularios (Login/Logout)
+CSRF_TRUSTED_ORIGINS = [
+    'https://related-ann-marie-universidadchimborazo-96bd37d7.koyeb.app',
+    'https://*.koyeb.app' 
+]
