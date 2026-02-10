@@ -74,7 +74,6 @@ def registro(request):
         form = RegistroForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
-            user.set_password(form.cleaned_data['password']) # Esto ya lo tenías, déjalo
             user.is_staff = False        
             user.is_superuser = False   
             user.save()
