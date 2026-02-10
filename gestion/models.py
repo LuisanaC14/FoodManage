@@ -12,8 +12,8 @@ CATEGORIAS = [
     ('bebida', 'Bebidas'),
     ('arroz', 'Arroces'),
     ('sopa', 'Sopas'),
+    ('porcion', 'Porciones'),
     ('extra', 'Extras'),
-    ('otro', 'Otros'),
 ]
 
 # 2. MODELO PRINCIPAL (Aquí nace el producto)
