@@ -108,27 +108,23 @@
             <ul class="navbar-nav ms-auto mb-2 mb-lg-0 align-items-center">
 
                 {% if user.is_authenticated %}
-                    <li class="nav-item dropdown">
-                        <a class="nav-link dropdown-toggle d-flex align-items-center gap-2" href="#" role="button" data-bs-toggle="dropdown">
+                    <li class="nav-item dropdown ms-3">
+                        <button class="btn btn-outline-light border-0 dropdown-toggle d-flex align-items-center gap-2" type="button" data-bs-toggle="dropdown">
                             <div style="width: 35px; height: 35px; background: #222; border: 2px solid #ccff00; border-radius: 50%; display: flex; align-items: center; justify-content: center; color: #ccff00; font-weight: bold;">
-                                {{ user.username|make_list|first|upper }}
+                                {{ user.username|first|upper }}
                             </div>
-                            <span class="text-white d-none d-lg-block">{{ user.username }}</span>
-                        </a>
-                        
+                            <span class="d-none d-xl-block">{{ user.username }}</span>
+                        </button>
                         <ul class="dropdown-menu dropdown-menu-end bg-dark border-secondary shadow-lg">
                             <li class="px-3 py-2 border-bottom border-secondary">
                                 <small class="text-muted d-block" style="font-size: 0.7rem;">HOLA,</small>
                                 <span class="text-white fw-bold" style="color: #ccff00 !important;">{{ user.username|upper }}</span>
                             </li>
-                            
                             <li><a class="dropdown-item text-white py-2" href="{% url 'mis_pedidos' %}"><i class="fas fa-receipt me-2 text-warning"></i> Mis Pedidos</a></li>
                             <li><a class="dropdown-item text-white py-2" href="{% url 'mi_cuenta' %}"><i class="fas fa-cog me-2 text-warning"></i> Mi Cuenta</a></li>
-                            
                             <li><hr class="dropdown-divider bg-secondary"></li>
-                            
                             <li>
-                                <form action="{% url 'logout' %}" method="post" id="logout-form">
+                                <form action="{% url 'logout' %}" method="post">
                                     {% csrf_token %}
                                     <button type="submit" class="dropdown-item text-danger fw-bold py-2">
                                         <i class="fas fa-sign-out-alt me-2"></i> Cerrar Sesión
@@ -139,9 +135,10 @@
                     </li>
 
                 {% else %}
-                    <li class="nav-item ms-lg-3">
-                        <a href="{% url 'admin_login' %}" class="btn btn-outline-warning rounded-pill px-4 fw-bold" style="border: 2px solid #ccff00; color: #ccff00;">
-                            <i class="fas fa-user me-2"></i> INGRESAR
+                    <li class="nav-item ms-3">
+                        <a href="{% url 'login' %}" class="btn fw-bold rounded-pill px-4" 
+                           style="background-color: #ccff00; color: black; border: none; transition: 0.3s;">
+                            <i class="fas fa-user me-1"></i> INGRESAR
                         </a>
                     </li>
                 {% endif %}

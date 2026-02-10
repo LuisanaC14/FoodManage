@@ -303,3 +303,7 @@ EMAIL_HOST_PASSWORD = 'nhkh lkbo knqt ekqg'
 
 # Configuración del remitente
 DEFAULT_FROM_EMAIL = 'Soporte Máncora <mancoramarisqueria2026@gmail.com>'
+
+# Redirección después del login y logout
+LOGIN_REDIRECT_URL = 'inicio'
+LOGOUT_REDIRECT_URL = 'inicio'

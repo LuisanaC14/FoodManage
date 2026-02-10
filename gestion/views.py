@@ -1,3 +1,4 @@
+from django.contrib.auth import login
 import json, os, threading
 from django.http import JsonResponse, HttpResponse
 from django.shortcuts import render, redirect, get_object_or_404
@@ -73,22 +74,16 @@ def registro(request):
         form = RegistroForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
-            
-            # --- AGREGA ESTA LÍNEA AQUÍ 👇 ---
-            # Esto convierte "12345" en "pbkdf2_sha256$..." para que el login funcione
-            user.set_password(form.cleaned_data['password']) 
-            # ---------------------------------
-
-            # Solo permitimos staff si quieres que entren al panel, 
-            # de lo contrario, déjalo en False para Clientes normales.
+            user.set_password(form.cleaned_data['password']) # Esto ya lo tenías, déjalo
             user.is_staff = False        
             user.is_superuser = False   
             user.save()
 
-            # Se elimina la asignación automática al grupo 'Meseros'
-            
-            messages.success(request, f'Cuenta creada exitosamente para {user.username}. Espere asignación de rol.')
-            return redirect('admin_login') 
+            # --- CAMBIA ESTA PARTE ---
+            # En lugar de mandarlos al login, los logueamos y mandamos al menú
+            login(request, user)
+            messages.success(request, f'¡Bienvenido(a) {user.username}!')
+            return redirect('inicio') 
     else:
         form = RegistroForm()
     
