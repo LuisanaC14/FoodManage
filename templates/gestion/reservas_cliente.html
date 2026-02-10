@@ -184,7 +184,7 @@
         }
     });
 
-    function enviarReservaWhatsApp() {
+function enviarReservaWhatsApp() {
         const nombre = document.getElementById('nombre_cli').value;
         const telefono = document.getElementById('telefono_cli').value;
         const personas = document.getElementById('personas_cli').value;
@@ -192,11 +192,25 @@
         const hora = document.getElementById('hora_cli').value;
         const mesaId = document.getElementById('res-mesa-num').value;
 
+        // 1. Validación original (Que no falten datos)
         if (!nombre || !telefono || !fecha || !hora || !mesaId) {
             alert("⚠️ Por favor completa todos los campos y selecciona una mesa.");
             return;
         }
 
+        // 2. NUEVA VALIDACIÓN: Teléfono de 10 dígitos exactos
+        if (telefono.length !== 10 || isNaN(telefono)) {
+            alert("⚠️ El teléfono debe tener 10 dígitos válidos.");
+            return; // Esto detiene el envío si está mal
+        }
+
+        // 3. NUEVA VALIDACIÓN: Personas positivas (mayor a 0)
+        if (parseInt(personas) <= 0) {
+            alert("⚠️ La cantidad de personas debe ser mayor a 0.");
+            return; // Esto detiene el envío si es 0 o negativo
+        }
+
+        // --- DE AQUÍ PARA ABAJO ES TU CÓDIGO ORIGINAL SIN TOCAR ---
         let texto = `*=== SOLICITUD DE RESERVA ===*\n*Máncora Marisquería*\n\n*CLIENTE:* ${nombre.toUpperCase()}\n*TELÉFONO:* ${telefono}\n----------------------------------\n*MESA:* #${mesaId}\n*PERSONAS:* ${personas}\n*FECHA:* ${fecha}\n*HORA:* ${hora}\n----------------------------------\n\n_Enviado desde la Web Máncora._`;
         
         // Abrir WhatsApp
@@ -212,7 +226,7 @@
 
             document.getElementById('mesa-selected-badge').classList.add('d-none');
 
-            alert("¡Solicitud generada! Te esperamos en WhatsApp.");
+            // alert("¡Solicitud generada! Te esperamos en WhatsApp.");
         }, 1000);
     }
 
