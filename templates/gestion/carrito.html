@@ -336,11 +336,23 @@
     function enviarWhatsApp(ticket, metodo, cart, nombre, direccion) {
         const numeroLocal = "593993103744"; 
         let total = 0;
+
+        // --- PASO 1: AGRUPAR PRODUCTOS (LA SOLUCIÓN AL NaN) ---
+        // Esto convierte la lista suelta en una lista con cantidades
+        const carritoAgrupado = cart.reduce((acc, item) => {
+            const existe = acc.find(i => i.id === item.id);
+            if (existe) {
+                existe.cantidad += 1;
+            } else {
+                acc.push({ ...item, cantidad: 1 });
+            }
+            return acc;
+        }, []);
         
-        // Encabezado limpio y formal
+        // --- PASO 2: CREAR EL MENSAJE ---
         let texto = `*NUEVO PEDIDO WEB*\n`;
-        texto += `Cliente: *${nombre}*\n`;
-        texto += `Pago: *${metodo.toUpperCase()}*\n`;
+        texto += `Cliente: ${nombre}\n`;
+        texto += `Pago: ${metodo.toUpperCase()}\n`;
         
         if(ticket !== "WEB-EFECTIVO") texto += `Ticket: #${ticket}\n`;
         if(direccion) texto += `Retiro: En local (Lago Agrio)\n`;
@@ -348,11 +360,10 @@
         texto += `--------------------------------\n`;
         texto += `*DETALLE DE CONSUMO:*\n`;
         
-        // Bucle mejorado: Muestra nombre, cantidad, precio unitario y subtotal
-        cart.forEach(item => {
+        // Usamos 'carritoAgrupado' en vez de 'cart'
+        carritoAgrupado.forEach(item => {
             let subtotal = item.price * item.cantidad;
             
-            // Formato: - PRODUCTO (x2) | $Unitario | Total: $Subtotal
             texto += `- ${item.name} (x${item.cantidad})\n`;
             texto += `  Precio: $${item.price.toFixed(2)} c/u  =>  Subtotal: $${subtotal.toFixed(2)}\n`;
             
