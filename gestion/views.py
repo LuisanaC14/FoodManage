@@ -6,7 +6,7 @@ from django.contrib import messages
 from django.db.models import Sum
 from .models import Producto, Venta, Mesa, Pedido, DetallePedido, Reserva
 from .forms import RegistroForm
-from django.contrib.auth.models import Group, Permission
+from django.contrib.auth.models import Group, Permission, User
 from django.contrib.auth.decorators import login_required
 from django.views.decorators.csrf import csrf_exempt
 from .models import Pedido, Mesa, Producto, DetallePedido, SesionCaja, Gasto
@@ -73,6 +73,12 @@ def registro(request):
         form = RegistroForm(request.POST)
         if form.is_valid():
             user = form.save(commit=False)
+            
+            # --- AGREGA ESTA LÍNEA AQUÍ 👇 ---
+            # Esto convierte "12345" en "pbkdf2_sha256$..." para que el login funcione
+            user.set_password(form.cleaned_data['password']) 
+            # ---------------------------------
+
             # Solo permitimos staff si quieres que entren al panel, 
             # de lo contrario, déjalo en False para Clientes normales.
             user.is_staff = False        
