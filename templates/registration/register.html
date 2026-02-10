@@ -69,28 +69,57 @@
                 <form method="post" id="registerForm" novalidate>
                     {% csrf_token %}
                     
-                    {% for field in form %}
-                    <div class="mb-3"> <div class="input-group">
-                            <input type="{{ field.field.widget.input_type }}" 
-                                   name="{{ field.name }}" 
-                                   class="form-control" 
-                                   placeholder="{{ field.label }}"
-                                   required style="background: rgba(255,255,255,0.1) !important; border: 1px solid rgba(255,255,255,0.2); color: white !important;">
-                            
+                    <div class="mb-3"> 
+                        <div class="input-group">
+                            <input type="text" name="username" class="form-control" placeholder="Usuario" required 
+                                   style="background: rgba(255,255,255,0.1) !important; border: 1px solid rgba(255,255,255,0.2); color: white !important;">
                             <div class="input-group-append">
                                 <div class="input-group-text" style="background: rgba(255,255,255,0.1) !important; border: 1px solid rgba(255,255,255,0.2); color: white; border-left: none;">
-                                    <span class="fas fa-edit"></span>
+                                    <span class="fas fa-user"></span>
                                 </div>
                             </div>
                         </div>
-
-                        {% if field.errors %}
-                            <div class="error-text">
-                                <i class="fas fa-exclamation-circle"></i> {{ field.errors.0 }}
-                            </div>
+                        {% if form.username.errors %}
+                            <div class="error-text"><i class="fas fa-exclamation-circle"></i> {{ form.username.errors.0 }}</div>
                         {% endif %}
                     </div>
-                    {% endfor %}
+
+                    <div class="mb-3"> 
+                        <div class="input-group">
+                            <input type="email" name="email" class="form-control" placeholder="Correo Electrónico" required 
+                                   style="background: rgba(255,255,255,0.1) !important; border: 1px solid rgba(255,255,255,0.2); color: white !important;">
+                            <div class="input-group-append">
+                                <div class="input-group-text" style="background: rgba(255,255,255,0.1) !important; border: 1px solid rgba(255,255,255,0.2); color: white; border-left: none;">
+                                    <span class="fas fa-envelope"></span>
+                                </div>
+                            </div>
+                        </div>
+                        {% if form.email.errors %}
+                            <div class="error-text"><i class="fas fa-exclamation-circle"></i> {{ form.email.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3"> 
+                        <div class="input-group">
+                            <input type="password" name="password1" class="form-control" placeholder="Contraseña" required 
+                                   style="background: rgba(255,255,255,0.1) !important; border: 1px solid rgba(255,255,255,0.2); color: white !important;">
+                            <div class="input-group-append"></div> 
+                        </div>
+                        {% if form.password1.errors %}
+                            <div class="error-text"><i class="fas fa-exclamation-circle"></i> {{ form.password1.errors.0 }}</div>
+                        {% endif %}
+                    </div>
+
+                    <div class="mb-3"> 
+                        <div class="input-group">
+                            <input type="password" name="password2" class="form-control" placeholder="Confirmar Contraseña" required 
+                                   style="background: rgba(255,255,255,0.1) !important; border: 1px solid rgba(255,255,255,0.2); color: white !important;">
+                            <div class="input-group-append"></div>
+                        </div>
+                        {% if form.password2.errors %}
+                            <div class="error-text"><i class="fas fa-exclamation-circle"></i> {{ form.password2.errors.0 }}</div>
+                        {% endif %}
+                    </div>
 
                     <div class="row mt-4">
                         <div class="col-12">
@@ -112,17 +141,20 @@
 
     <script>
         (function() {
-            // 1. CONFIGURACIÓN DEL OJO (Tu lógica original)
+            // 1. CONFIGURACIÓN DEL OJO
             const setupEyeToggle = () => {
                 const passwordInputs = document.querySelectorAll('input[type="password"]');
                 
                 passwordInputs.forEach((input, index) => {
                     const toggleId = `toggle-eye-reg-${index}`;
                     if (!document.getElementById(toggleId)) {
-                        const appendDiv = input.parentElement.querySelector('.input-group-append');
+                        // Buscamos el contenedor padre y luego el div de append
+                        const inputGroup = input.closest('.input-group');
+                        const appendDiv = inputGroup.querySelector('.input-group-append');
+                        
                         if (appendDiv) {
                             appendDiv.innerHTML = `
-                                <div class="input-group-text" id="${toggleId}" style="cursor: pointer; background: rgba(255,255,255,0.1); border-left: none; color: white;">
+                                <div class="input-group-text" id="${toggleId}" style="cursor: pointer; background: rgba(255,255,255,0.1); border-left: none; color: white; border: 1px solid rgba(255,255,255,0.2);">
                                     <i class="fas fa-eye"></i>
                                 </div>
                             `;
@@ -143,20 +175,18 @@
                 });
             };
 
-            // 2. VALIDACIÓN DE CAMPOS VACÍOS (Nuevo estilo píldora roja)
+            // 2. VALIDACIÓN DE CAMPOS VACÍOS
             const setupValidation = () => {
                 const form = document.getElementById('registerForm');
                 if (form) {
                     form.addEventListener('submit', function(e) {
-                        const inputs = form.querySelectorAll('input[required]'); // Busca inputs obligatorios
+                        const inputs = form.querySelectorAll('input[required]');
                         let hayErrores = false;
 
                         inputs.forEach(input => {
-                            // Buscar el contenedor padre .input-group
                             const inputGroup = input.closest('.input-group');
-                            const parentDiv = inputGroup.parentElement; // El div .mb-3 que envuelve todo
+                            const parentDiv = inputGroup.parentElement;
 
-                            // Limpiar errores previos generados por JS
                             const errorPrevio = parentDiv.querySelector('.error-text-js');
                             if (errorPrevio) errorPrevio.remove();
                             
@@ -168,18 +198,16 @@
                                 input.classList.add('shake');
                                 setTimeout(() => input.classList.remove('shake'), 500);
 
-                                // Crear mensaje de error bonito
                                 const msg = document.createElement('div');
-                                msg.className = 'error-text error-text-js'; // Clase extra para identificarlo
+                                msg.className = 'error-text error-text-js';
                                 msg.innerHTML = '<i class="fas fa-exclamation-circle"></i> Este campo es obligatorio.';
                                 
-                                // Insertar debajo del input-group
                                 parentDiv.appendChild(msg);
                             }
                         });
 
                         if (hayErrores) {
-                            e.preventDefault(); // Detener envío si faltan datos
+                            e.preventDefault();
                         }
                     });
                 }
