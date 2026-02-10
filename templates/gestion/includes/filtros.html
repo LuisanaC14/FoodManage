@@ -2,7 +2,7 @@
     
     <div class="sidebar-widget mb-4">
         <div class="input-group">
-            <input type="text" id="searchInput" class="form-control" placeholder="Buscar plato..." 
+            <input type="text" id="searchInput" class="form-control" placeholder="Buscar plato..." onkeyup="searchMenu()"
                    style="background: #000; border: 1px solid #444; color: #fff; border-radius: 8px 0 0 8px;">
             <button class="btn" type="button" onclick="searchMenu()" 
                     style="background: #ccff00; color: #000; font-weight: bold; border-radius: 0 8px 8px 0;">
@@ -57,8 +57,6 @@
                     <span class="badge bg-dark text-white rounded-pill">{{ conteos.extra }}</span>
                 </a>
             </li>
-
-
         </ul>
     </div>
 
@@ -67,47 +65,83 @@
             Rango de Precio
         </h5>
         <div class="mt-3">
-            <input type="range" class="form-range" min="5" max="50" step="1" id="priceRange" oninput="updatePriceLabel(this.value)" 
+            <input type="range" class="form-range" min="1" max="50" step="1" id="priceRange" oninput="updatePriceLabel(this.value)" 
                    style="accent-color: #ccff00;">
             <div class="d-flex justify-content-between align-items-center mt-2">
-                <span class="text-white small">Max: $<span id="priceValue" style="color: #ccff00; font-weight: bold;">50</span></span>
+                <span class="text-white small">Max: $<span id="priceValue" style="color: #ccff00; font-weight: bold;">25</span></span>
                 <button class="btn btn-sm" onclick="filterByPrice()" style="border: 1px solid #ccff00; color: #ccff00; border-radius: 20px; font-size: 0.7rem;">FILTRAR</button>
             </div>
         </div>
     </div>
-
 </div>
 
 <style>
-    .cat-link:hover, .cat-link.active { color: #ccff00 !important; padding-left: 5px; }
+    .cat-link:hover, .cat-link.active { color: #ccff00 !important; padding-left: 10px; font-weight: bold; }
     .cat-link:hover .badge, .cat-link.active .badge { background: #ccff00 !important; color: #000 !important; }
-    .tag-item:hover { background: #ccff00 !important; color: #000 !important; border-color: #ccff00 !important; }
+    .menu-item { transition: all 0.3s ease; }
 </style>
 
 <script>
-    // Script para actualizar el texto del precio
+    // 1. FUNCIÓN DE FILTRADO (LA QUE FALTABA)
+    function filterMenu(category, element) {
+        // A. Resaltar el link activo
+        document.querySelectorAll('.cat-link').forEach(link => link.classList.remove('active'));
+        if(element) element.classList.add('active');
+
+        // B. Mostrar/Ocultar platos
+        let items = document.querySelectorAll('.menu-item');
+        
+        items.forEach(item => {
+            // Buscamos la etiqueta "data-category" en cada plato
+            let itemCategory = item.getAttribute('data-category'); 
+            
+            if (category === 'todos') {
+                item.style.display = 'block'; // Mostrar todo
+                item.classList.add('animate__fadeIn');
+            } else {
+                // Comparamos si la categoría del plato coincide con el botón
+                if (itemCategory === category) {
+                    item.style.display = 'block';
+                    item.classList.add('animate__fadeIn');
+                } else {
+                    item.style.display = 'none';
+                }
+            }
+        });
+    }
+
+    // 2. ACTUALIZAR ETIQUETA DE PRECIO
     function updatePriceLabel(val) {
         document.getElementById('priceValue').innerText = val;
     }
     
-    // Script básico para filtrar por precio (Front-end)
+    // 3. FILTRAR POR PRECIO
     function filterByPrice() {
-        let maxPrice = document.getElementById('priceRange').value;
+        let maxPrice = parseFloat(document.getElementById('priceRange').value);
         document.querySelectorAll('.menu-item').forEach(item => {
-            // Asumiendo que añades un atributo data-price a tus productos
-            let itemPrice = parseFloat(item.dataset.price || 0);
-            if(itemPrice <= maxPrice) item.style.display = 'block';
-            else item.style.display = 'none';
+            let itemPrice = parseFloat(item.getAttribute('data-price') || 0);
+            
+            // Solo mostramos si el precio es menor al seleccionado Y si la categoría actual (si hubiera) coincide
+            // Por simplicidad, aquí filtra sobre todo lo visible:
+            if(itemPrice <= maxPrice && item.style.display !== 'none') {
+                item.style.display = 'block';
+            } else {
+                item.style.display = 'none';
+            }
         });
     }
 
-    // Buscador simple
+    // 4. BUSCADOR EN TIEMPO REAL
     function searchMenu() {
         let text = document.getElementById('searchInput').value.toLowerCase();
         document.querySelectorAll('.menu-item').forEach(item => {
             let name = item.querySelector('h5') ? item.querySelector('h5').innerText.toLowerCase() : "";
-            if(name.includes(text)) item.style.display = 'block';
-            else item.style.display = 'none';
+            
+            if(name.includes(text)) {
+                item.style.display = 'block';
+            } else {
+                item.style.display = 'none';
+            }
         });
     }
 </script>
