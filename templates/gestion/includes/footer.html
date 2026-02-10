@@ -150,10 +150,10 @@
         <div class="footer-col">
             <h3>NAVEGACIÓN</h3>
             <ul class="footer-links">
-                <li><a href="/"><i class="fas fa-home"></i> Inicio</a></li>
-                <li><a href="#menu"><i class="fas fa-utensils"></i> Menú</a></li>
-                <li><a href="#reservas"><i class="fas fa-calendar-alt"></i> Reservar Mesa</a></li>
-                <li><a href="/carrito/"><i class="fas fa-shopping-cart"></i> Mi Pedido</a></li>
+                <li><a href="{% url 'inicio' %}"><i class="fas fa-home"></i> Inicio</a></li>
+                <li><a href="{% url 'inicio' %}#menu-start"><i class="fas fa-utensils"></i> Menú</a></li>
+                <li><a href="{% url 'reserva_web' %}"><i class="fas fa-calendar-alt"></i> Reservar Mesa</a></li>
+                <li><a href="{% url 'carrito' %}"><i class="fas fa-shopping-cart"></i> Mi Pedido</a></li>
             </ul>
         </div>
 
