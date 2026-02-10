@@ -337,20 +337,31 @@
         const numeroLocal = "593993103744"; 
         let total = 0;
         
-        let texto = ` *HOLA*, soy *${nombre}*. Nuevo pedido Web\n`;
+        // Encabezado limpio y formal
+        let texto = `*NUEVO PEDIDO WEB*\n`;
+        texto += `Cliente: *${nombre}*\n`;
         texto += `Pago: *${metodo.toUpperCase()}*\n`;
-        if(ticket !== "WEB-EFECTIVO") texto += ` Ticket: #${ticket}\n`;
-        if(direccion) texto += ` Retiro en local (Lago Agrio)\n`;
-        texto += `---------------------\n`;
         
+        if(ticket !== "WEB-EFECTIVO") texto += `Ticket: #${ticket}\n`;
+        if(direccion) texto += `Retiro: En local (Lago Agrio)\n`;
+        
+        texto += `--------------------------------\n`;
+        texto += `*DETALLE DE CONSUMO:*\n`;
+        
+        // Bucle mejorado: Muestra nombre, cantidad, precio unitario y subtotal
         cart.forEach(item => {
-            texto += `▪️ ${item.name} (x${item.cantidad}) - $${(item.price * item.cantidad).toFixed(2)}\n`;
-            total += (item.price * item.cantidad);
+            let subtotal = item.price * item.cantidad;
+            
+            // Formato: - PRODUCTO (x2) | $Unitario | Total: $Subtotal
+            texto += `- ${item.name} (x${item.cantidad})\n`;
+            texto += `  Precio: $${item.price.toFixed(2)} c/u  =>  Subtotal: $${subtotal.toFixed(2)}\n`;
+            
+            total += subtotal;
         });
         
-        texto += `---------------------\n`;
-        texto += ` *TOTAL: $${total.toFixed(2)}*\n\n`;
-        texto += ` *Solicito mi factura física al retirar mi pedido.*`;
+        texto += `--------------------------------\n`;
+        texto += `*TOTAL A PAGAR: $${total.toFixed(2)}*\n\n`;
+        texto += `Solicito mi factura física al retirar mi pedido.`;
 
         window.open(`https://wa.me/${numeroLocal}?text=${encodeURIComponent(texto)}`, '_blank');
     }
