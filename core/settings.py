@@ -313,3 +313,14 @@ CSRF_TRUSTED_ORIGINS = [
     'https://related-ann-marie-universidadchimborazo-96bd37d7.koyeb.app',
     'https://*.koyeb.app' 
 ]
+
+# =========================================================
+# CONFIGURACIÓN DE SEGURIDAD PARA KOYEB (CSRF)
+# =========================================================
+
+# 2. Decirle a Django que estamos detrás de un Proxy seguro (HTTPS)
+SECURE_PROXY_SSL_HEADER = ('HTTP_X_FORWARDED_PROTO', 'https')
+
+# 3. Asegurar cookies en HTTPS
+CSRF_COOKIE_SECURE = True
+SESSION_COOKIE_SECURE = True
