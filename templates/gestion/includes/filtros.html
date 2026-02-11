@@ -2,9 +2,9 @@
     
     <div class="sidebar-widget mb-4">
         <div class="input-group">
-            <input type="text" id="searchInput" class="form-control" placeholder="Buscar plato..." onkeyup="searchMenu()"
+            <input type="text" id="searchInput" class="form-control" placeholder="Buscar plato..." onkeyup="aplicarFiltros()"
                    style="background: #000; border: 1px solid #444; color: #fff; border-radius: 8px 0 0 8px;">
-            <button class="btn" type="button" onclick="searchMenu()" 
+            <button class="btn" type="button" onclick="aplicarFiltros()" 
                     style="background: #ccff00; color: #000; font-weight: bold; border-radius: 0 8px 8px 0;">
                 <i class="fas fa-search"></i>
             </button>
@@ -17,42 +17,42 @@
         </h5>
         <ul class="list-unstyled">
             <li class="mb-2">
-                <a href="javascript:void(0)" onclick="filterMenu('todos', this)" class="cat-link active d-flex justify-content-between align-items-center text-decoration-none py-2" style="border-bottom: 1px solid #222; color: #aaa; transition: 0.3s;">
+                <a href="javascript:void(0)" onclick="seleccionarCategoria('todos', this)" class="cat-link active d-flex justify-content-between align-items-center text-decoration-none py-2" style="border-bottom: 1px solid #222; color: #aaa; transition: 0.3s;">
                     <span><i class="fas fa-utensils me-2"></i>Todo</span>
                     <span class="badge bg-dark text-white rounded-pill">{{ conteos.total }}</span>
                 </a>
             </li>
 
             <li class="mb-2">
-                <a href="javascript:void(0)" onclick="filterMenu('arroz', this)" class="cat-link d-flex justify-content-between align-items-center text-decoration-none py-2" style="border-bottom: 1px solid #222; color: #aaa; transition: 0.3s;">
+                <a href="javascript:void(0)" onclick="seleccionarCategoria('arroz', this)" class="cat-link d-flex justify-content-between align-items-center text-decoration-none py-2" style="border-bottom: 1px solid #222; color: #aaa; transition: 0.3s;">
                     <span><i class="fas fa-bowl-rice me-2"></i>Arroces</span>
                     <span class="badge bg-dark text-white rounded-pill">{{ conteos.arroz }}</span>
                 </a>
             </li>
 
             <li class="mb-2">
-                <a href="javascript:void(0)" onclick="filterMenu('sopa', this)" class="cat-link d-flex justify-content-between align-items-center text-decoration-none py-2" style="border-bottom: 1px solid #222; color: #aaa; transition: 0.3s;">
+                <a href="javascript:void(0)" onclick="seleccionarCategoria('sopa', this)" class="cat-link d-flex justify-content-between align-items-center text-decoration-none py-2" style="border-bottom: 1px solid #222; color: #aaa; transition: 0.3s;">
                     <span><i class="fas fa-bowl-food me-2"></i>Sopas</span>
                     <span class="badge bg-dark text-white rounded-pill">{{ conteos.sopa }}</span>
                 </a>
             </li>
 
             <li class="mb-2">
-                <a href="javascript:void(0)" onclick="filterMenu('porcion', this)" class="cat-link d-flex justify-content-between align-items-center text-decoration-none py-2" style="border-bottom: 1px solid #222; color: #aaa; transition: 0.3s;">
+                <a href="javascript:void(0)" onclick="seleccionarCategoria('porcion', this)" class="cat-link d-flex justify-content-between align-items-center text-decoration-none py-2" style="border-bottom: 1px solid #222; color: #aaa; transition: 0.3s;">
                     <span><i class="fas fa-drumstick-bite me-2"></i>Porciones</span>
                     <span class="badge bg-dark text-white rounded-pill">{{ conteos.porcion }}</span>
                 </a>
             </li>
 
             <li class="mb-2">
-                <a href="javascript:void(0)" onclick="filterMenu('bebida', this)" class="cat-link d-flex justify-content-between align-items-center text-decoration-none py-2" style="border-bottom: 1px solid #222; color: #aaa; transition: 0.3s;">
+                <a href="javascript:void(0)" onclick="seleccionarCategoria('bebida', this)" class="cat-link d-flex justify-content-between align-items-center text-decoration-none py-2" style="border-bottom: 1px solid #222; color: #aaa; transition: 0.3s;">
                     <span><i class="fas fa-cocktail me-2"></i>Bebidas</span>
                     <span class="badge bg-dark text-white rounded-pill">{{ conteos.bebida }}</span>
                 </a>
             </li>
 
             <li class="mb-2">
-                <a href="javascript:void(0)" onclick="filterMenu('extra', this)" class="cat-link d-flex justify-content-between align-items-center text-decoration-none py-2" style="border-bottom: 1px solid #222; color: #aaa; transition: 0.3s;">
+                <a href="javascript:void(0)" onclick="seleccionarCategoria('extra', this)" class="cat-link d-flex justify-content-between align-items-center text-decoration-none py-2" style="border-bottom: 1px solid #222; color: #aaa; transition: 0.3s;">
                     <span><i class="fas fa-plus-circle me-2"></i>Extras</span>
                     <span class="badge bg-dark text-white rounded-pill">{{ conteos.extra }}</span>
                 </a>
@@ -65,11 +65,13 @@
             Rango de Precio
         </h5>
         <div class="mt-3">
-            <input type="range" class="form-range" min="1" max="50" step="1" id="priceRange" oninput="updatePriceLabel(this.value)" 
+            <input type="range" class="form-range" min="1" max="50" step="1" id="priceRange" 
+                   oninput="aplicarFiltros()" 
                    style="accent-color: #ccff00;">
+            
             <div class="d-flex justify-content-between align-items-center mt-2">
                 <span class="text-white small">Max: $<span id="priceValue" style="color: #ccff00; font-weight: bold;">25</span></span>
-                <button class="btn btn-sm" onclick="filterByPrice()" style="border: 1px solid #ccff00; color: #ccff00; border-radius: 20px; font-size: 0.7rem;">FILTRAR</button>
+                <button class="btn btn-sm" onclick="aplicarFiltros()" style="border: 1px solid #ccff00; color: #ccff00; border-radius: 20px; font-size: 0.7rem;">FILTRAR</button>
             </div>
         </div>
     </div>
@@ -82,66 +84,69 @@
 </style>
 
 <script>
-    // 1. FUNCIÓN DE FILTRADO (LA QUE FALTABA)
-    function filterMenu(category, element) {
-        // A. Resaltar el link activo
+    // VARIABLE GLOBAL PARA GUARDAR LA CATEGORÍA SELECCIONADA
+    let categoriaActual = 'todos';
+
+    function seleccionarCategoria(categoria, elemento) {
+        // 1. Efecto visual (Poner en amarillo el link)
         document.querySelectorAll('.cat-link').forEach(link => link.classList.remove('active'));
-        if(element) element.classList.add('active');
+        if(elemento) elemento.classList.add('active');
 
-        // B. Mostrar/Ocultar platos
-        let items = document.querySelectorAll('.menu-item');
+        // 2. Guardamos la categoría en la memoria
+        categoriaActual = categoria;
+
+        // 3. Llamamos al filtro maestro para que recalcule todo
+        aplicarFiltros();
+    }
+
+    // --- ESTA ES LA FUNCIÓN MAESTRA (BUSCADOR + PRECIO + CATEGORÍA) ---
+    function aplicarFiltros() {
+        // A. OBTENEMOS LOS DATOS DE LOS 3 FILTROS
         
-        items.forEach(item => {
-            // Buscamos la etiqueta "data-category" en cada plato
-            let itemCategory = item.getAttribute('data-category'); 
+        // 1. TEXTO DEL BUSCADOR (Aquí está lo que te preocupaba, ¡sigue aquí!)
+        const textoBusqueda = document.getElementById('searchInput').value.toLowerCase();
+        
+        // 2. PRECIO DEL SLIDER
+        const precioMaximo = parseFloat(document.getElementById('priceRange').value);
+        
+        // Actualizamos el numerito del precio visualmente
+        document.getElementById('priceValue').innerText = precioMaximo;
+
+        // B. REVISAMOS CADA PLATO UNO POR UNO
+        const platos = document.querySelectorAll('.menu-item');
+
+        platos.forEach(plato => {
+            // Obtenemos los datos ocultos del HTML del plato
+            const catPlato = plato.getAttribute('data-category'); 
+            const precioPlato = parseFloat(plato.getAttribute('data-price') || 0);
             
-            if (category === 'todos') {
-                item.style.display = 'block'; // Mostrar todo
-                item.classList.add('animate__fadeIn');
+            // Obtenemos el nombre del plato para buscar
+            const nombrePlato = plato.querySelector('h5') ? plato.querySelector('h5').innerText.toLowerCase() : "";
+
+            // --- AQUÍ ESTÁ LA MAGIA: COMPROBAMOS LAS 3 COSAS A LA VEZ ---
+            
+            // Condición 1: ¿Coincide la categoría? (Si es 'todos' siempre es sí)
+            const coincideCategoria = (categoriaActual === 'todos') || (catPlato === categoriaActual);
+            
+            // Condición 2: ¿El precio es menor al slider?
+            const coincidePrecio = (precioPlato <= precioMaximo);
+            
+            // Condición 3: ¿El nombre tiene el texto que escribiste? (ESTO ES EL BUSCADOR)
+            const coincideTexto = nombrePlato.includes(textoBusqueda);
+
+            // SI CUMPLE LAS 3, SE MUESTRA. SI FALLA ALGUNA, SE OCULTA.
+            if (coincideCategoria && coincidePrecio && coincideTexto) {
+                plato.style.display = 'block';
+                plato.classList.add('animate__fadeIn');
             } else {
-                // Comparamos si la categoría del plato coincide con el botón
-                if (itemCategory === category) {
-                    item.style.display = 'block';
-                    item.classList.add('animate__fadeIn');
-                } else {
-                    item.style.display = 'none';
-                }
+                plato.style.display = 'none';
             }
         });
     }
 
-    // 2. ACTUALIZAR ETIQUETA DE PRECIO
-    function updatePriceLabel(val) {
-        document.getElementById('priceValue').innerText = val;
-    }
-    
-    // 3. FILTRAR POR PRECIO
-    function filterByPrice() {
-        let maxPrice = parseFloat(document.getElementById('priceRange').value);
-        document.querySelectorAll('.menu-item').forEach(item => {
-            let itemPrice = parseFloat(item.getAttribute('data-price') || 0);
-            
-            // Solo mostramos si el precio es menor al seleccionado Y si la categoría actual (si hubiera) coincide
-            // Por simplicidad, aquí filtra sobre todo lo visible:
-            if(itemPrice <= maxPrice && item.style.display !== 'none') {
-                item.style.display = 'block';
-            } else {
-                item.style.display = 'none';
-            }
-        });
-    }
-
-    // 4. BUSCADOR EN TIEMPO REAL
-    function searchMenu() {
-        let text = document.getElementById('searchInput').value.toLowerCase();
-        document.querySelectorAll('.menu-item').forEach(item => {
-            let name = item.querySelector('h5') ? item.querySelector('h5').innerText.toLowerCase() : "";
-            
-            if(name.includes(text)) {
-                item.style.display = 'block';
-            } else {
-                item.style.display = 'none';
-            }
-        });
-    }
+    // Inicializar al cargar para que el slider arranque al máximo
+    document.addEventListener('DOMContentLoaded', () => {
+        document.getElementById('priceRange').value = 50; 
+        document.getElementById('priceValue').innerText = "50";
+    });
 </script>
