@@ -211,12 +211,12 @@ function enviarReservaWhatsApp() {
             return;
         }
 
-        // 2. VALIDACIÓN TELÉFONO (10 DÍGITOS)
-        if (telefono.length !== 10 || isNaN(telefono)) {
+        // 2. VALIDACIÓN TELÉFONO (10 DÍGITOS Y EMPIEZA CON 09)
+        if (telefono.length !== 10 || !telefono.startsWith('09') || isNaN(telefono)) {
             Swal.fire({
                 icon: 'error',
                 title: 'Teléfono Incorrecto',
-                text: 'El número debe tener 10 dígitos válidos (Ej: 0991234567).',
+                text: 'El celular debe tener 10 dígitos y empezar con 09.',
                 ...estiloAlerta
             });
             return;
