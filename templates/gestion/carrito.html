@@ -140,6 +140,7 @@
     </div>
 </div>
 
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     document.addEventListener('DOMContentLoaded', function() {
         renderizarResumen();
@@ -270,7 +271,20 @@
 
     async function procesarPedido() {
         let cart = JSON.parse(localStorage.getItem('mancora_cart')) || [];
-        if(cart.length === 0) return alert("El carrito está vacío");
+        
+        // ESTILO NEÓN PARA LAS ALERTAS
+        const estiloAlerta = {
+            confirmButtonColor: '#ccff00',
+            background: '#111',
+            color: '#fff',
+            confirmButtonText: '<span style="color: #000; font-weight: bold;">ENTENDIDO</span>'
+        };
+
+        // 1. VALIDAR CARRITO VACÍO
+        if(cart.length === 0) {
+            Swal.fire({ icon: 'warning', title: 'Carrito Vacío', text: 'Agrega productos antes de pedir.', ...estiloAlerta });
+            return;
+        }
 
         const nombre = document.getElementById('cli-nombre').value.trim();
         const cedula = document.getElementById('cli-cedula').value.trim();
@@ -279,26 +293,56 @@
         const direccion = document.getElementById('cli-direccion').value.trim();
         const nota = document.getElementById('input-nota').value;
 
+        // 2. VALIDAR CAMPOS VACÍOS
         if(!nombre || !cedula || !telefono || !email) {
-            alert("⚠️ Completa tus datos personales para la factura.");
+            Swal.fire({ icon: 'warning', title: 'Faltan Datos', text: 'Completa nombre, cédula, teléfono y correo.', ...estiloAlerta });
+            return;
+        }
+
+        // 3. VALIDACIÓN CÉDULA / RUC (10 o 13 dígitos numéricos)
+        if ((cedula.length !== 10 && cedula.length !== 13) || isNaN(cedula)) {
+            Swal.fire({ icon: 'error', title: 'Documento Incorrecto', text: 'La cédula debe tener 10 dígitos (o 13 si es RUC) y solo números.', ...estiloAlerta });
+            return;
+        }
+
+        // 4. VALIDACIÓN TELÉFONO (10 DÍGITOS Y EMPEZAR CON 09)
+        if (telefono.length !== 10 || !telefono.startsWith('09') || isNaN(telefono)) {
+            Swal.fire({ icon: 'error', title: 'Teléfono Incorrecto', text: 'El celular debe tener 10 dígitos y empezar con 09.', ...estiloAlerta });
+            return;
+        }
+
+        // 5. VALIDACIÓN CORREO
+        if (!email.includes('@') || !email.includes('.')) {
+            Swal.fire({ icon: 'error', title: 'Correo Inválido', text: 'Ingresa un correo válido (ej: usuario@email.com).', ...estiloAlerta });
             return;
         }
 
         const metodoElem = document.querySelector('input[name="metodo_pago"]:checked');
-        if (!metodoElem) return alert("⚠️ Selecciona un MÉTODO DE PAGO.");
-        const metodo = metodoElem.value;
-        const fotoInput = document.getElementById('input-foto');
-
-        // FLUJO EFECTIVO
-        if (metodo === 'Efectivo') {
-            enviarWhatsApp("WEB-EFECTIVO", metodo, cart, nombre, direccion);
-            localStorage.removeItem('mancora_cart');
-            window.location.href = "{% url 'inicio' %}";
+        if (!metodoElem) {
+            Swal.fire({ icon: 'question', title: 'Método de Pago', text: 'Por favor selecciona Efectivo o Transferencia.', ...estiloAlerta });
             return;
         }
 
-        // FLUJO TRANSFERENCIA
-        if(fotoInput.files.length === 0) return alert("⚠️ Sube la foto del comprobante.");
+        const metodo = metodoElem.value;
+        const fotoInput = document.getElementById('input-foto');
+
+        // --- FLUJO EFECTIVO ---
+        if (metodo === 'Efectivo') {
+            enviarWhatsApp("WEB-EFECTIVO", metodo, cart, nombre, direccion);
+            localStorage.removeItem('mancora_cart');
+            
+            Swal.fire({ icon: 'success', title: '¡Pedido Listo!', text: 'Abriendo WhatsApp...', showConfirmButton: false, timer: 2000, background: '#111', color: '#fff' });
+            setTimeout(() => {
+                window.location.href = "{% url 'inicio' %}";
+            }, 2000);
+            return;
+        }
+
+        // --- FLUJO TRANSFERENCIA ---
+        if(fotoInput.files.length === 0) {
+            Swal.fire({ icon: 'warning', title: 'Falta Comprobante', text: 'Sube la foto de la transferencia.', ...estiloAlerta });
+            return;
+        }
 
         const btn = document.getElementById('btn-confirmar');
         btn.disabled = true;
@@ -323,16 +367,25 @@
             if(data.status === 'success') {
                 enviarWhatsApp(data.ticket, metodo, cart, nombre, direccion);
                 localStorage.removeItem('mancora_cart');
-                window.location.href = "{% url 'inicio' %}"; 
+                
+                Swal.fire({ icon: 'success', title: '¡Pedido Recibido!', text: 'Gracias por tu compra.', showConfirmButton: false, timer: 2000, background: '#111', color: '#fff' });
+                setTimeout(() => {
+                    window.location.href = "{% url 'inicio' %}"; 
+                }, 2000);
             } else {
-                alert("Error: " + data.message);
+                Swal.fire({ icon: 'error', title: 'Error', text: data.message, ...estiloAlerta });
                 btn.disabled = false;
+                document.getElementById('btn-text').classList.remove('d-none');
+                document.getElementById('btn-loading').classList.add('d-none');
             }
         } catch (error) {
-            alert("Error de conexión");
+            Swal.fire({ icon: 'error', title: 'Error de conexión', text: 'Inténtalo de nuevo.', ...estiloAlerta });
             btn.disabled = false;
+            document.getElementById('btn-text').classList.remove('d-none');
+            document.getElementById('btn-loading').classList.add('d-none');
         }
     }
+
     function enviarWhatsApp(ticket, metodo, cart, nombre, direccion) {
         const numeroLocal = "593993103744"; 
         let total = 0;
