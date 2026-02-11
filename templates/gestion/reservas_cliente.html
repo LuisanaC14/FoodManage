@@ -152,7 +152,7 @@
         </div>
     </div>
 </div>
-
+<script src="https://cdn.jsdelivr.net/npm/sweetalert2@11"></script>
 <script>
     document.getElementById('fecha_cli').min = new Date().toISOString().split("T")[0];
 
@@ -192,42 +192,69 @@ function enviarReservaWhatsApp() {
         const hora = document.getElementById('hora_cli').value;
         const mesaId = document.getElementById('res-mesa-num').value;
 
-        // 1. Validación original (Que no falten datos)
+        // Configuración común para que combine con tu página (Fondo Negro / Botón Neón)
+        const estiloAlerta = {
+            confirmButtonColor: '#ccff00',
+            background: '#111',
+            color: '#fff',
+            confirmButtonText: '<span style="color: #000; font-weight: bold;">ENTENDIDO</span>'
+        };
+
+        // 1. VALIDACIÓN GENERAL
         if (!nombre || !telefono || !fecha || !hora || !mesaId) {
-            alert("⚠️ Por favor completa todos los campos y selecciona una mesa.");
+            Swal.fire({
+                icon: 'warning',
+                title: 'Faltan Datos',
+                text: 'Por favor completa todos los campos y selecciona una mesa.',
+                ...estiloAlerta
+            });
             return;
         }
 
-        // 2. NUEVA VALIDACIÓN: Teléfono de 10 dígitos exactos
+        // 2. VALIDACIÓN TELÉFONO (10 DÍGITOS)
         if (telefono.length !== 10 || isNaN(telefono)) {
-            alert("⚠️ El teléfono debe tener 10 dígitos válidos.");
-            return; // Esto detiene el envío si está mal
+            Swal.fire({
+                icon: 'error',
+                title: 'Teléfono Incorrecto',
+                text: 'El número debe tener 10 dígitos válidos (Ej: 0991234567).',
+                ...estiloAlerta
+            });
+            return;
         }
 
-        // 3. NUEVA VALIDACIÓN: Personas positivas (mayor a 0)
+        // 3. VALIDACIÓN PERSONAS (> 0)
         if (parseInt(personas) <= 0) {
-            alert("⚠️ La cantidad de personas debe ser mayor a 0.");
-            return; // Esto detiene el envío si es 0 o negativo
+            Swal.fire({
+                icon: 'error',
+                title: 'Error en Personas',
+                text: 'La cantidad de personas debe ser mayor a 0.',
+                ...estiloAlerta
+            });
+            return;
         }
 
-        // --- DE AQUÍ PARA ABAJO ES TU CÓDIGO ORIGINAL SIN TOCAR ---
+        // SI TODO ESTÁ BIEN...
         let texto = `*=== SOLICITUD DE RESERVA ===*\n*Máncora Marisquería*\n\n*CLIENTE:* ${nombre.toUpperCase()}\n*TELÉFONO:* ${telefono}\n----------------------------------\n*MESA:* #${mesaId}\n*PERSONAS:* ${personas}\n*FECHA:* ${fecha}\n*HORA:* ${hora}\n----------------------------------\n\n_Enviado desde la Web Máncora._`;
         
-        // Abrir WhatsApp
         window.open(`https://wa.me/593991414440?text=${encodeURIComponent(texto)}`, '_blank');
 
+        // MENSAJE DE ÉXITO (MÁS BONITO)
+        Swal.fire({
+            icon: 'success',
+            title: '¡Solicitud Creada!',
+            text: 'Te esperamos en WhatsApp para confirmar.',
+            showConfirmButton: false,
+            timer: 2500,
+            background: '#111',
+            color: '#fff'
+        });
+
         setTimeout(() => {
-            // Limpia los campos de texto
             document.getElementById('form-reserva-web').reset();
-            
-            // Limpia la selección visual de la mesa
             document.querySelectorAll('.mesa-spot').forEach(m => m.classList.remove('selected-cliente'));
             document.getElementById('res-mesa-num').value = "";
-
             document.getElementById('mesa-selected-badge').classList.add('d-none');
-
-            // alert("¡Solicitud generada! Te esperamos en WhatsApp.");
-        }, 1000);
+        }, 2000);
     }
 
     function ampliarImagen(elemento) {
